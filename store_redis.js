@@ -13,7 +13,7 @@ var rcli = redis.createClient(redis.DEFAULT_PORT, '10.95.8.182');
 var rcli2 = redis.createClient(redis.DEFAULT_PORT, '10.95.8.182');
 
 
-redis.debug_mode = true;
+//redis.debug_mode = true;
 
 function put(key, obj, err_fun) {
 

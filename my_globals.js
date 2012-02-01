@@ -23,6 +23,7 @@ exports.C = {
     'HEAD_RELAYER_HTTPCALLBACK':'x-relayer-httpcallback',
     'HEAD_RELAYER_HTTPCALLBACK_METHOD':'x-relayer-httpcallback_method',
     'HEAD_RELAYER_HTTPCALLBACK_PORT':'x-relayer-httpcallback_port',
+    'HEAD_RELAYER_PERSISTENCE' : 'x-relayer-persistence', //STATUS, HEAD, CONTENT
     'PARAM_DBHOST':'dbhost',
     'PARAM_DBPORT':'dbport',
     'PARAM_SPAWN':'spawn',
@@ -34,7 +35,6 @@ exports.C = {
     'RD_DATA':'Data',
     'RD_METHOD':'Method',
     'RD_POSTDATA':'Postdata',
-    'RD_RELAYED_REQUEST':'RelayedRequest',
-
+    'RD_RELAYED_REQUEST':'RelayedRequest'
 };
 
