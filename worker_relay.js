@@ -29,7 +29,7 @@ function do_job(task) {
                                 //check callback_res status (modify state) Not interested in body
                                 db_err = {callback_status : callback_res.statusCode, details:'callback sent OK'};
                                 //TODO DAO don't use REDIS at this level
-                                rcli.hmset("wrH:" + task.id, db_err, function (err, red_res) {
+                                rcli.hmset("wrH:" + task.id, db_err, function (err) {
                                     if (err) {
                                         console.log("BD Error setting callback status:" + err);
                                     }
@@ -43,7 +43,7 @@ function do_job(task) {
                             db_err = {callback_status:'error', details: str_err};
                             //store
                             //TODO DAO don't use REDIS at this level
-                            rcli.hmset("wrH:" + task.id, db_err, function (err, red_res) {
+                            rcli.hmset("wrH:" + task.id, db_err, function (err) {
                                 if (err) {
                                     console.log("BD Error setting callback ERROR:" + err);
                                 }
@@ -58,7 +58,7 @@ function do_job(task) {
             }
         );
         req.on('error', function (e) {
-            console.log('problem with request: ' + e.message);
+            console.log('problem with relayed request: ' + e.message);
         });
         req.end();
     }
@@ -83,18 +83,20 @@ function get_response(resp, task, callback) {
     });
 }
 function set_object(task, resp_obj, type) {
-    //TODO refactorize (be carefull, resp_obj Mutable)
     //remove from response what is not needed
+    var set_obj={};
     type = type.toUpperCase();
     if (type === 'STATUS') {
-        delete resp_obj.body;
-        delete resp_obj.headers;
+        set_obj.statusCode = resp_obj.statusCode;
     }
     else if (type == 'HEADER') {
-        delete resp_obj.body;
+        set_obj.statusCode = resp_obj.statusCode;
+        set_obj.headers = resp_obj.headers;
     }
     else if (type == 'BODY') {
-        //nothing to do?
+        set_obj.statusCode = resp_obj.statusCode;
+        set_obj.headers = resp_obj.headers;
+        set_obj.body = resp_obj.body;
     }
     else {
         //Error
@@ -102,7 +104,7 @@ function set_object(task, resp_obj, type) {
         return;
     }
     //TODO DAO don't use REDIS at this level
-    rcli.hmset("wrH:" + task.id, resp_obj, function (err, red_res) {
+    rcli.hmset("wrH:" + task.id, set_obj, function (err, red_res) {
         if (err) {
             console.log(err);
         }
