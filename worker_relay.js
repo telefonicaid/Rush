@@ -3,6 +3,7 @@ var http = require("http");
 var MG = require("./my_globals").C;
 var url = require('url');
 var rcli = redis.createClient(redis.DEFAULT_PORT, '10.95.8.182');
+
 function do_job(task) {
     var target_host = task.headers[MG.HEAD_RELAYER_HOST];
     if (!target_host) {
@@ -15,45 +16,10 @@ function do_job(task) {
         req = http.request(options, function (rly_res) {
                 get_response(rly_res, task, function (task, resp_obj) {
                     //PERSISTENCE
-                    if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
-                        set_object(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
-                    }
+                    do_persistence(task, resp_obj);
 
                     //CALLBACK
-                    var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
-                    var db_err;
-                    if (callback_host) {
-                        var callback_options = url.parse(callback_host);
-                        callback_options.method = 'POST';
-                        var callback_req = http.request(callback_options, function(callback_res) {
-                                //check callback_res status (modify state) Not interested in body
-                                db_err = {callback_status : callback_res.statusCode, details:'callback sent OK'};
-                                //TODO DAO don't use REDIS at this level
-                                rcli.hmset("wrH:" + task.id, db_err, function (err) {
-                                    if (err) {
-                                        console.log("BD Error setting callback status:" + err);
-                                    }
-                                });
-                            }
-                        );
-                        
-                        callback_req.on('error', function(err) {
-                            //error in request
-                            var str_err = JSON.stringify(err);
-                            db_err = {callback_status:'error', details: str_err};
-                            //store
-                            //TODO DAO don't use REDIS at this level
-                            rcli.hmset("wrH:" + task.id, db_err, function (err) {
-                                if (err) {
-                                    console.log("BD Error setting callback ERROR:" + err);
-                                }
-                            });
-                        });
-                        var str_resp_obj = JSON.stringify(resp_obj);
-                        callback_req.write(str_resp_obj);
-                        callback_req.end();
-                    } //CALLBACK end
-                    
+                    do_callback(task, resp_obj);
                 });
             }
         );
@@ -113,4 +79,44 @@ function set_object(task, resp_obj, type) {
         }
     });
 }
+function do_persistence(task, resp_obj) {
+    if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
+        set_object(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
+    }
+}
+function do_callback(task, resp_obj) {
+    var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
+    var db_err;
+    if (callback_host) {
+        var callback_options = url.parse(callback_host);
+        callback_options.method = 'POST';
+        var callback_req = http.request(callback_options, function (callback_res) {
+                //check callback_res status (modify state) Not interested in body
+                db_err = {callback_status:callback_res.statusCode, details:'callback sent OK'};
+                //TODO DAO don't use REDIS at this level
+                rcli.hmset("wrH:" + task.id, db_err, function (err) {
+                    if (err) {
+                        console.log("BD Error setting callback status:" + err);
+                    }
+                });
+            }
+        );
+        callback_req.on('error', function (err) {
+            //error in request
+            var str_err = JSON.stringify(err);
+            db_err = {callback_status:'error', details:str_err};
+            //store
+            //TODO DAO don't use REDIS at this level
+            rcli.hmset("wrH:" + task.id, db_err, function (err) {
+                if (err) {
+                    console.log("BD Error setting callback ERROR:" + err);
+                }
+            });
+        });
+        var str_resp_obj = JSON.stringify(resp_obj);
+        callback_req.write(str_resp_obj);
+        callback_req.end();
+    }
+}
+
 exports.do_job = do_job;

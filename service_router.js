@@ -11,7 +11,7 @@ function route(request) {
         return { ok:false, message:MG.HEAD_RELAYER_HOST + " is missing"};
     }
     else {
-        return { ok:true, service:"wrL:lpri"};
+        return { ok:true, service:"wrL:hpri"};
     }
 
 }
