@@ -15,7 +15,7 @@ function do_job(task) {
         req = http.request(options, function (rly_res) {
                 get_response(rly_res, task, function (task, resp_obj) {
                     //PERSISTENCE
-                    do_persistence(task, resp_obj);
+                    do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
 
                     //CALLBACK
                     do_callback(task, resp_obj);
@@ -24,7 +24,7 @@ function do_job(task) {
         );
         req.on('error', function (e) {
             console.log('problem with relayed request: ' + e.message);
-			do_retry(e, task, function(){
+			do_retry(task, function(){
                 //error callback
                 do_callback(task, e);
                 //error persistence
@@ -87,9 +87,9 @@ function set_object(task, resp_obj, type) {
         }
     });
 }
-function do_persistence(task, resp_obj) {
-    if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
-        set_object(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
+function do_persistence(task, resp_obj, type) {
+    if (type) {
+        set_object(task, resp_obj, type);
     }
 }
 function do_callback(task, resp_obj) {
@@ -125,12 +125,7 @@ function do_callback(task, resp_obj) {
     }
 }
 
-function do_retry(error, task, callback) {
-    if(task.headers[MG.HEAD_RELAYER_RETRY])
-        retry(task, callback);
-}
-
-function retry(task, callback) {
+function do_retry(task, callback) {
     var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
     var time = -1;
 
