@@ -5,8 +5,8 @@
  * Time: 18:59
  * To change this template use File | Settings | File Templates.
  */
-var redis = require("redis");
-var config = require("config_base");
+var redis = require('redis');
+var config = require('./config_base').queue;
 
 // ?????? Pool grande de conexiones a redis? Tiene sentido???
 

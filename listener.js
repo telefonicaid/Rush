@@ -1,7 +1,7 @@
 var http = require('http');
 var uuid = require('node-uuid');
 var router = require("./service_router");
-var store = require("task_queue.js");
+var store = require("./task_queue.js");
 
 var n = 0;
 
