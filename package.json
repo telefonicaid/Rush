@@ -1,0 +1,31 @@
+{
+  "name": "Rush",
+  "version": "0.0.1",
+  "author": "Transversal Development",
+  "description": "a simple HTTP-Reayer",
+  "contributors": [
+    {
+      "name": "Carlos Romero Brox",
+      "email": "brox@tid.es"
+    },
+     {
+       "name": "Marcos Reyes",
+       "email": "mru@tid.es"
+     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://mrutid@github.com/mrutid/Rush.git"
+  },
+
+  "dependencies" : {
+    "redis"   :  "*",
+    "node-uuid": "*"
+  },
+  "bundleDependencies": [
+  ],
+  "license": "AGPL",
+  "engine": {
+    "node": "0.6.6"
+  }
+}
