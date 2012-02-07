@@ -24,8 +24,6 @@ function do_job(task, callback) {
         req.on('error', function (e) {
             console.log('problem with relayed request: ' + e.message);
             do_retry(task, function () {
-                //error callback
-                do_http_callback(task, e);
                 //error persistence
                 do_persistence(task, e, 'ERROR', function () {
                     //CALLBACK
@@ -90,9 +88,8 @@ function set_object(task, resp_obj, type, callback) {
 }
 function do_persistence(task, resp_obj, type, callback) {
     if (type) {
-        set_object(task, resp_obj, type);
+        set_object(task, resp_obj, type, callback);
     }
-    if (callback) callback();
 }
 function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
