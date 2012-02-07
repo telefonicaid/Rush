@@ -2,8 +2,7 @@ var http = require('http');
 var MG = require('./my_globals').C;
 var url = require('url');
 var db = require('./dbrelayer');
-
-function do_job(task) {
+function do_job(task, callback) {
     var target_host = task.headers[MG.HEAD_RELAYER_HOST];
     if (!target_host) {
         console.log("Not target host");
@@ -15,27 +14,28 @@ function do_job(task) {
         req = http.request(options, function (rly_res) {
                 get_response(rly_res, task, function (task, resp_obj) {
                     //PERSISTENCE
-                    do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
-
-                    //CALLBACK
-                    do_callback(task, resp_obj);
+                    do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE], function () {
+                        //CALLBACK
+                        do_http_callback(task, resp_obj, callback);
+                    });
                 });
             }
         );
         req.on('error', function (e) {
             console.log('problem with relayed request: ' + e.message);
-			do_retry(task, function(){
+            do_retry(task, function () {
                 //error callback
-                do_callback(task, e);
+                do_http_callback(task, e);
                 //error persistence
-                do_persistence(task, e, 'ERROR');
+                do_persistence(task, e, 'ERROR', function () {
+                    //CALLBACK
+                    do_http_callback(task, e, callback);
+                });
             });
         });
         req.end(); //?? sure HERE?
-
     }
 }
-
 function get_response(resp, task, callback) {
     var data = "";
     resp.on('data', function (chunk) {
@@ -43,7 +43,7 @@ function get_response(resp, task, callback) {
     });
     resp.on('end', function (chunk) {
         if (chunk) {
-            if(chunk){
+            if (chunk) {
                 data += chunk;
             } //avoid tail undefined
         }
@@ -53,9 +53,9 @@ function get_response(resp, task, callback) {
         }
     });
 }
-function set_object(task, resp_obj, type) {
+function set_object(task, resp_obj, type, callback) {
     //remove from response what is not needed
-    var set_obj={};
+    var set_obj = {};
     type = type.toUpperCase();
     //todo
     if (type === 'STATUS') {
@@ -70,7 +70,7 @@ function set_object(task, resp_obj, type) {
         set_obj.headers = resp_obj.headers;
         set_obj.body = resp_obj.body;
     }
-    else if (type == 'ERROR'){
+    else if (type == 'ERROR') {
         set_obj = resp_obj;
     }
     else {
@@ -85,14 +85,16 @@ function set_object(task, resp_obj, type) {
         else {
             console.log(red_res);
         }
+        if (callback) callback();
     });
 }
-function do_persistence(task, resp_obj, type) {
+function do_persistence(task, resp_obj, type, callback) {
     if (type) {
         set_object(task, resp_obj, type);
     }
+    if (callback) callback();
 }
-function do_callback(task, resp_obj) {
+function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
     var db_err;
     if (callback_host) {
@@ -100,23 +102,25 @@ function do_callback(task, resp_obj) {
         callback_options.method = 'POST';
         var callback_req = http.request(callback_options, function (callback_res) {
                 //check callback_res status (modify state) Not interested in body
-                db_err = {callback_status:callback_res.statusCode, details:'callback sent OK'};
-               db.update(task.id, db_err, function (err) {
+                db_err = {callback_status:callback_res.statusCode, callback_details:'callback sent OK'};
+                db.update(task.id, db_err, function (err) {
                     if (err) {
                         console.log("BD Error setting callback status:" + err);
                     }
+                    if (callback) callback();
                 });
             }
         );
         callback_req.on('error', function (err) {
             //error in request
             var str_err = JSON.stringify(err);  // Too much information?????
-            db_err = {callback_status:'error', details:str_err};
+            db_err = {callback_status:'error', callback_details:str_err};
             //store
-            db.update(task.id, db_err, function (err) {
-                if (err) {
-                    console.log("BD Error setting callback ERROR:" + err);
+            db.update(task.id, db_err, function (dberr) {
+                if (dberr) {
+                    console.log("BD Error setting callback ERROR:" + dberr);
                 }
+                if (callback) callback();
             });
         });
         var str_resp_obj = JSON.stringify(resp_obj);
@@ -124,16 +128,14 @@ function do_callback(task, resp_obj) {
         callback_req.end();
     }
 }
-
 function do_retry(task, callback) {
     var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
     var time = -1;
-
-    if(retry_list) {
+    if (retry_list) {
         retry_a = retry_list.split(",");
-        if(retry_a.length>0) {
-            time = parseInt(retry_a.shift(),10);
-            if (retry_a.length >0) {
+        if (retry_a.length > 0) {
+            time = parseInt(retry_a.shift(), 10);
+            if (retry_a.length > 0) {
                 // there is retry times still
                 task.headers[MG.HEAD_RELAYER_RETRY] = retry_a.join(",");
             }
@@ -142,16 +144,15 @@ function do_retry(task, callback) {
                 delete task.headers[MG.HEAD_RELAYER_RETRY];
             }
             if (time > 0) {
-                setTimeout(function() {
-                        do_job(task);
-                    }, time);
+                setTimeout(function () {
+                    do_job(task);
+                }, time);
             }
         }
     }
-    else{
-    //no more attempts (or no retry policy)
-        if(callback) callback();
+    else {
+        //no more attempts (or no retry policy)
+        if (callback) callback();
     }
 }
-
 exports.do_job = do_job;
