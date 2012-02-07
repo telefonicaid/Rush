@@ -6,11 +6,12 @@
  * To change this template use File | Settings | File Templates.
  */
 var redis = require("redis");
+var config = require("config_base");
 
 // ?????? Pool grande de conexiones a redis? Tiene sentido???
 
-var rcli = redis.createClient(redis.DEFAULT_PORT, '10.95.8.182');
-var rcli2 = redis.createClient(redis.DEFAULT_PORT, '10.95.8.182');
+var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
+var rcli2 = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 
 
 //redis.debug_mode = true;
