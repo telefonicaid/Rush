@@ -24,7 +24,7 @@ function do_job(task) {
         );
         req.on('error', function (e) {
             console.log('problem with relayed request: ' + e.message);
-			do_retry(e, task, function(){
+			do_retry(task, function(){
                 //error callback
                 do_callback(task, e);
                 //error persistence
@@ -125,12 +125,7 @@ function do_callback(task, resp_obj) {
     }
 }
 
-function do_retry(error, task, callback) {
-    if(task.headers[MG.HEAD_RELAYER_RETRY])
-        retry(task, callback);
-}
-
-function retry(task, callback) {
+function do_retry(task, callback) {
     var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
     var time = -1;
 
