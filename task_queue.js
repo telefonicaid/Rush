@@ -7,6 +7,7 @@
  */
 var redis = require('redis');
 var config = require('./config_base').queue;
+var logger = require('./logger.js');
 
 // ?????? Pool grande de conexiones a redis? Tiene sentido???
 
@@ -18,23 +19,21 @@ var rcli2 = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 
 function put(key, obj, err_fun) {
 
-    console.log("in  put");
+    logger.info('in  put');
 
     var simple_req_str = JSON.stringify(obj);
 
-    console.log("simple_req_str: "+ simple_req_str);
+    logger.info('simple_req_str: '+ simple_req_str);
 
     rcli.lpush(key, simple_req_str,err_fun);
 }
 
 function get(keys, callback) {
 
-    console.log("keys");
-    console.dir(keys);
+    logger.info('keys', keys);
 
     rcli2.brpop(keys.control, keys.hpri, keys.lpri , 0, function(err, data) {
-            console.log("data");
-            console.dir(data);
+            logger.info("data",data);
 
             var obj = JSON.parse(data[1]);
             callback(err, { queueId: data[0], task: obj });

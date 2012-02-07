@@ -1,5 +1,5 @@
-var worker_relay = require("./worker_relay");
-var MG = require("./my_globals").C;
+var worker_relay = require('./worker_relay');
+var MG = require('./my_globals').C;
 /*
  ok: true/false
  service
@@ -8,19 +8,19 @@ var MG = require("./my_globals").C;
 function route(request) {
 
     if (!request.headers[MG.HEAD_RELAYER_HOST]) {
-        return { ok:false, message:MG.HEAD_RELAYER_HOST + " is missing"};
+        return { ok:false, message:MG.HEAD_RELAYER_HOST + ' is missing'};
     }
     else {
-        return { ok:true, service:"wrL:hpri"};
+        return { ok:true, service: 'wrL:hpri'};
     }
 
 }
 
 
 function getQueues() {
-    return {control:"wrL:control",
-        hpri:"wrL:hpri",
-        lpri:"wrL:lpri" };
+    return {control:'wrL:control',
+        hpri: 'wrL:hpri',
+        lpri: 'wrL:lpri' };
 }
 
 function getWorker(resp) {
