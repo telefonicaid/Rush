@@ -22,8 +22,6 @@
     "redis"   :  "*",
     "node-uuid": "*"
   },
-  "bundleDependencies": [
-  ],
   "license": "AGPL",
   "engine": {
     "node": "0.6.6"
