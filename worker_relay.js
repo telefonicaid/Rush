@@ -124,6 +124,9 @@ function do_http_callback(task, resp_obj, callback) {
         callback_req.write(str_resp_obj);
         callback_req.end();
     }
+    else {
+        if (callback) callback();
+    }
 }
 function do_retry(task, callback) {
     var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
