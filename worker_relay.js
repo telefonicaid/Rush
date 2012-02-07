@@ -24,7 +24,12 @@ function do_job(task) {
         );
         req.on('error', function (e) {
             console.log('problem with relayed request: ' + e.message);
-			do_retry(e, task);
+			do_retry(e, task, function(){
+                //error callback
+                do_callback(task, e);
+                //error persistence
+                do_persistence(task, e, 'ERROR');
+            });
         });
         req.end(); //?? sure HERE?
 
@@ -52,6 +57,7 @@ function set_object(task, resp_obj, type) {
     //remove from response what is not needed
     var set_obj={};
     type = type.toUpperCase();
+    //todo
     if (type === 'STATUS') {
         set_obj.statusCode = resp_obj.statusCode;
     }
@@ -63,6 +69,9 @@ function set_object(task, resp_obj, type) {
         set_obj.statusCode = resp_obj.statusCode;
         set_obj.headers = resp_obj.headers;
         set_obj.body = resp_obj.body;
+    }
+    else if (type == 'ERROR'){
+        set_obj = resp_obj;
     }
     else {
         //Error
@@ -134,6 +143,7 @@ function retry(task, callback) {
                 task.headers[MG.HEAD_RELAYER_RETRY] = retry_a.join(",");
             }
             else {
+                //Retry End with no success
                 delete task.headers[MG.HEAD_RELAYER_RETRY];
             }
             if (time > 0) {
@@ -143,7 +153,10 @@ function retry(task, callback) {
             }
         }
     }
-    if(callback) callback();
+    else{
+    //no more attempts (or no retry policy)
+        if(callback) callback();
+    }
 }
 
 exports.do_job = do_job;
