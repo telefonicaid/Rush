@@ -15,7 +15,7 @@ function do_job(task) {
         req = http.request(options, function (rly_res) {
                 get_response(rly_res, task, function (task, resp_obj) {
                     //PERSISTENCE
-                    do_persistence(task, resp_obj);
+                    do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
 
                     //CALLBACK
                     do_callback(task, resp_obj);
@@ -87,9 +87,9 @@ function set_object(task, resp_obj, type) {
         }
     });
 }
-function do_persistence(task, resp_obj) {
-    if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
-        set_object(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE]);
+function do_persistence(task, resp_obj, type) {
+    if (type) {
+        set_object(task, resp_obj, type);
     }
 }
 function do_callback(task, resp_obj) {
