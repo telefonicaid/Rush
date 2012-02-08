@@ -11,6 +11,7 @@ function do_job(task, callback) {
         var options = url.parse(target_host);
         task.headers['host'] = options.host;
         options.headers = task.headers;
+        options.method = task.method;
         req = http.request(options, function (rly_res) {
                 get_response(rly_res, task, function (task, resp_obj) {
                     //PERSISTENCE
@@ -31,6 +32,10 @@ function do_job(task, callback) {
                 });
             });
         });
+        if (options.method=='POST' || options.method=='PUT'){
+            //write body
+            req.write(task.body);
+        }
         req.end(); //?? sure HERE?
     }
 }
