@@ -86,7 +86,7 @@ function set_object(task, resp_obj, type, callback) {
             console.log(err);
         }
         else {
-            console.log(red_res);
+
         }
         if (callback) callback();
     });
