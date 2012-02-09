@@ -24,9 +24,13 @@ function update(key, obj, cllbk) {
             o_aux[p] = obj[p];
         }
     }
-    rcli.hmset(config.key_prefix + key, o_aux, function (err, res) {
+    var redis_key = config.key_prefix + key;
+    rcli.hmset(redis_key, o_aux, function (err, res) {
         if (cllbk) cllbk(err, res);
     });
+    //Expiring keys (It could be part of the policies)
+    //JUST A TRY
+    rcli.expire(redis_key, config.expire_time);
 }
 
 exports.update = update;
