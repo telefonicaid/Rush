@@ -16,7 +16,7 @@ function update(key, obj, cllbk) {
     var o_aux = {}; // auxiliar object to adapt to redis
     // redis client allows one depth level of nested objects, i.e. a plain object
     for(p in obj) {
-        if(typeof(obj[p]) === 'object') {
+        if(typeof obj[p] === 'object') {
              str = JSON.stringify(obj[p]);
             o_aux[p] = str;
         }
