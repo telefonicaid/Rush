@@ -6,8 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-config = require('./config_base').dbrelayer;
-redis = require('redis');
+var config = require('./config_base').dbrelayer;
+var redis = require('redis');
 
 var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 
@@ -24,13 +24,9 @@ function update(key, obj, cllbk) {
             o_aux[p] = obj[p];
         }
     }
-    var redis_key = config.key_prefix + key;
-    rcli.hmset(redis_key, o_aux, function (err, res) {
+    rcli.hmset(config.key_prefix + key, o_aux, function (err, res) {
         if (cllbk) cllbk(err, res);
     });
-    //Expiring keys (It could be part of the policies)
-    //JUST A TRY
-    rcli.expire(redis_key, config.expire_time);
 }
 
 exports.update = update;
