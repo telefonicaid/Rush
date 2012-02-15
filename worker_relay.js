@@ -95,7 +95,7 @@ function do_persistence(task, resp_obj, type, callback) {
     if (type) {
         set_object(task, resp_obj, type, callback);
     }
-    if (callback) callback();
+    else if (callback) callback();
 }
 function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
