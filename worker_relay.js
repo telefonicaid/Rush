@@ -79,7 +79,7 @@ function set_object(task, resp_obj, type, callback) {
     else {
         //Error
         console.log(type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE);
-        return;
+        if (callback) callback();
     }
     db.update(task.id, set_obj, function (err, red_res) {
         if (err) {
@@ -95,6 +95,7 @@ function do_persistence(task, resp_obj, type, callback) {
     if (type) {
         set_object(task, resp_obj, type, callback);
     }
+    else if (callback) callback();
 }
 function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
