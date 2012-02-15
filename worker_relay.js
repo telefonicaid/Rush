@@ -79,7 +79,7 @@ function set_object(task, resp_obj, type, callback) {
     else {
         //Error
         console.log(type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE);
-        if (callback) callback();
+        callback && callback();
     }
     db.update(task.id, set_obj, function (err, red_res) {
         if (err) {
@@ -88,7 +88,7 @@ function set_object(task, resp_obj, type, callback) {
         else {
 
         }
-        if (callback) callback();
+        callback && callback();
     });
 }
 function do_persistence(task, resp_obj, type, callback) {
