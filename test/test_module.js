@@ -1,11 +1,13 @@
 //Testing Module For Rush
 var LISTENER_HOSTNAME = 'RelayA',
-    LISTENER_PORT = '8030';
+    LISTENER_PORT = '8030',
+    REDIS_HOST = 'Relay1';
 var http = require('http');
 var global = require('../my_globals').C;
 var async = require('async');
 var os = require('os');
-var assert = require('assert');
+var redis_mod = require('redis');
+var redis = redis_mod.createClient(redis_mod.DEFAULT_PORT, REDIS_HOST);
 var server,
     end_point_req,
     end_point_res,
@@ -121,8 +123,6 @@ var async_get = function (callback) {
             var post_data = '',
                 expected_callback,
                 expected_callback_JSON;
-
-
             console.log('OK- callback arrive');
             //it is going to receive a POST with 'CALLBACK DATA'
             if (req.method == 'POST') {
@@ -143,16 +143,13 @@ var async_get = function (callback) {
                         "state":"relay_response"
                     };
                     expected_callback_JSON = JSON.stringify(expected_callback);
-                    if (post_data==expected_callback_JSON){
+                    if (post_data == expected_callback_JSON) {
                         console.log('OK- expected data at callback');
                     }
-                    else
-                    {
-                        
+                    else {
                         console.log('FAIL- NOT expected data at callback');
                         console.log(post_data);
                         console.log(expected_callback_JSON);
-
                     }
                     //Exitpoint
                     end_point_server.close();
@@ -181,6 +178,103 @@ var async_get = function (callback) {
     exports.client_req = client_req;
 };
 exports.async_callback = async_get;
+//type 'STATUS'|'HEADER'|'BODY'
+var persistence_get = function (type) {
+    return function (callback) {
+        var relayer_header = {},
+            end_point_server;
+        console.log('PERSISTENCE TESTING');
+        //Create end point server
+        end_point_server = http.createServer(
+            function (req, res) {
+                console.log('OK- end point server reached');
+                exports.end_point_req = req;
+                res.writeHead(200);
+                res.write('PERSISTENT DATA');
+                res.end();
+                exports.end_point_res = res;
+                end_point_server.close();
+            }).listen(8765);
+        //Do request
+        relayer_header[global.HEAD_RELAYER_HOST] = 'http://' + os.hostname() + ':8765';
+        relayer_header[global.HEAD_RELAYER_PERSISTENCE] = type;
+        options =
+        {
+            hostname:LISTENER_HOSTNAME,
+            port:LISTENER_PORT,
+            method:'GET',
+            headers:relayer_header
+        };
+        client_req = http.request(options, function (res) {
+            var id = '',
+                expected_data;
+            console.log("Rush response (with id)");
+            exports.client_res = res;
+            res.on('data', function (chunk) {
+                chunk ? id += chunk : '';
+            });
+            res.on('end', function (chunk) {
+                chunk ? id += chunk : '';
+                //Wait some seconds and look at REDIS
+                setTimeout(function () {
+                    redis.hgetall('wrH:' + id, function (err, data) {
+                        if (err) {
+                            console.log('REDIS ERR:' + err);
+                        }
+                        else {
+                            if (type == 'BODY') {
+                                expected_data = {
+                                    statusCode:'200',
+                                    headers:'{"connection":"keep-alive","transfer-encoding":"chunked"}',
+                                    body:'PERSISTENT DATA' };
+                            }
+                            else if (type == 'HEADER') {
+                                expected_data = {
+                                    statusCode:'200',
+                                    headers:'{"connection":"keep-alive","transfer-encoding":"chunked"}'
+                                };
+                            }
+                            else if (type == 'STATUS') {
+                                expected_data = {statusCode:'200'};
+                            }
+                            if (type == 'BODY' || type == 'HEADER' || type == 'STATUS') {
+                                expected_data = JSON.stringify(expected_data);
+                                var current_data = JSON.stringify(data);
+                                if (current_data == expected_data) {
+                                    console.log('OK- FOUND EXPECTED DATA for ' + type);
+                                }
+                                else {
+                                    console.log('FAIL- NOT FOUND EXPECTED DATA for ' + type);
+                                    console.log('found');
+                                    console.log(current_data);
+                                    console.log('expected');
+                                    console.log(expected_data);
+                                }
+                            }
+                            exports.persistent_data = data;
+                        }
+                        callback && callback();
+                    });
+                }, 2000);
+            });
+        });
+        client_req.end();
+        exports.client_req = client_req;
+    }
+};
+exports.persistence_get_body = persistence_get('BODY');
+exports.persistence_get_header = persistence_get('HEADER');
+exports.persistence_get_status = persistence_get('STATUS');
+exports.persistence_get = function () {
+    async.series([
+        exports.persistence_get_body,
+        exports.persistence_get_header,
+        exports.persistence_get_status],
+        function () {
+            console.log('End PERSISTENCE TEST')
+        });
+}
+//AUX
 var client_request_test_handler = function (res) {
     var id = '';
     exports.client_res = res;
@@ -204,5 +298,6 @@ var client_request_test_handler = function (res) {
         else {
             console.log('FAIL-  no id received');
         }
+        return id;
     });
 }
