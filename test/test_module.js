@@ -5,6 +5,7 @@ var http = require('http');
 var global = require('../my_globals').C;
 var async = require('async');
 var os = require('os');
+var assert = require('assert');
 var server,
     end_point_req,
     end_point_res,
@@ -100,10 +101,10 @@ exports.oneway = function () {
     });
 }
 var async_get = function (callback) {
-    var relayer_header = {},
+    var expected_callback,
+        relayer_header = {},
         end_point_server,
         callback_server;
-
     //Create end point server
     end_point_server = http.createServer(
         function (req, res) {
@@ -117,9 +118,13 @@ var async_get = function (callback) {
     //Create Callback Server
     callback_server = http.createServer(
         function (req, res) {
+            var post_data = '',
+                expected_callback,
+                expected_callback_JSON;
+
+
             console.log('OK- callback arrive');
             //it is going to receive a POST with 'CALLBACK DATA'
-            var post_data = '';
             if (req.method == 'POST') {
                 req.on('data', function (chunk) {
                     chunk ? post_data += chunk : '';
@@ -128,6 +133,27 @@ var async_get = function (callback) {
                     chunk ? post_data += chunk : '';
                     //verify the callback contents
                     exports.callback_data = post_data; //remove
+                    expected_callback = {
+                        "statusCode":200,
+                        "headers":{
+                            "connection":"keep-alive",
+                            "transfer-encoding":"chunked"
+                        },
+                        "body":"CALLBACK DATA",
+                        "state":"relay_response"
+                    };
+                    expected_callback_JSON = JSON.stringify(expected_callback);
+                    if (post_data==expected_callback_JSON){
+                        console.log('OK- expected data at callback');
+                    }
+                    else
+                    {
+                        
+                        console.log('FAIL- NOT expected data at callback');
+                        console.log(post_data);
+                        console.log(expected_callback_JSON);
+
+                    }
                     //Exitpoint
                     end_point_server.close();
                     callback_server.close();
@@ -143,7 +169,6 @@ var async_get = function (callback) {
     //Do request
     relayer_header[global.HEAD_RELAYER_HOST] = 'http://' + os.hostname() + ':8765';
     relayer_header[global.HEAD_RELAYER_HTTPCALLBACK] = 'http://' + os.hostname() + ':8764';
-    relayer_header[global.HEAD_RELAYER_PERSISTENCE] = 'BODY';
     options =
     {
         hostname:LISTENER_HOSTNAME,
