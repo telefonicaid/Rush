@@ -20,7 +20,8 @@
 
   "dependencies" : {
     "redis"   :  "*",
-    "node-uuid": "*"
+    "node-uuid": "*",
+    "async": "*"
   },
   "license": "AGPL",
   "engine": {
