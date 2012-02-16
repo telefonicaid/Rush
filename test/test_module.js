@@ -274,6 +274,56 @@ exports.persistence_get = function () {
             console.log('End PERSISTENCE TEST')
         });
 }
+var retry = function (times, retry_value) {
+    return function (callback) {
+        //Create end-point Server
+        var iter = 1;
+        var end_point_server = http.createServer(
+            function (req, res) {
+                //Server will fail several times and then success
+                if (iter == times) {
+                    //Server res 200 OK
+                    res.writeHead(200);
+                    res.write('finally work');
+                    res.end();
+                    console.log('OK- Test Success Retried times:' + times);
+                    iter++;
+                    //defer server close (catch more retries fail case)
+                    setTimeout(function () {
+                        end_point_server.close()
+                    }, 1000);
+                }
+                else if (iter < times) {
+                    //Server res
+                    res.writeHead(503);
+                    res.end();
+                    if (iter < times) {
+                        console.log('OK- Attempt to send request ' + iter);
+                    }
+                    iter++;
+                }
+                else {
+                    //more retries than expected
+                    console.log('FAIL- Attempt to send request after success' + iter);
+                    iter++;
+                }
+            }).listen(8765);
+        //send the request
+        relayer_header[global.HEAD_RELAYER_HOST] = 'http://' + os.hostname() + ':8765';
+        relayer_header[global.HEAD_RELAYER_RETRY] = retry_value;
+        options =
+        {
+            hostname:LISTENER_HOSTNAME,
+            port:LISTENER_PORT,
+            method:'GET',
+            headers:relayer_header
+        };
+        client_req = http.request(options, client_request_test_handler);
+        client_req.end();
+        exports.client_req = client_req;
+    }
+};
+exports.retry = retry(3, '2,10,100,200');
 //AUX
 var client_request_test_handler = function (res) {
     var id = '';
