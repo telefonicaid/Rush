@@ -25,7 +25,7 @@ function do_job(task, callback) {
                 });
                 }
                 else{
-                    handle_request_error(task, callback)({statusCode:rly_res.statusCode, headers: rly_res.headers});
+                    handle_request_error(task, callback)({message: 'Server error:'+ rly_res.statusCode, statusCode:rly_res.statusCode, headers: rly_res.headers});
                 }
             }
         );
