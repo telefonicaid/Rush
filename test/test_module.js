@@ -2,6 +2,8 @@
 var LISTENER_HOSTNAME = 'RelayA',
     LISTENER_PORT = '8030',
     REDIS_HOST = 'Relay1';
+
+
 var http = require('http');
 var global = require('../my_globals').C;
 var async = require('async');
@@ -24,18 +26,21 @@ var oneway = function (method) {
                 exports.end_point_req = req;
                 //verify Server Side
                 console.log('Verify Server Side');
+                //TEST PATH
                 if (req.url == '/testpath') {
-                    console.log('OK- request URL: ' + req.url);
+                    ok(' request URL: ' + req.url);
                 }
                 else {
-                    console.log('FAIL- request URL:' + req.url);
+                    fail(' request URL:' + req.url);
                 }
+                //TEST METHOD
                 if (req.method == method) {
-                    console.log('OK- request METHOD:' + req.method);
+                    ok(' request METHOD:' + req.method);
                 }
                 else {
-                    console.log('FAIL request METHOD:' + req.method);
+                    fail(' request METHOD:' + req.method);
                 }
+                //TEST POST-PUT-DATA
                 if (req.method == 'POST' || req.method == 'PUT') {
                     var post_data = '';
                     req.on('data', function (chunk) {
@@ -45,20 +50,21 @@ var oneway = function (method) {
                         chunk ? post_data += chunk : '';
                         //verify POST DATA
                         if (post_data == "POST/PUT TEST DATA") {
-                            console.log('OK- POST/PUT DATA received OK')
+                            ok(' POST/PUT DATA received OK')
                         }
                         else {
-                            console.log('FAIL- WRONG POST/PUT DATA: ' + post_data);
+                            fail(' WRONG POST/PUT DATA: ' + post_data);
                         }
                         //END OF THE SERVER FLOW for PUT y POST
                         callback && callback();
                     })
                 }
+                //TEST HEADERS
                 if (req.headers['testheader'] == 'FOO_TEST_VAL') {
-                    console.log('OK HEADER FOUND: ' + req.headers['testheader']);
+                    ok('OK HEADER FOUND: ' + req.headers['testheader']);
                 }
                 else {
-                    console.log('FAIL HEADER: ' + req.headers['testheader']);
+                    fail('FAIL HEADER: ' + req.headers['testheader']);
                 }
                 res.writeHead(200);
                 res.write('TEST-oneway');
@@ -89,49 +95,37 @@ var oneway = function (method) {
         exports.client_req = client_req;
     }
 };
-exports.oneway_get = oneway('GET');
-exports.oneway_post = oneway('POST');
-exports.oneway_put = oneway('PUT');
-exports.oneway_delete = oneway('DELETE');
-exports.oneway = function () {
-    async.series([
-        exports.oneway_get,
-        exports.oneway_post,
-        exports.oneway_put,
-        exports.oneway_delete], function () {
-        console.log('End ONEWAY TEST')
-    });
-}
+
 var async_get = function (callback) {
     var expected_callback,
-        relayer_header = {},
-        end_point_server,
-        callback_server;
+        relayer_header = {};
+    console.log('ASYNC-CALLBACK TESTING');
     //Create end point server
-    end_point_server = http.createServer(
+    var end_point_server = http.createServer(
         function (req, res) {
-            console.log('OK- end point server reached');
+            ok(' end point server reached');
             exports.end_point_req = req;
             res.writeHead(200);
             res.write('CALLBACK DATA');
             res.end();
             exports.end_point_res = res;
+            end_point_server.close();
         }).listen(8765);
     //Create Callback Server
-    callback_server = http.createServer(
+    var callback_server = http.createServer(
         function (req, res) {
             var post_data = '',
                 expected_callback,
                 expected_callback_JSON;
-            console.log('OK- callback arrive');
-            //it is going to receive a POST with 'CALLBACK DATA'
+            ok(' callback arrives');
+            //TEST it is going to receive a POST with 'CALLBACK DATA'
             if (req.method == 'POST') {
                 req.on('data', function (chunk) {
                     chunk ? post_data += chunk : '';
                 });
                 req.on('end', function (chunk) {
                     chunk ? post_data += chunk : '';
-                    //verify the callback contents
+                    //TEST the callback contents
                     exports.callback_data = post_data; //remove
                     expected_callback = {
                         "statusCode":200,
@@ -144,21 +138,21 @@ var async_get = function (callback) {
                     };
                     expected_callback_JSON = JSON.stringify(expected_callback);
                     if (post_data == expected_callback_JSON) {
-                        console.log('OK- expected data at callback');
+                        ok(' expected data at callback');
                     }
                     else {
-                        console.log('FAIL- NOT expected data at callback');
+                        fail(' NOT expected data at callback');
                         console.log(post_data);
                         console.log(expected_callback_JSON);
                     }
                     //Exitpoint
-                    end_point_server.close();
                     callback_server.close();
+                    console.log('END ASYNC-CALLBACK TESTING');
                     callback && callback();
                 });
             }
             else {
-                console.log('FAIL- POST HTTP CALLBACK EXPECTED:' + req.method);
+                fail(' POST HTTP CALLBACK EXPECTED:' + req.method);
             }
             res.writeHead(200);
             res.end();
@@ -177,17 +171,15 @@ var async_get = function (callback) {
     client_req.end();
     exports.client_req = client_req;
 };
-exports.async_callback = async_get;
 //type 'STATUS'|'HEADER'|'BODY'
 var persistence_get = function (type) {
     return function (callback) {
-        var relayer_header = {},
-            end_point_server;
+        var relayer_header = {};
         console.log('PERSISTENCE TESTING');
         //Create end point server
-        end_point_server = http.createServer(
+        var end_point_server = http.createServer(
             function (req, res) {
-                console.log('OK- end point server reached');
+                ok(' end point server reached');
                 exports.end_point_req = req;
                 res.writeHead(200);
                 res.write('PERSISTENT DATA');
@@ -241,10 +233,10 @@ var persistence_get = function (type) {
                                 expected_data = JSON.stringify(expected_data);
                                 var current_data = JSON.stringify(data);
                                 if (current_data == expected_data) {
-                                    console.log('OK- FOUND EXPECTED DATA for ' + type);
+                                    ok(' FOUND EXPECTED DATA for ' + type);
                                 }
                                 else {
-                                    console.log('FAIL- NOT FOUND EXPECTED DATA for ' + type);
+                                    fail(' NOT FOUND EXPECTED DATA for ' + type);
                                     console.log('found');
                                     console.log(current_data);
                                     console.log('expected');
@@ -262,22 +254,12 @@ var persistence_get = function (type) {
         exports.client_req = client_req;
     }
 };
-exports.persistence_get_body = persistence_get('BODY');
-exports.persistence_get_header = persistence_get('HEADER');
-exports.persistence_get_status = persistence_get('STATUS');
-exports.persistence_get = function () {
-    async.series([
-        exports.persistence_get_body,
-        exports.persistence_get_header,
-        exports.persistence_get_status],
-        function () {
-            console.log('End PERSISTENCE TEST')
-        });
-}
+
 var retry = function (times, retry_value) {
     return function (callback) {
         //Create end-point Server
         var iter = 1;
+        console.log('START RETRY TEST');
         var end_point_server = http.createServer(
             function (req, res) {
                 //Server will fail several times and then success
@@ -286,11 +268,13 @@ var retry = function (times, retry_value) {
                     res.writeHead(200);
                     res.write('finally work');
                     res.end();
-                    console.log('OK- Test Success Retried times:' + times);
+                    ok(' Test Success Retried times:' + times);
                     iter++;
                     //defer server close (catch more retries fail case)
                     setTimeout(function () {
-                        end_point_server.close()
+                        end_point_server.close();
+                        console.log('END RETRY TEST');
+                        callback && callback();
                     }, 1000);
                 }
                 else if (iter < times) {
@@ -298,13 +282,13 @@ var retry = function (times, retry_value) {
                     res.writeHead(503);
                     res.end();
                     if (iter < times) {
-                        console.log('OK- Attempt to send request ' + iter);
+                        ok(' Attempt to send request ' + iter);
                     }
                     iter++;
                 }
                 else {
                     //more retries than expected
-                    console.log('FAIL- Attempt to send request after success' + iter);
+                    fail(' Attempt to send request after success' + iter);
                     iter++;
                 }
             }).listen(8765);
@@ -323,7 +307,48 @@ var retry = function (times, retry_value) {
         exports.client_req = client_req;
     }
 };
+
+exports.oneway_get = oneway('GET');
+exports.oneway_post = oneway('POST');
+exports.oneway_put = oneway('PUT');
+exports.oneway_delete = oneway('DELETE');
+exports.oneway = function (callback) {
+    async.series([
+        exports.oneway_get,
+        exports.oneway_post,
+        exports.oneway_put,
+        exports.oneway_delete],
+        function () {
+        console.log('End ONEWAY TEST');
+        callback && callback();
+    });
+}
+
+exports.async_callback = async_get;
+
+exports.persistence_body = persistence_get('BODY');
+exports.persistence_header = persistence_get('HEADER');
+exports.persistence_status = persistence_get('STATUS');
+exports.persistence = function (callback) {
+    async.series([
+        exports.persistence_body,
+        exports.persistence_header,
+        exports.persistence_status],
+        function () {
+            console.log('End PERSISTENCE TEST');
+            callback && callback();
+
+        });
+}
 exports.retry = retry(3, '2,10,100,200');
+
+exports.all = function(){
+async.series(
+    [exports.oneway,exports.async_callback,exports.persistence,exports.retry],
+    function(){console.log('Whole tests ended')}
+);
+
+}
 //AUX
 var client_request_test_handler = function (res) {
     var id = '';
@@ -337,17 +362,35 @@ var client_request_test_handler = function (res) {
         console.log('Verify Client Side');
         //We got a 200 + id?
         if (res.statusCode == 200) {
-            console.log('OK- 200 OK received');
+            ok(' 200 OK received');
         }
         else {
-            console.log('FAIL-' + res.statusCode + ' received');
+            fail('' + res.statusCode + ' received');
         }
         if (id != '' && id) {
-            console.log('OK- ID: ' + id + ' received');
+            ok(' ID: ' + id + ' received');
         }
         else {
-            console.log('FAIL-  no id received');
+            fail('no id received');
         }
         return id;
     });
 }
+
+var fail = function(str){
+    var red, blue, reset;
+    red   = '\033[31m';
+    blue  = '\033[34m';
+    reset = '\033[0m';
+    //console.log(red + 'This is red' + reset + ' while ' + blue + ' this is blue' + reset);
+    console.log(red+'(FAIL) '+str+reset);
+};
+
+    var ok = function(str){
+        var red, blue, reset;
+        red   = '\033[31m';
+        blue  = '\033[34m';
+        reset = '\033[0m';
+        //console.log(red + 'This is red' + reset + ' while ' + blue + ' this is blue' + reset);
+        console.log(blue+'(OK) '+str+reset);
+    }
