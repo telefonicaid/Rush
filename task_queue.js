@@ -48,7 +48,8 @@ function get(keys, aux_queue_id, callback) {
 function get_pending(idconsumer, callback){
     logger.info('Getting pending elem from: '+idconsumer);
     rcli.rpop(idconsumer, function onPendingData(err, data){
-       if(callback){callback(err, data);}
+        var obj = JSON.parse(data[1]);
+        if(callback){callback(err, { queueId: data[0], task: obj });}
     });
 }
 
