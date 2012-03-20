@@ -349,9 +349,7 @@ async.series(
 );
 
 }
-
-exports.oneway_get();
-
+tr.t.
 //AUX
 var client_request_test_handler = function (res) {
     var id = '';

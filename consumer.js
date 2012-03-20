@@ -16,7 +16,7 @@ function consume(idconsumer) {
 
                     if (resp.queueId !== obsQueues.control) {
                         do_job = service_router.getWorker(resp);
-                        do_job(resp.task, function(){
+                        do_job(resp.task, function onJobEnd(){
                             store.rem_processing_queue(idconsumer, function onRemoval(err){
                               if(err){
                                   logger.error("ERROR_________________", err);
