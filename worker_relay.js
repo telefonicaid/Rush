@@ -83,8 +83,9 @@ function set_object(task, resp_obj, type, callback) {
     }
     else {
         //Error
-        console.log(type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE);
-        callback && callback();
+        var err_msg = type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
+        console.log(err_msg);
+        callback && callback(err_msg);
     }
     db.update(task.id, set_obj, function (err, red_res) {
         if (err) {
@@ -93,14 +94,14 @@ function set_object(task, resp_obj, type, callback) {
         else {
 
         }
-        callback && callback();
+        callback && callback(err);
     });
 }
 function do_persistence(task, resp_obj, type, callback) {
     if (type) {
         set_object(task, resp_obj, type, callback);
     }
-    else if (callback) callback();
+    else if (callback) callback(null);
 }
 function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
@@ -115,7 +116,7 @@ function do_http_callback(task, resp_obj, callback) {
                     if (err) {
                         console.log("BD Error setting callback status:" + err);
                     }
-                    if (callback) callback();
+                    if (callback) callback(err);
                 });
             }
         );
@@ -128,7 +129,7 @@ function do_http_callback(task, resp_obj, callback) {
                 if (dberr) {
                     console.log("BD Error setting callback ERROR:" + dberr);
                 }
-                if (callback) callback();
+                if (callback) callback(dberr);
             });
         });
         var str_resp_obj = JSON.stringify(resp_obj);
@@ -136,7 +137,7 @@ function do_http_callback(task, resp_obj, callback) {
         callback_req.end();
     }
     else {
-        if (callback) callback();
+        if (callback) callback(null);
     }
 }
 function do_retry(task, error, callback) {
@@ -166,7 +167,7 @@ function do_retry(task, error, callback) {
         //error persistence
         do_persistence(task, error, 'ERROR', function (err) {
             //CALLBACK
-            do_http_callback(task, e, callback);
+            do_http_callback(task, error, callback);
         });
     }
 }

@@ -36,13 +36,20 @@ function get(keys, aux_queue_id, callback) {
             logger.info("data",data);
             //technical DEBT dou to REDIS unsupported functionality
             //BRPOPLPUSH from multiple sources OR LUA Scripting
-            rcli.lpush(aux_queue_id, data[1], function onPush(err){
+            rcli.lpush(aux_queue_id, data, function onPush(err){
                 var obj = JSON.parse(data[1]);
                 callback(err, { queueId: data[0], task: obj });
             });
 
     });
 
+}
+
+function get_pending(idconsumer, callback){
+    logger.info('Getting pending elem from: '+idconsumer);
+    rcli.rpop(idconsumer, function onPendingData(err, data){
+       if(callback){callback(err, data);}
+    });
 }
 
 function rem_processing_queue(idconsumer, callback) {

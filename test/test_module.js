@@ -285,7 +285,11 @@ var retry = function (times, retry_value) {
                         ok(' Attempt to send request ' + iter);
                     }
                     iter++;
-                }
+                    if (retry_value.length<=iter){
+                        end_point_server.close();
+                    }
+
+                        }
                 else {
                     //more retries than expected
                     fail(' Attempt to send request after success' + iter);
@@ -295,6 +299,7 @@ var retry = function (times, retry_value) {
         //send the request
         relayer_header[global.HEAD_RELAYER_HOST] = 'http://' + os.hostname() + ':8765';
         relayer_header[global.HEAD_RELAYER_RETRY] = retry_value;
+        relayer_header[global.HEAD_RELAYER_PERSISTENCE] = 'BODY';
         options =
         {
             hostname:LISTENER_HOSTNAME,
@@ -341,6 +346,7 @@ exports.persistence = function (callback) {
         });
 }
 exports.retry = retry(3, '2,10,100,200');
+exports.retry_fail = retry(4, '2,10');
 
 exports.all = function(){
 async.series(
@@ -349,7 +355,6 @@ async.series(
 );
 
 }
-tr.t.
 //AUX
 var client_request_test_handler = function (res) {
     var id = '';
