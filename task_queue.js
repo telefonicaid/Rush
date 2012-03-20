@@ -60,3 +60,4 @@ function rem_processing_queue(idconsumer, callback) {
 exports.put = put;
 exports.get = get;
 exports.rem_processing_queue = rem_processing_queue;
+exports.get_pending = get_pending;
