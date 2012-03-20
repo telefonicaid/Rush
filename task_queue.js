@@ -36,8 +36,8 @@ function get(keys, aux_queue_id, callback) {
             logger.info("data",data);
             //technical DEBT dou to REDIS unsupported functionality
             //BRPOPLPUSH from multiple sources OR LUA Scripting
-            var obj = JSON.parse(data[1]);
-            rcli.lpush(aux_queue_id, obj, function onPush(err){
+            rcli.lpush(aux_queue_id, data[1], function onPush(err){
+                var obj = JSON.parse(data[1]);
                 callback(err, { queueId: data[0], task: obj });
             });
 
