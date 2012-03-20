@@ -1,7 +1,7 @@
 var http = require('http');
 var store = require('./task_queue.js');
 var service_router= require('./service_router');
-var logger = require('./logger.js')
+var logger = require('./logger.js');
 var C = require('./config_base.js');
 var obsQueues =service_router.getQueues();
 
@@ -22,7 +22,7 @@ function consume(idconsumer, start) {
             logger.info("resp", resp);
             //EMIT PROCESSING
             if (resp.queueId !== obsQueues.control) {
-                do_job = service_router.getWorker(resp);
+                var do_job = service_router.getWorker(resp);
                 do_job(resp.task, function onJobEnd(dojoberr){
                     if (dojoberr){
                         logger.error("ERROR_________________", dojoberr);
