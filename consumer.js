@@ -18,7 +18,7 @@ function consume(idconsumer, start) {
         if (err) {
             logger.error("ERROR_________________", err);
         }
-        else if(resp){
+        else if(resp && resp.task){
             logger.info("resp", resp);
             //EMIT PROCESSING
             if (resp.queueId !== obsQueues.control) {
