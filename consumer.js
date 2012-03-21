@@ -43,7 +43,7 @@ function consume(idconsumer, start) {
 
             if (resp.queueId !== obsQueues.control) {
                 var do_job = service_router.getWorker(resp);
-                do_job(resp.task, function onJobEnd(dojoberr){ //job results add
+                do_job(resp.task, function onJobEnd(dojoberr, jobresult){ //job results add
                     if (dojoberr){
                         logger.error("ERROR_________________", dojoberr);
                         //EMIT ERROR
@@ -72,7 +72,8 @@ function consume(idconsumer, start) {
                             id:resp.task.id,
                             state:G.STATE_COMPLETED,
                             date: Date(),
-                            task: resp.task
+                            task: resp.task,
+                            result: jobresult
                         };
                         emitter.emit(G.EVENT_NEWSTATE, st);
                     }

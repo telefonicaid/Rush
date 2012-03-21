@@ -18,9 +18,23 @@ function do_job(task, callback) {
 
                     get_response(rly_res, task, function (task, resp_obj) {
                         //PERSISTENCE
-                        do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE], function () {
+                        do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE], function onPersistence(errP, resultP) {
                             //CALLBACK
-                            do_http_callback(task, resp_obj, callback);
+                            do_http_callback(task, resp_obj, function onCallback(errC, resultC) {
+                                var cb_error = {
+                                  persistence_error: errP,
+                                  httpcb_error: errC
+                                };
+                                if (!(cb_error.persistence_error || cb_error.httpcb_error)){
+                                    cb_error=null;
+                                }
+                                var cb_result = {
+                                    persistence_result: resultP,
+                                    httpcb_result: resultC
+                                };
+                                if (callback) callback(cb_error, cb_result);
+                            });
+
                         });
                     });
                 }
@@ -91,17 +105,14 @@ function set_object(task, resp_obj, type, callback) {
         if (err) {
             console.log(err);
         }
-        else {
-
-        }
-        callback && callback(err);
+        callback && callback(err, set_obj);
     });
 }
 function do_persistence(task, resp_obj, type, callback) {
     if (type) {
         set_object(task, resp_obj, type, callback);
     }
-    else if (callback) callback(null);
+    else if (callback) callback(null, 'no persistence/no data');
 }
 function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
@@ -111,25 +122,25 @@ function do_http_callback(task, resp_obj, callback) {
         callback_options.method = 'POST';
         var callback_req = http.request(callback_options, function (callback_res) {
                 //check callback_res status (modify state) Not interested in body
-                db_err = {callback_status:callback_res.statusCode, callback_details:'callback sent OK'};
-                db.update(task.id, db_err, function (err) {
+                db_res = {callback_status:callback_res.statusCode, callback_details:'callback sent OK'};
+                db.update(task.id, db_res, function (err) {
                     if (err) {
                         console.log("BD Error setting callback status:" + err);
                     }
-                    if (callback) callback(err);
+                    if (callback) callback(err, db_res);
                 });
             }
         );
         callback_req.on('error', function (err) {
             //error in request
             var str_err = JSON.stringify(err);  // Too much information?????
-            db_err = {callback_status:'error', callback_details:str_err};
+            db_st = {callback_status:'error', callback_details:str_err};
             //store
-            db.update(task.id, db_err, function (dberr) {
+            db.update(task.id, db_st, function (dberr) {
                 if (dberr) {
                     console.log("BD Error setting callback ERROR:" + dberr);
                 }
-                if (callback) callback(dberr);
+                if (callback) callback(dberr, db_st);
             });
         });
         var str_resp_obj = JSON.stringify(resp_obj);
