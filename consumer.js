@@ -4,11 +4,16 @@ var service_router= require('./service_router');
 var logger = require('./logger.js');
 var C = require('./config_base.js');
 var G = require('./my_globals').C;
-var emitter = require('./emitter_module.js').eventEmitter;
+var emitter = require('./emitter_module.js').get();
 
 var obsQueues =service_router.getQueues();
 
 var max_poppers = 500;
+
+var ev_lsnr = require('./ev_lsnr');
+ev_lsnr.init(emitter);
+
+
 function consume(idconsumer, start) {
     if(start){
     store.get_pending(idconsumer, processing_consumed_task);

@@ -3,10 +3,11 @@ var uuid = require('node-uuid');
 var router = require('./service_router');
 var store = require('./task_queue.js');
 var logger = require('./logger.js');
-var emitter = require('./emitter_module.js').eventEmitter;
+var emitter = require('./emitter_module.js').get();
 var G = require('./my_globals').C;
 
-
+var ev_lsnr = require('./ev_lsnr');
+ev_lsnr.init(emitter);
 
 var n = 0;
 
