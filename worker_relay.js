@@ -176,9 +176,22 @@ function do_retry(task, error, callback) {
     else {
         //no more attempts (or no retry policy)
         //error persistence
-        do_persistence(task, error, 'ERROR', function (err) {
+        do_persistence(task, error, 'ERROR', function (errP, resultP) {
             //CALLBACK
-            do_http_callback(task, error, callback);
+            do_http_callback(task, error, function (errC, resultC){
+                var cb_error = {
+                    persistence_error: errP,
+                    httpcb_error: errC
+                };
+                if (!(cb_error.persistence_error || cb_error.httpcb_error)){
+                    cb_error=null;
+                }
+                var cb_result = {
+                    persistence_result: resultP,
+                    httpcb_result: resultC
+                };
+                if (callback) callback(cb_error, cb_result);
+            });
         });
     }
 }
