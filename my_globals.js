@@ -9,6 +9,7 @@
 exports.C = {
     'STATE_COMPLETED':'completed',
     'STATE_PENDING':'pending',
+    'STATE_PROCESSING':'processing',
     'STATE_ERROR':'error',
     'STATE_RETRY_FAIL':'retry_fail',
     'STATUS_OK':'200',
@@ -35,6 +36,8 @@ exports.C = {
     'RD_DATA':'Data',
     'RD_METHOD':'Method',
     'RD_POSTDATA':'Postdata',
-    'RD_RELAYED_REQUEST':'RelayedRequest'
+    'RD_RELAYED_REQUEST':'RelayedRequest',
+    'EVENT_NEWSTATE': 'newstate',
+    'EVENT_ERR' : 'error'
 };
 

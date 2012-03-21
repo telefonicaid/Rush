@@ -13,30 +13,50 @@ function do_job(task, callback) {
         options.headers = task.headers;
         options.method = task.method;
         req = http.request(options, function (rly_res) {
-                get_response(rly_res, task, function (task, resp_obj) {
-                    //PERSISTENCE
-                    do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE], function () {
-                        //CALLBACK
-                        do_http_callback(task, resp_obj, callback);
+                if (Math.floor(rly_res.statusCode / 100) != 5) {
+                    //if no 5XX ERROR
+
+                    get_response(rly_res, task, function (task, resp_obj) {
+                        //PERSISTENCE
+                        do_persistence(task, resp_obj, task.headers[MG.HEAD_RELAYER_PERSISTENCE], function onPersistence(errP, resultP) {
+                            //CALLBACK
+                            do_http_callback(task, resp_obj, function onCallback(errC, resultC) {
+                                var cb_error = {
+                                  persistence_error: errP,
+                                  httpcb_error: errC
+                                };
+                                if (!(cb_error.persistence_error || cb_error.httpcb_error)){
+                                    cb_error=null;
+                                }
+                                var cb_result = {
+                                    relayed_request_result: resp_obj,
+                                    persistence_result: resultP,
+                                    httpcb_result: resultC
+                                };
+                                if (callback) callback(cb_error, cb_result);
+                            });
+
+                        });
                     });
-                });
+                }
+                else {
+                    handle_request_error(task, callback)({message:'Server error:' + rly_res.statusCode, statusCode:rly_res.statusCode, headers:rly_res.headers});
+                }
             }
         );
-        req.on('error', function (e) {
-            console.log('problem with relayed request: ' + e.message);
-            do_retry(task, function () {
-                //error persistence
-                do_persistence(task, e, 'ERROR', function () {
-                    //CALLBACK
-                    do_http_callback(task, e, callback);
-                });
-            });
-        });
-        if (options.method=='POST' || options.method=='PUT'){
+        req.on('error', handle_request_error(task, callback));
+        if (options.method == 'POST' || options.method == 'PUT') {
             //write body
             req.write(task.body);
         }
         req.end(); //?? sure HERE?
+    }
+}
+
+function handle_request_error(task, callback) {
+    return function (e) {
+        console.log('problem with relayed request: ' + e.message);
+        do_retry(task, e, callback);
     }
 }
 function get_response(resp, task, callback) {
@@ -78,23 +98,22 @@ function set_object(task, resp_obj, type, callback) {
     }
     else {
         //Error
-        console.log(type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE);
-        return;
+        var err_msg = type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
+        console.log(err_msg);
+        callback && callback(err_msg);
     }
     db.update(task.id, set_obj, function (err, red_res) {
         if (err) {
             console.log(err);
         }
-        else {
-
-        }
-        if (callback) callback();
+        callback && callback(err, set_obj);
     });
 }
 function do_persistence(task, resp_obj, type, callback) {
     if (type) {
         set_object(task, resp_obj, type, callback);
     }
+    else if (callback) callback(null, 'no persistence/no data');
 }
 function do_http_callback(task, resp_obj, callback) {
     var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
@@ -104,25 +123,25 @@ function do_http_callback(task, resp_obj, callback) {
         callback_options.method = 'POST';
         var callback_req = http.request(callback_options, function (callback_res) {
                 //check callback_res status (modify state) Not interested in body
-                db_err = {callback_status:callback_res.statusCode, callback_details:'callback sent OK'};
-                db.update(task.id, db_err, function (err) {
+                db_res = {callback_status:callback_res.statusCode, callback_details:'callback sent OK'};
+                db.update(task.id, db_res, function (err) {
                     if (err) {
                         console.log("BD Error setting callback status:" + err);
                     }
-                    if (callback) callback();
+                    if (callback) callback(err, db_res);
                 });
             }
         );
         callback_req.on('error', function (err) {
             //error in request
             var str_err = JSON.stringify(err);  // Too much information?????
-            db_err = {callback_status:'error', callback_details:str_err};
+            db_st = {callback_status:'error', callback_details:str_err};
             //store
-            db.update(task.id, db_err, function (dberr) {
+            db.update(task.id, db_st, function (dberr) {
                 if (dberr) {
                     console.log("BD Error setting callback ERROR:" + dberr);
                 }
-                if (callback) callback();
+                if (callback) callback(dberr, db_st);
             });
         });
         var str_resp_obj = JSON.stringify(resp_obj);
@@ -130,10 +149,10 @@ function do_http_callback(task, resp_obj, callback) {
         callback_req.end();
     }
     else {
-        if (callback) callback();
+        if (callback) callback(null);
     }
 }
-function do_retry(task, callback) {
+function do_retry(task, error, callback) {
     var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
     var time = -1;
     if (retry_list) {
@@ -150,14 +169,32 @@ function do_retry(task, callback) {
             }
             if (time > 0) {
                 setTimeout(function () {
-                    do_job(task);
+                    do_job(task, callback);
                 }, time);
             }
         }
     }
     else {
         //no more attempts (or no retry policy)
-        if (callback) callback();
+        //error persistence
+        do_persistence(task, error, 'ERROR', function (errP, resultP) {
+            //CALLBACK
+            do_http_callback(task, error, function (errC, resultC){
+                var cb_error = {
+                    relayed_request_error: error,
+                    persistence_error: errP,
+                    httpcb_error: errC
+                };
+                if (!(cb_error.persistence_error || cb_error.httpcb_error || cb_error.relayed_request_error)){
+                    cb_error=null;
+                }
+                var cb_result = {
+                    persistence_result: resultP,
+                    httpcb_result: resultC
+                };
+                if (callback) callback(cb_error, cb_result);
+            });
+        });
     }
 }
 exports.do_job = do_job;
