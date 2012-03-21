@@ -3,6 +3,10 @@ var uuid = require('node-uuid');
 var router = require('./service_router');
 var store = require('./task_queue.js');
 var logger = require('./logger.js');
+var emitter = require('./emitter_module.js').eventEmitter;
+var G = require('./my_globals').C;
+
+
 
 var n = 0;
 
@@ -57,13 +61,40 @@ function assign_request(request, data, callback) {
                         response.statusCode(500);
                         response.data = error.toString();
                         logger.info('response',response);
-
+                        //EMIT ERROR
+                        var errev = {
+                            err:err,
+                            state:G.STATE_PENDING,
+                            date: Date(),
+                            msg:'error provisioning task',
+                            consumer_id: ''
+                        };
+                        emitter.emit(G.EVENT_ERR, errev);
+                        //EMIT STATE ERROR
+                        var st = {
+                            id:simple_req.id,
+                            state:G.STATE_ERROR,
+                            date: Date(),
+                            task: simple_req,
+                            consumer_id: '',
+                            msg:'error provisioning task'
+                        };
+                        emitter.emit(G.EVENT_NEWSTATE, st);
                     }
                     else {
                         logger.info('ok put');
                         response.statusCode = 200;
                         response.data = id;
                         logger.info('response', response);
+                        //EMIT STATE PENDING
+                        var st = {
+                            id:simple_req.id,
+                            state:G.STATE_PENDING,
+                            date: Date(),
+                            task: simple_req,
+                            consumer_id: ''
+                        };
+                        emitter.emit(G.EVENT_NEWSTATE, st);
                     }
                     callback(response);
                 }
