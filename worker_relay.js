@@ -187,6 +187,7 @@ function do_retry(task, error, callback) {
                     cb_error=null;
                 }
                 var cb_result = {
+                    relayed_request_error: error,
                     persistence_result: resultP,
                     httpcb_result: resultC
                 };
