@@ -60,7 +60,8 @@ function consume(idconsumer, start) {
                             date: Date(),
                             task: resp.task,
                             consumer_id: idconsumer,
-                            msg:'error processing task'
+                            msg:'error processing task',
+                            result:dojoberr
                         };
 
                         emitter.emit(G.EVENT_NEWSTATE, st);
