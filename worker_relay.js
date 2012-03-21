@@ -29,6 +29,7 @@ function do_job(task, callback) {
                                     cb_error=null;
                                 }
                                 var cb_result = {
+                                    relayed_request_result: resp_obj,
                                     persistence_result: resultP,
                                     httpcb_result: resultC
                                 };
@@ -180,14 +181,14 @@ function do_retry(task, error, callback) {
             //CALLBACK
             do_http_callback(task, error, function (errC, resultC){
                 var cb_error = {
+                    relayed_request_error: error,
                     persistence_error: errP,
                     httpcb_error: errC
                 };
-                if (!(cb_error.persistence_error || cb_error.httpcb_error)){
+                if (!(cb_error.persistence_error || cb_error.httpcb_error || cb_error.relayed_request_error)){
                     cb_error=null;
                 }
                 var cb_result = {
-                    relayed_request_error: error,
                     persistence_result: resultP,
                     httpcb_result: resultC
                 };
