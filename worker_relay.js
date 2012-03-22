@@ -29,7 +29,7 @@ function do_job(task, callback) {
                                     cb_error=null;
                                 }
                                 var cb_result = {
-                                    relayed_request_result: resp_obj,
+                                    //relayed_request_result: resp_obj,
                                     persistence_result: resultP,
                                     httpcb_result: resultC
                                 };
