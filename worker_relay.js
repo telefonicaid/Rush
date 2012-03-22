@@ -147,8 +147,9 @@ function do_http_callback(task, resp_obj, callback) {
             db.update(task.id, db_st, function (dberr) {
                 if (dberr) {
                     console.log("BD Error setting callback ERROR:" + dberr);
+                    db_st.redis_error = dberr;
                 }
-                if (callback) callback(dberr, db_st);
+                if (callback) callback(db_st, null);
             });
         });
         var str_resp_obj = JSON.stringify(resp_obj);
