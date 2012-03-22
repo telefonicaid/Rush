@@ -78,6 +78,7 @@ function get_response(resp, task, callback) {
 }
 function set_object(task, resp_obj, type, callback) {
     //remove from response what is not needed
+    var err_msg
     var set_obj = {};
     type = type.toUpperCase();
     //todo
@@ -98,13 +99,19 @@ function set_object(task, resp_obj, type, callback) {
     }
     else {
         //Error
-        var err_msg = type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
+        err_msg = type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
         console.log(err_msg);
-        callback && callback(err_msg);
     }
     db.update(task.id, set_obj, function (err, red_res) {
         if (err) {
             console.log(err);
+            err.err_msg = err_msg
+        }
+        else{
+            if (err_msg) {
+                err = {};
+                err.err_msg = err_msg;
+            }
         }
         callback && callback(err, set_obj);
     });
