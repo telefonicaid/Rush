@@ -1,10 +1,8 @@
-/**
- * Created by JetBrains WebStorm.
- * User: brox
- * Date: 31/01/12
- * Time: 18:59
- * To change this template use File | Settings | File Templates.
- */
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
+
 var redis = require('redis');
 var config = require('./config_base').queue;
 var logger = require('./logger.js');

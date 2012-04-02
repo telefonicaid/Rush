@@ -1,3 +1,8 @@
+  //
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
+
 var http = require('http');
 var uuid = require('node-uuid');
 var router = require('./service_router');

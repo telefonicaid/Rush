@@ -1,10 +1,7 @@
-/**
- * Created by JetBrains WebStorm.
- * User: brox
- * Date: 7/02/12
- * Time: 13:25
- * To change this template use File | Settings | File Templates.
- */
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
 
 //
 // Simple substitute for a real logging

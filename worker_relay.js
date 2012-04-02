@@ -1,3 +1,8 @@
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
+
 var http = require('http');
 var MG = require('./my_globals').C;
 var url = require('url');

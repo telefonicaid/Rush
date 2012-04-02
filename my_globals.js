@@ -1,10 +1,7 @@
-/**
- * Created by JetBrains WebStorm.
- * User: mru
- * Date: 11/01/12
- * Time: 16:15
- * To change this template use File | Settings | File Templates.
- */
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
 
 exports.C = {
     'STATE_COMPLETED':'completed',

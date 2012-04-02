@@ -1,3 +1,8 @@
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
+
 var worker_relay = require('./worker_relay');
 var MG = require('./my_globals').C;
 /*

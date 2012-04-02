@@ -1,3 +1,8 @@
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
+
 var http = require('http');
 var store = require('./task_queue.js');
 var service_router= require('./service_router');
