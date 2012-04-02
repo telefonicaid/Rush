@@ -1,3 +1,9 @@
+//
+// Copyright (c) Telefonica I+D. All rights reserved.
+//
+//
+
+
 var mongodb = require('mongodb');
 
 var G = require('./my_globals').C;
@@ -9,7 +15,7 @@ var clients = [];
 function init(emitter, callback) {
 
 
-    var client = new mongodb.Db('foobar', new mongodb.Server(config.mongo_host, config.mongo_port, {}));
+    var client = new mongodb.Db(config.mongo_db, new mongodb.Server(config.mongo_host, config.mongo_port, {}));
     client.open(function (err, p_client) {
         client.collection(config.collection, function (err, c) {
             if (err) {
