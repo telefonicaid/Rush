@@ -29,7 +29,7 @@ function do_job(task, callback) {
                                     cb_error=null;
                                 }
                                 var cb_result = {
-                                    relayed_request_result: resp_obj,
+                                    //relayed_request_result: resp_obj,
                                     persistence_result: resultP,
                                     httpcb_result: resultC
                                 };
@@ -78,6 +78,7 @@ function get_response(resp, task, callback) {
 }
 function set_object(task, resp_obj, type, callback) {
     //remove from response what is not needed
+    var err_msg
     var set_obj = {};
     type = type.toUpperCase();
     //todo
@@ -98,13 +99,19 @@ function set_object(task, resp_obj, type, callback) {
     }
     else {
         //Error
-        var err_msg = type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
+        err_msg = type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
         console.log(err_msg);
-        callback && callback(err_msg);
     }
     db.update(task.id, set_obj, function (err, red_res) {
         if (err) {
             console.log(err);
+            err.err_msg = err_msg
+        }
+        else{
+            if (err_msg) {
+                err = {};
+                err.err_msg = err_msg;
+            }
         }
         callback && callback(err, set_obj);
     });
@@ -140,8 +147,9 @@ function do_http_callback(task, resp_obj, callback) {
             db.update(task.id, db_st, function (dberr) {
                 if (dberr) {
                     console.log("BD Error setting callback ERROR:" + dberr);
+                    db_st.redis_error = dberr;
                 }
-                if (callback) callback(dberr, db_st);
+                if (callback) callback(db_st, null);
             });
         });
         var str_resp_obj = JSON.stringify(resp_obj);

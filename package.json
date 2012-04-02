@@ -1,30 +1,31 @@
 {
-  "name": "Rush",
-  "version": "0.0.1",
-  "author": "Transversal Development",
-  "description": "a simple HTTP-Reayer",
-  "contributors": [
-    {
-      "name": "Carlos Romero Brox",
-      "email": "brox@tid.es"
+    "name":"Rush",
+    "version":"0.0.1",
+    "author":"Transversal Development",
+    "description":"a simple HTTP-Reayer",
+    "contributors":[
+        {
+            "name":"Carlos Romero Brox",
+            "email":"brox@tid.es"
+        },
+        {
+            "name":"Marcos Reyes",
+            "email":"mru@tid.es"
+        }
+    ],
+    "repository":{
+        "type":"git",
+        "url":"https://mrutid@github.com/mrutid/Rush.git"
     },
-     {
-       "name": "Marcos Reyes",
-       "email": "mru@tid.es"
-     }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://mrutid@github.com/mrutid/Rush.git"
-  },
 
-  "dependencies" : {
-    "redis"   :  "*",
-    "node-uuid": "*",
-    "async": "*"
-  },
-  "license": "AGPL",
-  "engine": {
-    "node": "0.6.6"
-  }
+    "dependencies":{
+        "redis":"*",
+        "node-uuid":"*",
+        "async":"*",
+        "mongodb":"*"
+    },
+    "license":"AGPL",
+    "engine":{
+        "node":"0.6.6"
+    }
 }
