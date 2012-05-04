@@ -93,6 +93,7 @@ function set_object(task, resp_obj, type, callback) {
   var set_obj = {};
   type = type.toUpperCase();
   //todo
+  set_obj.resultOk= true;
   if (type === 'STATUS') {
     set_obj.statusCode = resp_obj.statusCode;
   }
@@ -106,6 +107,7 @@ function set_object(task, resp_obj, type, callback) {
       set_obj.body = resp_obj.body;
     }
     else if (type == 'ERROR') {
+        set_obj.resultOk= false;
         set_obj = resp_obj;
       }
 
