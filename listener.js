@@ -102,11 +102,9 @@ function assign_request(request, data, callback) {
                     logger.info('response', response);
                     //EMIT ERROR
                     var errev = {
-                        err:err,
-                        state:G.STATE_PENDING,
-                        date:new Date(),
-                        msg:'error provisioning task',
-                        consumer_id:''
+                        queueId:target.service,
+                        err:error,
+                        date:new Date()
                     };
                     emitter.emit(G.EVENT_ERR, errev);
                     //EMIT STATE ERROR
@@ -114,9 +112,7 @@ function assign_request(request, data, callback) {
                         id:simple_req.id,
                         state:G.STATE_ERROR,
                         date:new Date(),
-                        task:simple_req,
-                        consumer_id:'',
-                        msg:'error provisioning task'
+                        task:simple_req
                     };
                     emitter.emit(G.EVENT_NEWSTATE, st);
                 }
@@ -130,8 +126,7 @@ function assign_request(request, data, callback) {
                         id:simple_req.id,
                         state:G.STATE_PENDING,
                         date:new Date(),
-                        task:simple_req,
-                        consumer_id:''
+                        task:simple_req
                     };
                     emitter.emit(G.EVENT_NEWSTATE, st);
                 }

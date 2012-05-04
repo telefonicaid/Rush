@@ -31,11 +31,9 @@ function consume(idconsumer, start) {
         if (err) {
             logger.error("ERROR_________________", err);
             var errev = {
+                idConsumer: idconsumer,
                 err:err,
-                state:G.STATE_PENDING,
-                date: Date(),
-                msg:'error getting pending task info',
-                consumer_id: idconsumer
+                date: new Date()
             };
             emitter.emit(G.EVENT_ERR, errev);
         }
@@ -45,9 +43,9 @@ function consume(idconsumer, start) {
             var st = {
                 id:resp.task.id,
                 state:G.STATE_PROCESSING,
-                date: Date(),
+                date: new Date(),
                 task: resp.task,
-                consumer_id: idconsumer
+                idConsumer: idconsumer
             };
             emitter.emit(G.EVENT_NEWSTATE, st);
 
@@ -58,19 +56,18 @@ function consume(idconsumer, start) {
                         logger.error("ERROR_________________", dojoberr);
                         //EMIT ERROR
                         var errev = {
-                            err:dojoberr,
-                            state:G.STATE_PENDING,
-                            date: Date(),
-                            msg:'error processing task' };
+                          id:resp.task.id,
+                          date: new Date(),
+                            err:dojoberr
+                            };
                         emitter.emit(G.EVENT_ERR, errev);
                         //EMIT ERROR STATE
                         var st = {
                             id:resp.task.id,
                             state:G.STATE_ERROR,
-                            date: Date(),
+                            date: new Date(),
                             task: resp.task,
-                            consumer_id: idconsumer,
-                            msg:'error processing task',
+                            idConsumer: idconsumer,
                             result:dojoberr
                         };
 
@@ -82,7 +79,7 @@ function consume(idconsumer, start) {
                         var st = {
                             id:resp.task.id,
                             state:G.STATE_COMPLETED,
-                            date: Date(),
+                            date: new Date(),
                             task: resp.task,
                             result: jobresult
                         };
@@ -93,10 +90,9 @@ function consume(idconsumer, start) {
                             logger.error("ERROR_________________", err);
                             //EMIT ERROR
                             var errev = {
-                                err:berr,
-                                state:G.STATE_PENDING,
-                                date: Date(),
-                                msg:'error removing processing queu' };
+                              idConsumer:idconsumer,
+                              date: new Date(),
+                              err:err};
                             emitter.emit(G.EVENT_ERR, errev);
                         }
                         else{
