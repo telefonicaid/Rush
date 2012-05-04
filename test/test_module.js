@@ -199,18 +199,22 @@ var persistence_get = function(type) {
             } else {
               if (type == 'BODY') {
                 expected_data = {
+                  resultOk: 'true',
                   statusCode: '200',
                   headers: '{"connection":"keep-alive","transfer-encoding":"chunked"}',
                   body: 'PERSISTENT DATA' };
               } else {
                 if (type == 'HEADER') {
                   expected_data = {
+                    resultOk: 'true',
                     statusCode: '200',
                     headers: '{"connection":"keep-alive","transfer-encoding":"chunked"}'
                   };
                 } else {
                   if (type == 'STATUS') {
-                    expected_data = {statusCode: '200'};
+                    expected_data = {
+                      resultOk: 'true',
+                      statusCode: '200'};
                   }
                 }
               }

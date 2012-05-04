@@ -107,8 +107,8 @@ function set_object(task, resp_obj, type, callback) {
       set_obj.body = resp_obj.body;
     }
     else if (type == 'ERROR') {
-        set_obj.resultOk= false;
         set_obj = resp_obj;
+        set_obj.resultOk= false;
       }
 
   db.update(task.id, set_obj, function (err, red_res) {
@@ -153,20 +153,30 @@ function do_http_callback(task, resp_obj, callback) {
       //check callback_res status (modify state) Not interested in body
       db_res =
       {callback_status: callback_res.statusCode, callback_details: 'callback sent OK'};
-      db.update(task.id, db_res, function(err) {
-        if (err) {
-          console.log("BD Error setting callback status:" + err);
-        }
+      //store iff persistence policy
+      if(task.headers[MG.HEAD_RELAYER_PERSISTENCE]){
+        db.update(task.id, db_res, function(err) {
+          if (err) {
+            console.log("BD Error setting callback status:" + err);
+          }
+          if (callback) {
+            callback(err, db_res);
+          }
+        });
+      } else {
         if (callback) {
           callback(err, db_res);
         }
-      });
+      }
     });
+
+
     callback_req.on('error', function(err) {
       //error in request
       var str_err = JSON.stringify(err);  // Too much information?????
       db_st = {callback_status: 'error', callback_details: str_err};
-      //store
+      //store iff persistence policy
+      if(task.headers[MG.HEAD_RELAYER_PERSISTENCE]){
       db.update(task.id, db_st, function(dberr) {
         if (dberr) {
           console.log("BD Error setting callback ERROR:" + dberr);
@@ -176,6 +186,11 @@ function do_http_callback(task, resp_obj, callback) {
           callback(db_st, null);
         }
       });
+      } else {
+        if (callback) {
+          callback(db_st, null);
+        }
+      }
     });
     var str_resp_obj = JSON.stringify(resp_obj);
     callback_req.write(str_resp_obj);
