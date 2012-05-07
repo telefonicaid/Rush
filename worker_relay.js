@@ -46,8 +46,11 @@ function do_job(task, callback) {
             });
         });
       } else {
-        var e = {resultOk: true, statusCode: rly_res.statusCode, headers: rly_res.headers, body: rly_res.body};
-        handle_request_error(task, e, callback);
+         get_response(rly_res, task, function(task, resp_obj){
+            var e = {resultOk: true, statusCode: rly_res.statusCode, headers: rly_res.headers, body: resp_obj.body };
+            handle_request_error(task, e, callback);
+            });
+
       }
     });
     req.on('error', function(e) {
