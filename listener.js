@@ -18,7 +18,7 @@ var dbrelayer = require('./dbrelayer.js');
 var ev_lsnr = require('./ev_lsnr');
 ev_lsnr.init(emitter);
 
-var server = http.createServer(
+http.createServer(
     function(req, res) {
       'use strict';
 
@@ -95,6 +95,7 @@ function assign_request(request, data, callback) {
     if (target.ok) {
         logger.info('target ok!');
         store.put(target.service, simple_req, function written_req(error) {
+                var st;
                 if (error) {
                     logger.info('error put');
                     response.statusCode(500);
@@ -108,7 +109,7 @@ function assign_request(request, data, callback) {
                     };
                     emitter.emit(G.EVENT_ERR, errev);
                     //EMIT STATE ERROR
-                    var st = {
+                    st = {
                         id:simple_req.id,
                         state:G.STATE_ERROR,
                         date:new Date(),
@@ -122,7 +123,7 @@ function assign_request(request, data, callback) {
                     response.data = id;
                     logger.info('response', response);
                     //EMIT STATE PENDING
-                    var st = {
+                    st = {
                         id:simple_req.id,
                         state:G.STATE_PENDING,
                         date:new Date(),
