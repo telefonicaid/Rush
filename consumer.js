@@ -20,6 +20,8 @@ ev_lsnr.init(emitter);
 
 
 function consume(idconsumer, start) {
+    "use strict";
+
     if(start){
     store.get_pending(idconsumer, processing_consumed_task);
     }
@@ -28,6 +30,8 @@ function consume(idconsumer, start) {
     }
 
     function processing_consumed_task(err, resp) {
+        var st;
+
         if (err) {
             logger.error("ERROR_________________", err);
             var errev = {
@@ -40,7 +44,7 @@ function consume(idconsumer, start) {
         else if(resp && resp.task){
             logger.info("resp", resp);
             //EMIT PROCESSING
-            var st = {
+            st = {
                 id:resp.task.id,
                 state:G.STATE_PROCESSING,
                 date: new Date(),
@@ -62,7 +66,7 @@ function consume(idconsumer, start) {
                             };
                         emitter.emit(G.EVENT_ERR, errev);
                         //EMIT ERROR STATE
-                        var st = {
+                        st = {
                             id:resp.task.id,
                             state:G.STATE_ERROR,
                             date: new Date(),
@@ -77,7 +81,7 @@ function consume(idconsumer, start) {
 
                     else{
                         //EMIT COMPLETED
-                        var st = {
+                        st = {
                             id:resp.task.id,
                             state:G.STATE_COMPLETED,
                             date: new Date(),
@@ -97,21 +101,27 @@ function consume(idconsumer, start) {
                             emitter.emit(G.EVENT_ERR, errev);
                         }
                         else{
-                            process.nextTick(function consumer_clousure(){consume(idconsumer, false)});
+                            process.nextTick(function consumer_closure() {
+                                consume(idconsumer, false);
+                            });
                         }
                     });
 
                 });
             }
-            else {  /* control */
-
-            }
+            //else {  /* control */
+                  // nothing
+            //}
         }
         else{
-            process.nextTick(function consumer_clousure(){consume(idconsumer, false)});
+            process.nextTick(function consumer_closure() {
+                consume(idconsumer, false);
+            });
         }
     }
 }
+
+
 
 for (var i=0;i<max_poppers;i++){
       consume(C.consumer_id+i, true);
