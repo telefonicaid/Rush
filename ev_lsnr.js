@@ -13,14 +13,16 @@ var config = require('./config_base').ev_lsnr;
 var clients = [];
 
 function init(emitter, callback) {
-
+    "use strict";
 
     var client = new mongodb.Db(config.mongo_db, new mongodb.Server(config.mongo_host, config.mongo_port, {}));
 
     client.open(function (err, p_client) {
         client.collection(config.collectionState, function (err, c) {
             if (err) {
-                callback && callback(err);
+                if (callback) {
+                    callback(err);
+                }
             }
             else {
                 var collection = c;
@@ -28,17 +30,25 @@ function init(emitter, callback) {
                     console.log("lNEW STATE ARRIVED");
                     console.dir(data);
                     collection.insert(data, function (err, docs) {
-                        if (err) console.log(err);
-                        else console.log(docs);
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            console.log(docs);
+                        }
                     });
                 });
-                callback && callback(null);
+                if (callback) {
+                    callback(null);
+                }
             }
         });
 
       client.collection(config.collectionError, function (err, c) {
         if (err) {
-          callback && callback(err);
+            if (callback) {
+                callback(err);
+            }
         }
         else {
           var collection = c;
@@ -46,11 +56,17 @@ function init(emitter, callback) {
             console.log("lNEW ERROR ARRIVED");
             console.dir(data);
             collection.insert(data, function (err, docs) {
-              if (err) console.log(err);
-              else console.log(docs);
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log(docs);
+                }
             });
           });
-          callback && callback(null);
+            if (callback) {
+                callback(null);
+            }
         }
       });
     });
