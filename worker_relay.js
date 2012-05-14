@@ -99,7 +99,7 @@ function set_object(task, resp_obj, type, callback) {
     var err_msg,
         set_obj = {};
     type = type.toUpperCase();
-    //todo
+
     set_obj.resultOk = true;
     if (type === 'STATUS') {
         set_obj.statusCode = resp_obj.statusCode;
@@ -118,7 +118,7 @@ function set_object(task, resp_obj, type, callback) {
         set_obj.resultOk = false;
     }
 
-    db.update(task.id, set_obj, function (err, red_res) {
+    db.update(task.id, set_obj, function (err) {
         if (err) {
             console.log(err);
             err.err_msg = err_msg;
