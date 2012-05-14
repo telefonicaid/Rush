@@ -14,18 +14,22 @@ var level = INFO;
 
 
 function log(loglevel, msg, obj) {
+    "use strict";
     if (level >= loglevel) {
         console.log(msg);
-        if (obj)
+        if (obj)   {
             console.dir(obj);
+        }
     }
 }
 
 function info(msg, obj) {
+    "use strict";
     log(INFO, msg, obj);
 }
 
 function error(msg, obj) {
+    "use strict";
     log(ERROR, msg, obj);
 }
 
