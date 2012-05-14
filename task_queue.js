@@ -16,7 +16,7 @@ var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 //redis.debug_mode = true;
 
 function put(key, obj, err_fun) {
-
+    "use strict";
     logger.info('in  put');
 
     var simple_req_str = JSON.stringify(obj);
@@ -27,7 +27,7 @@ function put(key, obj, err_fun) {
 }
 
 function get(keys, aux_queue_id, callback) {
-
+    "use strict";
     logger.info('keys', keys);
 
     rcliBlocking.brpop(keys.control, keys.hpri, keys.lpri , 0, function onPop(err, data) {
@@ -44,6 +44,7 @@ function get(keys, aux_queue_id, callback) {
 }
 
 function get_pending(idconsumer, callback){
+    "use strict";
     logger.info('Getting pending elem from: '+idconsumer);
     rcli.rpop(idconsumer, function onPendingData(err, data){
         var obj = JSON.parse(data);
@@ -52,6 +53,7 @@ function get_pending(idconsumer, callback){
 }
 
 function rem_processing_queue(idconsumer, callback) {
+    "use strict";
     logger.info('removing aux elem from: '+idconsumer);
     rcli.del(idconsumer, callback);
 }
