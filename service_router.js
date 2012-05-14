@@ -11,7 +11,7 @@ var MG = require('./my_globals').C;
  message
  */
 function route(request) {
-
+    "use strict";
     if (!request.headers[MG.HEAD_RELAYER_HOST]) {
         return { ok:false, message:MG.HEAD_RELAYER_HOST + ' is missing'};
     }
@@ -23,12 +23,14 @@ function route(request) {
 
 
 function getQueues() {
+    "use strict";
     return {control:'wrL:control',
         hpri: 'wrL:hpri',
         lpri: 'wrL:lpri' };
 }
 
 function getWorker(resp) {
+    "use strict";
     // Select a worker based on resp data ( from task queue)
     return worker_relay.do_job;
 }
