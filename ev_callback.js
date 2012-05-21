@@ -10,7 +10,7 @@ function init(emitter, callback) {
             do_http_callback(data.task, data.result, function (error, result) {
                 var st = {
                     id:data.task.id,
-                    state:MG.CALLBACK_RESULT,
+                    state:MG.STATE_CALLBACK,
                     date:new Date(),
                     task:data.task,
                     err:error,
