@@ -1,13 +1,11 @@
 var http = require('http');
 var MG = require('./my_globals').C;
 var url = require('url');
-var db = require('./dbrelayer');
+
 
 function init(emitter, callback) {
     "use strict";
     emitter.on(MG.EVENT_NEWSTATE, function new_event(data) {
-        console.log("DATA EN EVENTO")
-        console.dir(data)
         if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
             do_http_callback(data.task, data.result, function (error, result) {
                 var st = {
@@ -18,13 +16,10 @@ function init(emitter, callback) {
                     err:error,
                     result:result
                 };
-
                 emitter.emit(MG.EVENT_NEWSTATE, st);
-
             });
         }
     });
-
 }
 
 function do_http_callback(task, resp_obj, callback) {
