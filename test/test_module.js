@@ -8,9 +8,10 @@ var async = require('async');
 var os = require('os');
 var redis_mod = require('redis');
 var redis = redis_mod.createClient(redis_mod.DEFAULT_PORT, REDIS_HOST);
-var server, end_point_req, end_point_res, client_res, client_req, relayer_header = {}, options;
+var server, end_point_req, end_point_res, client_res, client_req, options;
 var oneway = function(method) {
   return function(callback) {
+    var relayer_header = {};
     console.log('\nONEWAY TEST FOR METHOD ' + method);
     //Create EndPoint server
     server = http.createServer(
@@ -247,6 +248,7 @@ var persistence_get = function(type) {
 var retry = function(times, retry_value) {
   return function(callback) {
     //Create end-point Server
+    var relayer_header = {};
     var iter = 1;
     console.log('START RETRY TEST');
     var end_point_server = http.createServer(
