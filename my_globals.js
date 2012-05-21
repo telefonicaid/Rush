@@ -9,6 +9,8 @@ exports.C = {
     'STATE_PROCESSING':'processing',
     'STATE_ERROR':'error',
     'STATE_RETRY_FAIL':'retry_fail',
+    'STATE_CALLBACK':'callback_state',
+    'STATE_PERSISTENCE':'persistence_state',
     'STATUS_OK':'200',
     'STATUS_ERROR':'404',
     'STATUS_WEIRD':'500',
