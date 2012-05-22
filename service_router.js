@@ -3,7 +3,8 @@
 //
 //
 
-var worker_relay = require('./worker_relay');
+//var worker_relay = require('./worker_relay');
+var event_worker = require('./event_worker');
 var MG = require('./my_globals').C;
 /*
  ok: true/false
@@ -32,7 +33,7 @@ function getQueues() {
 function getWorker(resp) {
     "use strict";
     // Select a worker based on resp data ( from task queue)
-    return worker_relay.do_job;
+    return event_worker.do_job;
 }
 
 exports.route = route;

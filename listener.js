@@ -7,11 +7,11 @@ var http = require('http');
 var url = require('url');
 var uuid = require('node-uuid');
 var router = require('./service_router');
-var store = require('./task_queue.js');
-var logger = require('./logger.js');
-var emitter = require('./emitter_module.js').get();
+var store = require('./task_queue');
+var logger = require('./logger');
+var emitter = require('./emitter_module').get();
 var G = require('./my_globals').C;
-var dbrelayer = require('./dbrelayer.js');
+var dbrelayer = require('./dbrelayer');
 
 
 

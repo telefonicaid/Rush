@@ -17,7 +17,10 @@ var max_poppers = 500;
 
 var ev_lsnr = require('./ev_lsnr');
 ev_lsnr.init(emitter);
-
+var ev_callback = require('./ev_callback');
+ev_callback.init(emitter);
+var ev_persistence = require('./ev_persistence');
+ev_persistence.init(emitter);
 
 function consume(idconsumer, start) {
     "use strict";

@@ -6,7 +6,7 @@
 var http = require('http');
 var MG = require('./my_globals').C;
 var url = require('url');
-var db = require('./dbrelayer');
+
 function do_job(task, callback) {
     "use strict";
     var target_host = task.headers[MG.HEAD_RELAYER_HOST],
