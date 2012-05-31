@@ -19,6 +19,14 @@ function init(emitter, callback) {
                     };
                     emitter.emit(MG.EVENT_NEWSTATE, st);
                 }
+                if(error) {
+                    var errev = {
+                        id:data.task.id,
+                        date: new Date(),
+                        cb_err: error
+                    };
+                    emitter.emit(MG.EVENT_ERR, errev);
+                }
             });
         }
     });
@@ -54,8 +62,8 @@ function do_http_callback(task, resp_obj, callback) {
 
         callback_req.on('error', function (err) {
             //error in request
-            var str_err = JSON.stringify(err);  // Too much information?????
-            var cb_st = {callback_status:str_err};
+
+            var cb_st = { error: err.code+'('+ err.syscall+')'};
             //store iff persistence policy
             if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
             db.update(task.id, cb_st, function (err) {

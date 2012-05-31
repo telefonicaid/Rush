@@ -37,7 +37,8 @@ function do_job(task, callback) {
         });
         req.on('error', function (e) {
             e.resultOk = false;
-            handle_request_error(task, e, callback);
+
+            handle_request_error(task, {resultOk: false, error:e.code+'('+ e.syscall+')'}, callback);
         });
 
         if (options.method === 'POST' || options.method === 'PUT') {

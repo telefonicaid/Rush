@@ -53,25 +53,15 @@ function set_object(task, resp_obj, type, callback) {
     var err_msg,
         set_obj = {};
     type = type.toUpperCase();
-    set_obj.resultOk = true;
 
-    if (type === 'ERROR') {
-        set_obj.resultOk = false;
-        set_obj.error = resp_obj.errno;
-    }
-    else {
-        set_obj.resultOk = true;
-        switch (type) {
-            case 'BODY':
-                set_obj.body = resp_obj.body;
-            /* fall-through */
-            case  'HEADER':
-                set_obj.headers = resp_obj.headers;
-            /* fall-through */
-            case  'STATUS':
-                set_obj.statusCode = resp_obj.statusCode;
-                break;
-        }
+    set_obj = resp_obj;
+    switch (type) {
+        case 'STATUS':
+            delete set_obj.header;
+        /* fall-through */
+        case  'HEADER':
+            delete set_obj.body;
+            break;
     }
 
     db.update(task.id, set_obj, function (err) {
