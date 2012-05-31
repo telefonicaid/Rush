@@ -22,7 +22,8 @@
         "redis":"*",
         "node-uuid":"*",
         "async":"*",
-        "mongodb":"*"
+        "mongodb":"*",
+        "winston":"*"
     },
     "license":"AGPL",
     "engine":{
