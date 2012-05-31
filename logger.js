@@ -7,12 +7,39 @@
 // Simple substitute for a real logging
 //
 
-
+var util = require('util')
 var winston = require('winston')
+var logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Console)({level:'debug', timestamp:true}),
+        new (winston.transports.File)({ filename: 'somefile.log' })
+    ]
+});
+logger.setLevels(winston.config.syslog.levels);
 
-winston.setLevels(winston.config.syslog.levels);
-winston.remove(winston.transports.Console);
-winston.add(winston.transports.Console, {level:'debug', timestamp:true});
+logger.log_bak = logger.log;
+logger.log = function (loglevel, msg, obj) {
+    "use strict";
+    var prefix = this.prefix === undefined?'':'['+this.prefix+'] '
+
+    return this.log_bak(loglevel, prefix+msg, obj)
+}
+
+for (var level in winston.config.syslog.levels) {
+
+    logger[level] = function (level) {
+        return function (msg, obj) {
+            return this.log(level, msg, obj);
+        }
+    }(level);
+}
+
+
+
+
+exports.logger = logger;
+
+
 /*
  debug: 0,
  info: 1,
@@ -56,21 +83,4 @@ winston.add(winston.transports.Console, {level:'debug', timestamp:true});
 
 
  */
-
-//??? Take logging configuration from a file
-
-exports.profile = winston.profile
-
-exports.log = function (loglevel, msg, obj) {
-    "use strict";
-    return winston.log(loglevel, msg, obj)
-}
-
-for (var level in winston.config.syslog.levels) {
-    exports[level] = function (level) {
-        return function (msg, obj) {
-            return winston.log(level, msg, obj);
-        }
-    }(level);
-}
 
