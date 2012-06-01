@@ -20,12 +20,14 @@ var myWinston = new (winston.Logger)({
 myWinston.setLevels(winston.config.syslog.levels);
 
 function newLogger() {
+    var regxexp =  /(\s+)/gm;
     var logger = {};
     logger.log = function (loglevel, msg, obj) {
         "use strict";
         try {
-            var prefix = this.prefix === undefined ? '' : '[' + this.prefix + '] ';
-            msg += ' ' + JSON.stringify(cutback(4, obj));
+            var prefix = this.prefix === undefined ? '[?]' : '[' + this.prefix + '] ';
+            //msg += ' ' + JSON.stringify(cutback(4, obj));
+            msg  += ' ' +util.inspect(obj, true, 4).replace(regxexp,' ');
             return myWinston.log(loglevel, prefix + msg);
         }
         catch (e) {
@@ -34,7 +36,6 @@ function newLogger() {
     }
 
     for (var level in winston.config.syslog.levels) {
-
         logger[level] = function (level) {
             return function (msg, obj) {
                 return this.log(level, msg, obj);
@@ -47,36 +48,6 @@ function newLogger() {
 
 
 exports.newLogger = newLogger;
-
-function cutback(level, obj) {
-    var new_obj;
-
-    if (level > 0) {
-        if (typeof(obj) !== 'object') {
-            return obj;
-        }
-        else {
-            if (obj instanceof Array) {
-                new_obj = [];
-
-            }
-            else {
-                new_obj = {};
-            }
-            for (var p in obj) {
-                if (obj.hasOwnProperty(p) && typeof(obj[p]) !== 'function') {
-                    new_obj[p] = cutback(level - 1, obj[p]);
-                }
-            }
-            return new_obj;
-
-        }
-    }
-    else {
-        return '?';
-    }
-}
-
 
 /*
  debug: 0,
