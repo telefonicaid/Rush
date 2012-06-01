@@ -12,8 +12,8 @@ var winston = require('winston')
 
 var myWinston = new (winston.Logger)({
     transports:[
-        new (winston.transports.Console)({ level: 'debug',  timestamp:true}),
-        new (winston.transports.File)({ level: 'debug', filename:'somefile.log', timestamp:true , json: false})
+        new (winston.transports.Console)({ level:'debug', timestamp:true}),
+        new (winston.transports.File)({ level:'debug', filename:'somefile.log', timestamp:true, json:false})
     ]
 });
 
@@ -25,11 +25,7 @@ function newLogger() {
         "use strict";
         try {
             var prefix = this.prefix === undefined ? '' : '[' + this.prefix + '] ';
-
-
-                msg += ' ' + JSON.stringify(obj);
-
-
+            msg += ' ' + JSON.stringify(cutback(4, obj));
             return myWinston.log(loglevel, prefix + msg);
         }
         catch (e) {
@@ -52,6 +48,34 @@ function newLogger() {
 
 exports.newLogger = newLogger;
 
+function cutback(level, obj) {
+    var new_obj;
+
+    if (level > 0) {
+        if (typeof(obj) !== 'object') {
+            return obj;
+        }
+        else {
+            if (obj instanceof Array) {
+                new_obj = [];
+
+            }
+            else {
+                new_obj = {};
+            }
+            for (var p in obj) {
+                if (obj.hasOwnProperty(p) && typeof(obj[p]) !== 'function') {
+                    new_obj[p] = cutback(level - 1, obj[p]);
+                }
+            }
+            return new_obj;
+
+        }
+    }
+    else {
+        return '?';
+    }
+}
 
 
 /*
