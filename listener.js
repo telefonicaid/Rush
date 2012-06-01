@@ -8,7 +8,7 @@ var url = require('url');
 var uuid = require('node-uuid');
 var router = require('./service_router');
 var store = require('./task_queue');
-var logger = require('./logger').logger;
+
 var emitter = require('./emitter_module').get();
 var G = require('./my_globals').C;
 var dbrelayer = require('./dbrelayer');
@@ -16,8 +16,10 @@ var dbrelayer = require('./dbrelayer');
 var ev_lsnr = require('./ev_lsnr');
 ev_lsnr.init(emitter);
 
-logger.prefix =__filename;
-
+var path = require('path');
+var log = require('./logger');
+var logger = log.newLogger();
+logger.prefix = path.basename(module.filename,'.js');
 
 http.createServer(
     function serveReq(req, res) {
@@ -48,7 +50,7 @@ http.createServer(
             data += chunk;
         });
 
-        req.on('end', function onreqEnd() {
+        req.on('end', function onReqEnd() {
             if (parsedUrl.pathname === '/') {
                 assign_request(req, data, function write_res(result) {
                     res.writeHead(result.statusCode);
@@ -57,7 +59,7 @@ http.createServer(
                     reqLog.statusCode = result.statusCode
                     reqLog.bodyLenght = data.length;
                     delete reqLog.start;
-                    logger.info('request',reqLog);
+                    logger.info('request', reqLog);
                 });
             }
             else {
@@ -81,11 +83,10 @@ http.createServer(
                 else {
                     res.writeHead(400);
                     res.end('bad format: ' + parsedUrl.pathname);
-                    reqLog.responseTime = reqLog.start - Date.now();
+                    reqLog.responseTime = reqLog.responseTime = Date.now() - reqLog.start;
                     reqLog.statusCode = 400
-                    reqLog.bodyLenght = data.length;
-                    logger.info(JSON.stringify(reqLog));
-                    logger.info('bad format')
+                    reqLog.bodyLength = data.length;
+                    logger.warning('bad format',reqLog);
                 }
             }
         });
@@ -107,18 +108,15 @@ function assign_request(request, data, callback) {
     var response = {};
 
     var target = router.route(simple_req);
-
-    logger.info('target ', target);
+    logger.debug('target ', target);
 
     if (target.ok) {
-        logger.info('target ok!');
         store.put(target.service, simple_req, function written_req(error) {
                 var st;
                 if (error) {
-                    logger.notice('error put');
+                    logger.warning('put', error);
                     response.statusCode(500);
                     response.data = error.toString();
-                    logger.info('response', response);
                     //EMIT ERROR
                     var errev = {
                         queueId:target.service,
@@ -136,10 +134,9 @@ function assign_request(request, data, callback) {
                     emitter.emit(G.EVENT_NEWSTATE, st);
                 }
                 else {
-                    logger.info('ok put');
                     response.statusCode = 200;
                     response.data = id;
-                    logger.debug('response', response);
+
                     //EMIT STATE PENDING
                     st = {
                         id:simple_req.id,
@@ -149,6 +146,7 @@ function assign_request(request, data, callback) {
                     };
                     emitter.emit(G.EVENT_NEWSTATE, st);
                 }
+                logger.info('response', response);
                 callback(response);
             }
         );
@@ -156,7 +154,7 @@ function assign_request(request, data, callback) {
     else {
         response.statusCode = 404;
         response.data = target.message;
-        logger.debug('response', response);
+        logger.info('response', response);
         callback(response);
     }
 }

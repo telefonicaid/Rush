@@ -9,35 +9,49 @@
 
 var util = require('util')
 var winston = require('winston')
-var logger = new (winston.Logger)({
-    transports: [
-        new (winston.transports.Console)({level:'debug', timestamp:true}),
-        new (winston.transports.File)({ filename: 'somefile.log' })
+
+var myWinston = new (winston.Logger)({
+    transports:[
+        new (winston.transports.Console)({ level: 'debug',  timestamp:true}),
+        new (winston.transports.File)({ level: 'debug', filename:'somefile.log', timestamp:true , json: false})
     ]
 });
-logger.setLevels(winston.config.syslog.levels);
 
-logger.log_bak = logger.log;
-logger.log = function (loglevel, msg, obj) {
-    "use strict";
-    var prefix = this.prefix === undefined?'':'['+this.prefix+'] '
+myWinston.setLevels(winston.config.syslog.levels);
 
-    return this.log_bak(loglevel, prefix+msg, obj)
-}
+function newLogger() {
+    var logger = {};
+    logger.log = function (loglevel, msg, obj) {
+        "use strict";
+        try {
+            var prefix = this.prefix === undefined ? '' : '[' + this.prefix + '] ';
 
-for (var level in winston.config.syslog.levels) {
 
-    logger[level] = function (level) {
-        return function (msg, obj) {
-            return this.log(level, msg, obj);
+                msg += ' ' + JSON.stringify(obj);
+
+
+            return myWinston.log(loglevel, prefix + msg);
         }
-    }(level);
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    for (var level in winston.config.syslog.levels) {
+
+        logger[level] = function (level) {
+            return function (msg, obj) {
+                return this.log(level, msg, obj);
+            }
+        }(level);
+    }
+
+    return logger;
 }
 
 
+exports.newLogger = newLogger;
 
-
-exports.logger = logger;
 
 
 /*
