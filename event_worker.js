@@ -7,6 +7,11 @@ var http = require('http');
 var MG = require('./my_globals').C;
 var url = require('url');
 
+var path = require('path');
+var log = require('./logger');
+var logger = log.newLogger();
+logger.prefix = path.basename(module.filename,'.js');
+
 function do_job(task, callback) {
     "use strict";
     var target_host = task.headers[MG.HEAD_RELAYER_HOST],

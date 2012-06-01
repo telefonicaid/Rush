@@ -1,6 +1,12 @@
 var MG = require('./my_globals').C;
 var db = require('./dbrelayer');
 
+
+var path = require('path');
+var log = require('./logger');
+var logger = log.newLogger();
+logger.prefix = path.basename(module.filename,'.js');
+
 function init(emitter, callback) {
     "use strict";
     emitter.on(MG.EVENT_NEWSTATE, function new_event(data) {

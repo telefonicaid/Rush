@@ -3,9 +3,15 @@ var MG = require('./my_globals').C;
 var url = require('url');
 var db = require('./dbrelayer');
 
+var path = require('path');
+var log = require('./logger');
+var logger = log.newLogger();
+logger.prefix = path.basename(module.filename,'.js');
+
 function init(emitter, callback) {
     "use strict";
     emitter.on(MG.EVENT_NEWSTATE, function new_event(data) {
+        logger.debug('new_event', data);
         if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
             do_http_callback(data.task, data.result || data.err, function (error, result) {
                 if (error || result) {

@@ -95,6 +95,8 @@ http.createServer(
 
 function assign_request(request, data, callback) {
     'use strict';
+    logger.debug('assign_request', {request:request, data:data, callback:callback});
+
     var id = uuid.v1();
 
     var simple_req = {

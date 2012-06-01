@@ -39,16 +39,16 @@ function init(emitter, callback) {
           var collection = c;
           emitter.on(G.EVENT_NEWSTATE, function new_event(data) {
             try {
-              logger.debug("new_event", data);
+              logger.debug('new_event', data);
               collection.insert(data, function(err, docs) {
                 if (err) {
-                    logger.warning('insert', err);
+                    logger.warning('new_event', err);
                 } else {
-                  logger.debug('insert', docs);
+                  logger.debug('new_event', docs);
                 }
               });
             } catch (e) {
-                logger.warning('insert', e);
+                logger.warning('new_event', e);
             }
           });
           if (callback) {
@@ -68,17 +68,17 @@ function init(emitter, callback) {
             var collection = c;
             emitter.on(G.EVENT_ERR, function new_error(data) {
                 try {
-                logger.debug("new_error", data);
+                logger.debug('new_error', data);
 
               collection.insert(data, function(err, docs) {
                 if (err) {
-                    logger.warning('insert', err);
+                    logger.warning('new_error', err);
                 } else {
-                    logger.debug('insert', docs);
+                    logger.debug('new_error', docs);
                 }
               });
                 } catch (e) {
-                    logger.warning('insertError', e);
+                    logger.warning('new_error', e);
                 }
             });
             if (callback) {
