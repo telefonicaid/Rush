@@ -95,7 +95,7 @@ http.createServer(
 
 function assign_request(request, data, callback) {
     'use strict';
-    logger.debug('assign_request', {request:request, data:data, callback:callback});
+    logger.debug('assign_request(request, data, callback)', [request, data, callback]);
 
     var id = uuid.v1();
 
@@ -110,13 +110,13 @@ function assign_request(request, data, callback) {
     var response = {};
 
     var target = router.route(simple_req);
-    logger.debug('target ', target);
+    logger.debug('assign_request - target ', target);
 
     if (target.ok) {
-        store.put(target.service, simple_req, function written_req(error) {
+        store.put(target.service, simple_req, function onWrittenReq(error) {
                 var st;
                 if (error) {
-                    logger.warning('put', error);
+                    logger.warning('onWrittenReq', error);
                     response.statusCode(500);
                     response.data = error.toString();
                     //EMIT ERROR

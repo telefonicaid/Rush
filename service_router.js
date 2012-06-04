@@ -6,13 +6,20 @@
 //var worker_relay = require('./worker_relay');
 var event_worker = require('./event_worker');
 var MG = require('./my_globals').C;
+
+var path = require('path');
+var log = require('./logger');
+var logger = log.newLogger();
+logger.prefix = path.basename(module.filename,'.js');
+
 /*
  ok: true/false
  service
  message
  */
 function route(request) {
-    "use strict";
+    'use strict';
+    logger.debug("route(request)", [request]);
     if (!request.headers[MG.HEAD_RELAYER_HOST]) {
         return { ok:false, message:MG.HEAD_RELAYER_HOST + ' is missing'};
     }
@@ -24,7 +31,8 @@ function route(request) {
 
 
 function getQueues() {
-    "use strict";
+    'use strict';
+    logger.debug("getQueues()");
     return {control:'wrL:control',
         hpri: 'wrL:hpri',
         lpri: 'wrL:lpri' };
@@ -32,6 +40,7 @@ function getQueues() {
 
 function getWorker(resp) {
     "use strict";
+    logger.debug("getWorker(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
     return event_worker.do_job;
 }

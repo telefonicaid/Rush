@@ -11,6 +11,7 @@ var util = require('util')
 var winston = require('winston')
 
 var myWinston = new (winston.Logger)({
+    level: 'debug',
     transports:[
         new (winston.transports.Console)({ level:'debug', timestamp:true}),
         new (winston.transports.File)({ level:'debug', filename:'somefile.log', timestamp:true, json:false})
@@ -23,12 +24,17 @@ function newLogger() {
     var regxexp =  /(\s+)/gm;
     var logger = {};
     logger.log = function (loglevel, msg, obj) {
-        "use strict";
+
+
+        if( myWinston.levels[loglevel] < myWinston.levels[myWinston.level] ){
+            return;
+        }
+
         try {
             var prefix = this.prefix === undefined ? '[?]' : '[' + this.prefix + '] ';
             //msg += ' ' + JSON.stringify(cutback(4, obj));
             msg  += ' ' +util.inspect(obj, true, 4).replace(regxexp,' ');
-            return myWinston.log(loglevel, prefix + msg);
+            return myWinston.log(loglevel, prefix+ msg);
         }
         catch (e) {
             console.log(e);

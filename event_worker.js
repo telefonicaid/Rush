@@ -13,11 +13,13 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 
 function do_job(task, callback) {
-    "use strict";
+    'use strict';
+    logger.debug('do_job(task, callback)', [task, callback]);
+
     var target_host = task.headers[MG.HEAD_RELAYER_HOST],
         req;
     if (!target_host) {
-        console.log("Not target host");
+        logger.warning('do_job','Not target host');
     } else {
         var options = url.parse(target_host);
         task.headers.host = options.host;
@@ -42,7 +44,7 @@ function do_job(task, callback) {
         });
         req.on('error', function (e) {
             e.resultOk = false;
-
+            logger.warning('do_job',e);
             handle_request_error(task, {resultOk: false, error:e.code+'('+ e.syscall+')'}, callback);
         });
 
@@ -56,12 +58,15 @@ function do_job(task, callback) {
 
 function handle_request_error(task, e, callback) {
     "use strict";
-    console.log('problem with relayed request: ' + e.message);
+    logger.debug('handle_request_error(task, e, callback)', [task, e, callback]);
+    logger.warning('handle_request_error', e);
     do_retry(task, e, callback);
 
 }
 function get_response(resp, task, callback) {
     "use strict";
+    logger.debug('get_response(resp, task, callback)', [resp, task, callback]);
+
     var data = "";
     resp.on('data', function (chunk) {
         data += chunk;
@@ -82,6 +87,8 @@ function get_response(resp, task, callback) {
 
 function do_retry(task, error, callback) {
     "use strict";
+    logger.debug('do_retry(task, error, callback)',[task, error, callback]);
+
     var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
     var time = -1;
     if (retry_list) {

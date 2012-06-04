@@ -42,9 +42,9 @@ function init(emitter, callback) {
               logger.debug('new_event', data);
               collection.insert(data, function(err, docs) {
                 if (err) {
-                    logger.warning('new_event', err);
+                    logger.warning('insert', err);
                 } else {
-                  logger.debug('new_event', docs);
+                  logger.debug('insert', docs);
                 }
               });
             } catch (e) {
@@ -72,9 +72,9 @@ function init(emitter, callback) {
 
               collection.insert(data, function(err, docs) {
                 if (err) {
-                    logger.warning('new_error', err);
+                    logger.warning('insert', err);
                 } else {
-                    logger.debug('new_error', docs);
+                    logger.debug('insert', docs);
                 }
               });
                 } catch (e) {

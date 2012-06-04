@@ -21,21 +21,21 @@ var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 
 function put(key, obj, err_fun) {
     "use strict";
-    logger.debug('put', {key: key, obj: obj, err_fun: err_fun});
+    logger.debug('put(key, obj, err_fun)', [key, obj, err_fun]);
 
     var simple_req_str = JSON.stringify(obj);
 
-    logger.debug('simple_req_str ', simple_req_str);
+    logger.debug('put - simple_req_str ', simple_req_str);
 
     rcli.lpush(key, simple_req_str,err_fun);
 }
 
 function get(keys, aux_queue_id, callback) {
     "use strict";
-    logger.debug('get', {keys: keys, aux_queue_id: aux_queue_id, callback: callback});
+    logger.debug('get(keys, aux_queue_id, callback)',[keys, aux_queue_id, callback]);
 
     rcliBlocking.brpop(keys.control, keys.hpri, keys.lpri , 0, function onPop(err, data) {
-            logger.debug("get",data);
+            logger.debug('onPop(err, data)',[err, data]);
             //technical DEBT dou to REDIS unsupported functionality
             //BRPOPLPUSH from multiple sources OR LUA Scripting
             rcli.lpush(aux_queue_id, data[1], function onPush(err){
@@ -49,7 +49,8 @@ function get(keys, aux_queue_id, callback) {
 
 function get_pending(idconsumer, callback){
     "use strict";
-    logger.debug('get_pending', {idconsumer: idconsumer, callback: callback});
+    logger.debug('get_pending(idconsumer, callback)',[idconsumer, callback]);
+
     rcli.rpop(idconsumer, function onPendingData(err, data){
         var obj = JSON.parse(data);
         if(callback){callback(err, { queueId: 'PendingRecovery', task: obj });}
@@ -58,7 +59,7 @@ function get_pending(idconsumer, callback){
 
 function rem_processing_queue(idconsumer, callback) {
     "use strict";
-    logger.debug('rem_processing_queue', {idconsumer: idconsumer, callback: callback});
+    logger.debug('rem_processing_queue(idconsumer, callback)', [idconsumer, callback]);
     rcli.del(idconsumer, callback);
 }
 
