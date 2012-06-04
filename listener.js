@@ -57,7 +57,8 @@ http.createServer(
                     res.end(result.data);
                     reqLog.responseTime = Date.now() - reqLog.start;
                     reqLog.statusCode = result.statusCode
-                    reqLog.bodyLenght = data.length;
+                    reqLog.bodyLength = data.length;
+                    reqLog.id = result.data;
                     delete reqLog.start;
                     logger.info('request', reqLog);
                 });
@@ -148,7 +149,6 @@ function assign_request(request, data, callback) {
                     };
                     emitter.emit(G.EVENT_NEWSTATE, st);
                 }
-                logger.info('response', response);
                 callback(response);
             }
         );

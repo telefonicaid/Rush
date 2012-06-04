@@ -13,7 +13,8 @@ function init(emitter, callback) {
     emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
         logger.debug('onNewEvent(data)', [data]);
         if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
-            do_http_callback(data.task, data.result || data.err, function (error, result) {
+            do_http_callback(data.task, data.result || data.err, function onHttpCb(error, result) {
+                logger.debug('onHttpCb(error, result) ', [error, result ]);
                 if (error || result) {
                     var st = {
                         id:data.task.id,
@@ -23,10 +24,11 @@ function init(emitter, callback) {
                         err:error,
                         result:result
                     };
+                    logger.info('onHttpCb - st', st) ;
                     emitter.emit(MG.EVENT_NEWSTATE, st);
                 }
                 if(error) {
-                    logger.warning('new_event', error);
+                    logger.warning('onNewEvent', error);
                     var errev = {
                         id:data.task.id,
                         date: new Date(),
