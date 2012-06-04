@@ -8,13 +8,11 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 
 function init(emitter, callback) {
-    "use strict";
-    emitter.on(MG.EVENT_NEWSTATE, function new_event(data) {
-
+    'use strict';
+    emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
+        logger.debug('onNewEvent(data)', [data]);
 
         if (data.state === MG.STATE_ERROR ||data.state === MG.STATE_COMPLETED) {
-            console.log("\n\n\nDATA (persistence):\n");
-            console.dir(data);
             var type = data.state === MG.STATE_ERROR?'ERROR':data.task.headers[MG.HEAD_RELAYER_PERSISTENCE];
             do_persistence(data.task, data.result || data.err, type, function (error, result) {
                 if (error || result) {
@@ -34,8 +32,8 @@ function init(emitter, callback) {
 }
 
 function do_persistence(task, resp_obj, type, callback) {
-    "use strict";
-
+    'use strict';
+    logger.debug('do_persistence(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
     if (type === 'BODY' || type === 'STATUS' || type === 'HEADER' || type === 'ERROR') {
         set_object(task, resp_obj, type, callback);
     } else {
@@ -46,7 +44,7 @@ function do_persistence(task, resp_obj, type, callback) {
                 //Error
                 var err_msg =
                     type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
-                console.log(err_msg);
+                logger.warning('do_persistence', err_msg);
                 callback(err_msg);
             }
         }
@@ -54,7 +52,9 @@ function do_persistence(task, resp_obj, type, callback) {
 }
 
 function set_object(task, resp_obj, type, callback) {
-    "use strict";
+    'use strict';
+    logger.debug('set_object(task, resp_obj, type, callback)', [task, resp_obj, type, callback] );
+
     //remove from response what is not needed
     var err_msg,
         set_obj = {};
@@ -63,16 +63,20 @@ function set_object(task, resp_obj, type, callback) {
     set_obj = resp_obj;
     switch (type) {
         case 'STATUS':
-            delete set_obj.header;
+            delete set_obj.headers;
         /* fall-through */
         case  'HEADER':
             delete set_obj.body;
             break;
     }
 
-    db.update(task.id, set_obj, function (err) {
+    db.update(task.id, set_obj, function onUpdated(err) {
 
-      if (callback) {
+        if(err) {
+               logger.warning('onUpdated', err);
+        }
+
+        if (callback) {
             callback(err, set_obj);
         }
     });
