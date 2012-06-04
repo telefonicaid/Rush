@@ -3,7 +3,7 @@ var db = require('./dbrelayer');
 
 
 var path = require('path');
-var log = require('./logger');
+var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 

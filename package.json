@@ -23,7 +23,7 @@
         "node-uuid":"*",
         "async":"*",
         "mongodb":"*",
-        "winston":"*"
+        "logger" : "https://github.com/crbrox/pditclogger/tarball/master"
     },
     "license":"AGPL",
     "engine":{

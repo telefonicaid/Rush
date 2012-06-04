@@ -8,7 +8,7 @@ var event_worker = require('./event_worker');
 var MG = require('./my_globals').C;
 
 var path = require('path');
-var log = require('./logger');
+var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 
