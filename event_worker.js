@@ -23,23 +23,17 @@ function do_job(task, callback) {
     var target_host = task.headers[MG.HEAD_RELAYER_HOST],
         req;
     if (!target_host) {
-        logger.warning('do_job','Not target host');
+        logger.warning('do_job','No target host');
     } else {
         var options = url.parse(target_host);
         task.headers.host = options.host;
 
-        logger.warning('options.protocol', options.protocol);
         if(options.protocol === 'https:'){
-            logger.warning("ES SSL");
             httpModule = https;
-            logger.warning("DEBERIAMOS ESTAR USANDO httpS");
         }
         else  { // assume plain http
-            logger.warning("ES PLANO");
             httpModule = http;
         }
-
-        logger.warning('httpModule',httpModule);
         
         options.headers = task.headers;
         options.method = task.method;
