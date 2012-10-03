@@ -4,6 +4,8 @@
 //
 
 var http = require('http');
+var https = require('https');
+
 var MG = require('./my_globals').C;
 var url = require('url');
 
@@ -16,6 +18,8 @@ function do_job(task, callback) {
     'use strict';
     logger.debug('do_job(task, callback)', [task, callback]);
 
+    var httpModule;
+    
     var target_host = task.headers[MG.HEAD_RELAYER_HOST],
         req;
     if (!target_host) {
@@ -23,9 +27,23 @@ function do_job(task, callback) {
     } else {
         var options = url.parse(target_host);
         task.headers.host = options.host;
+
+        logger.warning('options.protocol', options.protocol);
+        if(options.protocol === 'https:'){
+            logger.warning("ES SSL");
+            httpModule = https;
+            logger.warning("DEBERIAMOS ESTAR USANDO httpS");
+        }
+        else  { // assume plain http
+            logger.warning("ES PLANO");
+            httpModule = http;
+        }
+
+        logger.warning('httpModule',httpModule);
+        
         options.headers = task.headers;
         options.method = task.method;
-        req = http.request(options, function (rly_res) {
+        req = httpModule.request(options, function (rly_res) {
             if (Math.floor(rly_res.statusCode / 100) !== 5) {
                 //if no 5XX ERROR
                 get_response(rly_res, task, function (task, resp_obj) {
