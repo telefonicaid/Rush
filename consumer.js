@@ -6,7 +6,7 @@
 var http = require('http');
 var store = require('./task_queue.js');
 var service_router = require('./service_router');
-var C = require('./config_base.js');
+var config_global = require('./config_base.js');
 var G = require('./my_globals').C;
 var emitter = require('./emitter_module.js').get();
 
@@ -14,6 +14,7 @@ var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
+logger.setLevel(config_global.logLevel);
 
 var obsQueues = service_router.getQueues();
 
@@ -137,5 +138,5 @@ function consume(idconsumer, start) {
 
 
 for (var i = 0; i < max_poppers; i++) {
-    consume(C.consumer_id + i, true);
+    consume(config_global.consumer_id + i, true);
 }

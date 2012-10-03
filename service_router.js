@@ -6,11 +6,13 @@
 //var worker_relay = require('./worker_relay');
 var event_worker = require('./event_worker');
 var MG = require('./my_globals').C;
+var config_global = require('./config_base.js');
 
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
+logger.setLevel(config_global.logLevel);
 
 /*
  ok: true/false

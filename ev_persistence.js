@@ -1,11 +1,12 @@
 var MG = require('./my_globals').C;
 var db = require('./dbrelayer');
-
+var config_global = require('./config_base.js');
 
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
+logger.setLevel(config_global.logLevel);
 
 function init(emitter, callback) {
     'use strict';

@@ -3,6 +3,18 @@
 //
 //
 
+
+/**
+ * Level for logger
+ * debug
+ * warning
+ * error
+ *
+ * @type {String}
+ */
+exports.logLevel = 'debug';
+
+
 // redis host
 exports.queue= {};
 exports.queue.redis_host = 'localhost';
@@ -10,6 +22,7 @@ exports.queue.redis_host = 'localhost';
 exports.dbrelayer = {};
 exports.dbrelayer.key_prefix = 'wrH:';
 exports.dbrelayer.redis_host = 'localhost';
+exports.dbrelayer.logLevel = 'warning';
 exports.expire_time = 60;
 
 exports.consumer_id = "consumerA:";
@@ -20,3 +33,6 @@ exports.ev_lsnr.mongo_port = 27017;
 exports.ev_lsnr.mongo_db =  'rush';
 exports.ev_lsnr.collectionState= 'RushState';
 exports.ev_lsnr.collectionError= 'RushError';
+
+
+

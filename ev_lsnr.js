@@ -7,12 +7,14 @@
 var mongodb = require('mongodb');
 
 var G = require('./my_globals').C;
-var config = require('./config_base').ev_lsnr;
+var config_global = require('./config_base');
+var config = config_global.ev_lsnr;
 
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
+logger.setLevel(config_global.logLevel);
 
 var clients = [];
 

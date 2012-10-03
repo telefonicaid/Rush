@@ -3,13 +3,16 @@
 //
 //
 
-var config = require('./config_base').dbrelayer;
+var config_global = require('./config_base');
+var config = config_global.dbrelayer;
+
 var redis = require('redis');
 
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
+logger.setLevel(config_global.logLevel);
 
 var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 

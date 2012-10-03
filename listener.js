@@ -11,6 +11,7 @@ var store = require('./task_queue');
 
 var emitter = require('./emitter_module').get();
 var G = require('./my_globals').C;
+var config = require('./config_base.js');
 var dbrelayer = require('./dbrelayer');
 
 var ev_lsnr = require('./ev_lsnr');
@@ -20,6 +21,7 @@ var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
+logger.setLevel(config.logLevel);
 
 http.createServer(
     function serveReq(req, res) {
