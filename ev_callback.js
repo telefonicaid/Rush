@@ -12,41 +12,48 @@ logger.setLevel(config_global.logLevel);
 
 function init(emitter, callback) {
     'use strict';
+    
+    
     emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
+
+        function onHttpCb(error, result) {
+            logger.debug('onHttpCb(error, result) ', [error, result ]);
+            if (error || result) {
+                var st = {
+                    id:data.task.id,
+                    state:MG.STATE_CALLBACK,
+                    date:new Date(),
+                    task:data.task,
+                    err:error,
+                    result:result
+                };
+                logger.info('onHttpCb - st', st) ;
+                emitter.emit(MG.EVENT_NEWSTATE, st);
+            }
+            if(error) {
+                logger.warning('onNewEvent', error);
+                var errev = {
+                    id:data.task.id,
+                    date: new Date(),
+                    cb_err: error
+                };
+                emitter.emit(MG.EVENT_ERR, errev);
+            }
+        }
+        
         logger.debug('onNewEvent(data)', [data]);
         if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
-            do_http_callback(data.task, data.result || data.err, function onHttpCb(error, result) {
-                logger.debug('onHttpCb(error, result) ', [error, result ]);
-                if (error || result) {
-                    var st = {
-                        id:data.task.id,
-                        state:MG.STATE_CALLBACK,
-                        date:new Date(),
-                        task:data.task,
-                        err:error,
-                        result:result
-                    };
-                    logger.info('onHttpCb - st', st) ;
-                    emitter.emit(MG.EVENT_NEWSTATE, st);
-                }
-                if(error) {
-                    logger.warning('onNewEvent', error);
-                    var errev = {
-                        id:data.task.id,
-                        date: new Date(),
-                        cb_err: error
-                    };
-                    emitter.emit(MG.EVENT_ERR, errev);
-                }
-            });
+            do_http_callback(data.task, data.result || data.err, data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK],onHttpCb);
+        }  
+        if(data.state === MG.STATE_ERROR) {
+            do_http_callback(data.task, data.result || data.err, data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK_ERROR],onHttpCb);
         }
     });
 }
 
-function do_http_callback(task, resp_obj, callback) {
+function do_http_callback(task, resp_obj, callback_host, callback) {
     'use strict';
-    logger.debug('do_http_callback(task, resp_obj, callback)', [task, resp_obj, callback]);
-    var callback_host = task.headers[MG.HEAD_RELAYER_HTTPCALLBACK];
+    logger.debug('do_http_callback(task, resp_obj, callback)', [task, resp_obj, callback]);    
     var cb_res;
     if (callback_host) {
         var callback_options = url.parse(callback_host);
