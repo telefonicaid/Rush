@@ -56,7 +56,7 @@ function init(emitter, callback) {
 function do_http_callback(task, resp_obj, callback_host, cb_field, callback) {
     'use strict';
     logger.debug('do_http_callback(task, resp_obj, callback_host, cb_status_field, callback)', [task, resp_obj, callback_host, cb_field, callback]);
-    var cb_res;
+    var cb_res = {};
     if (callback_host) {
         var callback_options = url.parse(callback_host);
         callback_options.method = 'POST';
@@ -86,7 +86,7 @@ function do_http_callback(task, resp_obj, callback_host, cb_field, callback) {
             if(err) {
                 logger.warning('onReqError', err);
             }
-            var cb_st;
+            var cb_st = {};
             cb_st[cb_field+'_err'] = err.code+'('+ err.syscall+')';
 
             //store iff persistence policy
