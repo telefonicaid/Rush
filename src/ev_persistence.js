@@ -19,7 +19,8 @@ function init(emitter, callback) {
                 if (error || result) {
                     var st = {
                         id:data.task.id,
-                        state:MG.STATE_PERSISTENCE,
+                      topic: data.task.headers[MG.HEAD_RELAYER_TOPIC],
+                      state:MG.STATE_PERSISTENCE,
                         date:new Date(),
                         task:data.task,
                         err:error,
