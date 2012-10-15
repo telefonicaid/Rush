@@ -3,7 +3,7 @@ var LISTENER_HOSTNAME = 'localhost', LISTENER_PORT = '8030', REDIS_HOST = 'Relay
 
 
 var http = require('http');
-var global = require('../my_globals').C;
+var global = require('../src/my_globals').C;
 var async = require('async');
 var os = require('os');
 var redis_mod = require('redis');
@@ -20,7 +20,7 @@ var oneway = function(method) {
         //verify Server Side
         console.log('Verify Server Side');
         //TEST PATH
-        if (req.url == '/testpath') {
+        if (req.url === '/testpath') {
           ok(' request URL: ' + req.url);
         } else {
           fail(' request URL:' + req.url);

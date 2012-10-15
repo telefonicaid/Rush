@@ -20,6 +20,7 @@ exports.C = {
     'HEAD_RELAYER_HTTPCALLBACK':'x-relayer-httpcallback',
     'HEAD_RELAYER_HTTPCALLBACK_ERROR':'x-relayer-httpcallback-error',
     'HEAD_RELAYER_PERSISTENCE' : 'x-relayer-persistence', //STATUS, HEAD, CONTENT
+    'HEAD_RELAYER_TOPIC': 'x-relayer-topic',
     'PARAM_DBHOST':'dbhost',
     'PARAM_DBPORT':'dbport',
     'PARAM_SPAWN':'spawn',

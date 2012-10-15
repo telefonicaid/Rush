@@ -44,6 +44,7 @@ http.createServer(
         reqLog.headers[G.HEAD_RELAYER_RETRY]=req.headers[G.HEAD_RELAYER_RETRY];
         reqLog.headers[G.HEAD_RELAYER_HTTPCALLBACK]=req.headers[G.HEAD_RELAYER_HTTPCALLBACK];
         reqLog.headers[G.HEAD_RELAYER_PERSISTENCE]= req.headers[G.HEAD_RELAYER_PERSISTENCE];
+        reqLog.headers[G.HEAD_RELAYER_TOPIC] = req.headers[G.HEAD_RELAYER_TOPIC];
         reqLog.headers['content-type'] = req.headers['content-type'];
 
         parsedUrl = url.parse(req.url);
@@ -58,7 +59,7 @@ http.createServer(
                     res.writeHead(result.statusCode);
                     res.end(result.data);
                     reqLog.responseTime = Date.now() - reqLog.start;
-                    reqLog.statusCode = result.statusCode
+                    reqLog.statusCode = result.statusCode;
                     reqLog.bodyLength = data.length;
                     reqLog.id = result.data;
                     delete reqLog.start;
@@ -87,7 +88,7 @@ http.createServer(
                     res.writeHead(400);
                     res.end('bad format: ' + parsedUrl.pathname);
                     reqLog.responseTime = reqLog.responseTime = Date.now() - reqLog.start;
-                    reqLog.statusCode = 400
+                    reqLog.statusCode = 400;
                     reqLog.bodyLength = data.length;
                     logger.warning('bad format',reqLog);
                 }
@@ -125,6 +126,7 @@ function assign_request(request, data, callback) {
                     //EMIT ERROR
                     var errev = {
                         queueId:target.service,
+                        topic: simple_req.headers[G.HEAD_RELAYER_TOPIC],
                         err:error,
                         date:new Date()
                     };
@@ -132,7 +134,8 @@ function assign_request(request, data, callback) {
                     //EMIT STATE ERROR
                     st = {
                         id:simple_req.id,
-                        state:G.STATE_ERROR,
+                      topic: simple_req.headers[G.HEAD_RELAYER_TOPIC],
+                      state:G.STATE_ERROR,
                         date:new Date(),
                         task:simple_req
                     };
@@ -145,7 +148,8 @@ function assign_request(request, data, callback) {
                     //EMIT STATE PENDING
                     st = {
                         id:simple_req.id,
-                        state:G.STATE_PENDING,
+                      topic: simple_req.headers[G.HEAD_RELAYER_TOPIC],
+                      state:G.STATE_PENDING,
                         date:new Date(),
                         task:simple_req
                     };
