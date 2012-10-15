@@ -19,8 +19,8 @@ function init(emitter, callback) {
                 if (error || result) {
                     var st = {
                         id:data.task.id,
-                      topic: data.task.headers[MG.HEAD_RELAYER_TOPIC],
-                      state:MG.STATE_PERSISTENCE,
+                        topic: data.task.headers[MG.HEAD_RELAYER_TOPIC],
+                        state:MG.STATE_PERSISTENCE,
                         date:new Date(),
                         task:data.task,
                         err:error,
@@ -37,7 +37,8 @@ function do_persistence(task, resp_obj, type, callback) {
     'use strict';
     logger.debug('do_persistence(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
     if (type === 'BODY' || type === 'STATUS' || type === 'HEADER' || type === 'ERROR') {
-        set_object(task, resp_obj, type, callback);
+      task.topic = task.headers[MG.HEAD_RELAYER_TOPIC];
+      set_object(task, resp_obj, type, callback);
     } else {
         if (!type && callback) {
             callback(null, null);
