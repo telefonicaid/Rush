@@ -3,10 +3,11 @@ var http = require('http');
 var serverListener = function (connectedCallback, dataCallback) {
 
     var body = '';
-    var headers;
+    var headers, method;
 
     var srv = http.createServer(function (req, res) {
         headers = req.headers;
+        method = req.method;
         req.on('data', function (chunk) {
             body += chunk;
         });
@@ -16,7 +17,7 @@ var serverListener = function (connectedCallback, dataCallback) {
         req.on('end', function () {
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(body);
-            dataCallback(headers, body);
+            dataCallback(method, headers, body);
             req.destroy();
             srv.close();
         });
