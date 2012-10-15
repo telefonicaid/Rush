@@ -1,6 +1,6 @@
 http = require('http');
 
-function postObj(options, content, cb) {
+var postObj = function (options, content, cb) {
     'use strict';
     var data = '';
 
@@ -29,23 +29,6 @@ function postObj(options, content, cb) {
 
     req.end();
 
-}
+};
 
-
-// Ejemplo de options
-var options = {};
-options.host = 'localhost';
-options.port = '8030';
-options.method = 'GET';
-options.headers = {};
-options.headers['content-type'] = 'application/json';
-options.headers['X-Relayer-Host'] = 'http://www.google.es/';
-options.headers['X-relayer-persistence'] = 'BODY';
-
-postObj(options, 'body', function (e) {
-    if (!e) {
-        console.log('finished');
-    }
-    console.log(e);
-    console.log('Callback\n')
-})
+postObj.exports = postObj;
