@@ -1,4 +1,3 @@
-
 var http = require('http');
 
 var serverListener = function (connectedCallback, dataCallback) {
@@ -17,18 +16,15 @@ var serverListener = function (connectedCallback, dataCallback) {
         req.on('end', function () {
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(body);
-            dataCallback(headers,body);
-            setTimeout(function(){
-                req.destroy();
-                srv.close();
-            },1000);
+            dataCallback(headers, body);
+            req.destroy();
+            srv.close();
         });
-        srv.on('close',function(){
+        srv.on('close', function () {
             console.log('server Closed');
         });
-    }).listen(8014);
+    }).listen(8014, connectedCallback);
 
-    srv.on('connection',connectedCallback);
 };
 
 exports.serverListener = serverListener;
