@@ -16,12 +16,12 @@ var postObj = function (options, content, cb) {
         });
         res.on('end', function () {
             console.log('end ' + data);
-            cb();
+            cb(null, data);
         });
     });
 
     req.on('error', function (e) {
-        cb(e);
+        cb(e, null);
     });
     if (options.method === 'POST' || options.method === 'PUT') {
         req.write(JSON.stringify(content));
@@ -31,4 +31,4 @@ var postObj = function (options, content, cb) {
 
 };
 
-postObj.exports = postObj;
+exports.postObj = postObj;
