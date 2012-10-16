@@ -46,6 +46,6 @@ exports.ev_lsnr.collectionError= 'RushError';
 exports.listener = {};
 exports.listener.port = 3001;
 
-config_global.consumer = {};
-config_global.consumer.max_poppers = 500;
+exports.consumer = {};
+exports.consumer.max_poppers = 500;
 
