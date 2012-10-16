@@ -16,16 +16,67 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 
 
-function do_job(task, callback) {
+function urlErrors(pUrl) {
+    "use strict";
+    var parsedUrl;
+    if (pUrl) {
+        parsedUrl = url.parse(pUrl);
+        if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+            return ('Invalid protocol ' + pUrl );
+        }
+    }
+
+    return null;
+}
+function createTask(simpleRequest, callback) {
+    "use strict";
+    
+    //Check required headers
+    if (!simpleRequest.headers[MG.HEAD_RELAYER_HOST]) {
+        callback ([MG.HEAD_RELAYER_HOST + ' is missing'], null);
+    }
+    else {
+        var errorsHeaders = [];
+        //check URLS
+        errorsHeaders = [simpleRequest.headers[MG.HEAD_RELAYER_HTTPCALLBACK],
+            simpleRequest.headers[MG.HEAD_RELAYER_HTTPCALLBACK_ERROR],
+            simpleRequest.headers[MG.HEAD_RELAYER_HOST]
+        ].map(urlErrors).filter(function(e) { return e!==null;});
+        
+        //check Retry header
+        var retryStr = simpleRequest.headers[MG.HEAD_RELAYER_RETRY];
+        if (retryStr) {
+         var retrySplit = retryStr.split(',');
+        if (!retrySplit.every(function(num){return isFinite(Number(num));})) {
+            errorsHeaders.push('invalid retry value: '+ retryStr);
+        }
+        }
+        //check Persistence Header
+        var persistence = simpleRequest.headers[MG.HEAD_RELAYER_PERSISTENCE];
+        if(persistence){
+        if (persistence!=='BODY' && persistence !== 'STATUS' && persistence !== 'HEADER'){
+            errorsHeaders.push('invalid persistence type: '+persistence);
+        }
+        }      
+        if(errorsHeaders.length > 0) {
+                 callback(errorsHeaders, null);
+        }
+        else {
+            callback(null, simpleRequest);
+        }
+    }    
+}
+
+function doJob(task, callback) {
     'use strict';
-    logger.debug('do_job(task, callback)', [task, callback]);
+    logger.debug('doJob(task, callback)', [task, callback]);
 
     var httpModule;
     
     var target_host = task.headers[MG.HEAD_RELAYER_HOST],
         req;
     if (!target_host) {
-        logger.warning('do_job','No target host');
+        logger.warning('doJob','No target host');
     } else {
         var options = url.parse(target_host);
         task.headers.host = options.host;
@@ -58,7 +109,7 @@ function do_job(task, callback) {
         });
         req.on('error', function (e) {
             e.resultOk = false;
-            logger.warning('do_job',e);
+            logger.warning('doJob',e);
             handle_request_error(task, {id:task.id, resultOk: false, error:e.code+'('+ e.syscall+')'}, callback);
         });
 
@@ -118,7 +169,7 @@ function do_retry(task, error, callback) {
             }
             if (time > 0) {
                 setTimeout(function () {
-                    do_job(task, callback);
+                    doJob(task, callback);
                 }, time);
             }
         }
@@ -129,4 +180,5 @@ function do_retry(task, error, callback) {
         }
     }
 }
-exports.do_job = do_job;
+exports.doJob = doJob;
+exports.createTask = createTask;

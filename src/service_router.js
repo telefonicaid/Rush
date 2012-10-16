@@ -19,16 +19,17 @@ logger.prefix = path.basename(module.filename,'.js');
  service
  message
  */
-function route(request) {
+function route(request, callback) {
     'use strict';
     logger.debug("route(request)", [request]);
-    if (!request.headers[MG.HEAD_RELAYER_HOST]) {
-        return { ok:false, message:MG.HEAD_RELAYER_HOST + ' is missing'};
-    }
-    else {
-        return { ok:true, service: 'wrL:hpri'};
-    }
-
+    getTask(request, function(err, task){
+        if(err){
+            callback({ok:false, message:err}, null);  
+        }
+        else{
+            callback(null, { ok:true, service: 'wrL:hpri', task: task});
+        }
+    });
 }
 
 
@@ -44,7 +45,14 @@ function getWorker(resp) {
     "use strict";
     logger.debug("getWorker(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
-    return event_worker.do_job;
+    return event_worker.doJob;
+}
+
+function getTask(resp, callback){
+    "use strict";
+    logger.debug("getTask(resp)", [resp]);
+    // Select a worker based on resp data ( from task queue)
+    return event_worker.createTask(resp, callback);
 }
 
 exports.route = route;
