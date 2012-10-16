@@ -12,10 +12,10 @@ var serverListener = function (connectedCallback, dataCallback) {
             body += chunk;
         });
         srv.on('error', function () {
-            callback(false);
+            dataCallback(null);
         });
         req.on('end', function () {
-            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.writeHead(200, headers);
             res.end(body);
             dataCallback(method, headers, body);
             req.destroy();
