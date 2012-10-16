@@ -20,7 +20,7 @@ var emitter = require('./emitter_module.js').get();
 
 var obsQueues = service_router.getQueues();
 
-var max_poppers = 500;
+var max_poppers = config_global.consumer.max_poppers;
 
 
 var ev_lsnr = require('./ev_lsnr');
