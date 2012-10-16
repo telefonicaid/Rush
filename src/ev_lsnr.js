@@ -14,7 +14,7 @@ var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
-logger.setLevel(config_global.logLevel);
+
 
 var clients = [];
 
