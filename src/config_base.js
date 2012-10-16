@@ -43,5 +43,6 @@ exports.ev_lsnr.mongo_db =  'rush';
 exports.ev_lsnr.collectionState= 'RushState';
 exports.ev_lsnr.collectionError= 'RushError';
 
-
+exports.listener = {};
+exports.listener.port = 3001;
 

@@ -89,7 +89,7 @@ http.createServer(function serveReq(req, res) {
             }
         }
     });
-}).listen(8030);
+}).listen(config.listener.port);
 
 
 function assign_request(request, data, callback) {
