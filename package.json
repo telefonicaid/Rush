@@ -19,7 +19,7 @@
     },
 
     "dependencies":{
-        "redis":"*",
+        "redis":"0.7.*",
         "node-uuid":"*",
         "async":"*",
         "mongodb":"*",
