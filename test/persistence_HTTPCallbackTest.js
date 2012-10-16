@@ -7,13 +7,22 @@ function makeRequest(type, content, done) {
     'use strict';
     //Variables
     var applicationContent = 'application/json',
+        relayerPersitence = 'BODY',
         relayerhost = 'http://localhost:8014',
         httpcallback = 'http://localhost:8015',
         personalHeader1name = 'personal-header-1',
         personalHeader1value = 'TEST1',
         personalHeader2name = 'personal-header-2',
         personalHeader2value = 'TEST2',
-        server_callback;
+        server_callback, id;
+
+    function testHeraders (headers) {
+        headers.should.have.property('content-type', applicationContent);
+        headers.should.have.property('x-relayer-host', relayerhost);
+        headers.should.have.property('x-relayer-httpcallback', httpcallback);
+        headers.should.have.property(personalHeader1name, personalHeader1value);
+        headers.should.have.property(personalHeader2name, personalHeader2value);
+    }
 
     //Start up the server
     server.serverListener(
@@ -27,30 +36,20 @@ function makeRequest(type, content, done) {
             options.method = type;
             options.headers = {};
             options.headers['content-type'] = applicationContent;
+            options.headers['X-relayer-persistence'] = relayerPersitence;
             options.headers['X-Relayer-Host'] = relayerhost;
             options.headers['x-relayer-httpcallback'] = httpcallback;
             options.headers[personalHeader1name] = personalHeader1value;
             options.headers[personalHeader2name] = personalHeader2value;
 
             utils.makeRequest(options, content, function (e, data) {
-                //console.log(e);
-                //console.log(data);
+                id = data;
             });
-
         },
 
         function (method, headers, contentReceived) {
-            //Test method
             method.should.be.equal(type);
-
-            //Test headers
-            headers.should.have.property('content-type', applicationContent);
-            headers.should.have.property('x-relayer-host', relayerhost);
-            headers.should.have.property('x-relayer-httpcallback', httpcallback);
-            headers.should.have.property(personalHeader1name, personalHeader1value);
-            headers.should.have.property(personalHeader2name, personalHeader2value);
-
-            //Test content
+            testHeraders(headers);
             contentReceived.should.be.equal(content);
         }
     );
@@ -66,19 +65,33 @@ function makeRequest(type, content, done) {
             });
 
         req.on('end', function () {
-            JSON.parse(response).body.should.be.equal(content);
             res.writeHead(200);
             res.end();
             server_callback.close();
-            done();
-        });
 
+            //Check content and headers
+            var JSONRes = JSON.parse(response);
+            JSONRes.body.should.be.equal(content);
+
+            testHeraders(JSONRes.headers);
+
+            // Check persistence
+            var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+            utils.makeRequest(options, '', function (err, data) {
+                var JSONRes = JSON.parse(data);
+                JSONRes.body.should.be.equal(content);
+                testHeraders(JSON.parse(JSONRes.headers));
+
+                done();
+            });
+
+        });
     }).listen(8015);
 }
 
-describe('HTTP_Callback', function () {
+describe('Persistence_HTTPCallback', function () {
     'use strict';
-    var content = 'HTTP_Callback Test';
+    var content = 'Persistence&HTTPCallBack Test';
 
     describe('#POST', function () {
 
@@ -101,10 +114,10 @@ describe('HTTP_Callback', function () {
         })
     });
 
-    describe('#PUT', function () {
+    describe('#DELETE', function () {
 
         it('Should ', function (done) {
             makeRequest('DELETE', '', done);
         })
-    });
+    })
 });
