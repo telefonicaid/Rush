@@ -2,19 +2,23 @@
 // Copyright (c) Telefonica I+D. All rights reserved.
 //
 //
-
+var config_global = require('./config_base.js');
+var path = require('path');
+var log = require('PDITCLogger');
+config_global.logger.File.filename = 'consumer.log';
+log.setConfig(config_global.logger);
+var logger = log.newLogger();
+logger.prefix = path.basename(module.filename,'.js');
+                                                            
 var http = require('http');
 var store = require('./task_queue.js');
 var service_router = require('./service_router');
-var config_global = require('./config_base.js');
+
 var G = require('./my_globals').C;
 var emitter = require('./emitter_module.js').get();
 
 var path = require('path');
 var log = require('PDITCLogger');
-var logger = log.newLogger();
-logger.prefix = path.basename(module.filename, '.js');
-logger.setLevel(config_global.logLevel);
 
 var obsQueues = service_router.getQueues();
 

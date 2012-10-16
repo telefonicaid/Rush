@@ -14,7 +14,7 @@ var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
-logger.setLevel(config_global.logLevel);
+
 
 function do_job(task, callback) {
     'use strict';
@@ -50,7 +50,7 @@ function do_job(task, callback) {
                                 });
             } else {
                 get_response(rly_res, task, function (task, resp_obj) {
-                    var e = {resultOk:true, statusCode:rly_res.statusCode, headers:rly_res.headers, body:resp_obj.body };
+                    var e = {id:task.id, resultOk:false, statusCode:rly_res.statusCode, headers:rly_res.headers, body:resp_obj.body };
                     handle_request_error(task, e, callback);
                 });
 
@@ -59,7 +59,7 @@ function do_job(task, callback) {
         req.on('error', function (e) {
             e.resultOk = false;
             logger.warning('do_job',e);
-            handle_request_error(task, {resultOk: false, error:e.code+'('+ e.syscall+')'}, callback);
+            handle_request_error(task, {id:task.id, resultOk: false, error:e.code+'('+ e.syscall+')'}, callback);
         });
 
         if (options.method === 'POST' || options.method === 'PUT') {
@@ -91,7 +91,7 @@ function get_response(resp, task, callback) {
                 data += chunk;
             } //avoid tail undefined
         }
-        var resp_obj = {resultOk:true, statusCode:resp.statusCode, headers:resp.headers, body:data};
+        var resp_obj = {id: task.id, topic: task.headers[MG.HEAD_RELAYER_TOPIC], resultOk:true, statusCode:resp.statusCode, headers:resp.headers, body:data};
         if (callback) {
             callback(task, resp_obj);
         }
