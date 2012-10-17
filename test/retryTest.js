@@ -11,7 +11,9 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
         PERSONAL_HEADER_1_NAME = 'personal-header-1',
         PERSONAL_HEADER_1_VALUE = 'TEST1',
         PERSONAL_HEADER_2_NAME = 'personal-header-2',
-        PERSONAL_HEADER_2_VALUE = 'TEST2';
+        PERSONAL_HEADER_2_VALUE = 'TEST2',
+        petitionsReceived = 0,
+        srv;
 
     function makeRequest(retryTimes) {
 
@@ -30,9 +32,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
         utils.makeRequest(options, CONTENT, function (e, data) { });
     }
 
-    var petitionsReceived = 0;
-
-    var srv = http.createServer(function (req, res) {
+    srv = http.createServer(function (req, res) {
 
         var headers = req.headers,
             method = req.method,

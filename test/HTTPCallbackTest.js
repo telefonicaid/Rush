@@ -90,39 +90,39 @@ describe('HTTP_Callback', function () {
 
     describe('#POST', function () {
 
-        it('Should ', function (done) {
+        it('Should receive a callback on a correct POST petition', function (done) {
             makeRequest('POST', content, done);
         })
     });
 
     describe('#PUT', function () {
 
-        it('Should ', function (done) {
+        it('Should receive a callback on a correct PUT petition ', function (done) {
             makeRequest('PUT', content, done);
         })
     });
 
     describe('#GET', function () {
 
-        it('Should ', function (done) {
+        it('Should receive a callback on a correct GET petition ', function (done) {
             makeRequest('GET', '', done);
         })
     });
 
-    describe('#PUT', function () {
+    describe('#DELETE', function () {
 
-        it('Should ', function (done) {
+        it('Should receive a callback on a correct DELETE petition ', function (done) {
             makeRequest('DELETE', '', done);
         })
     });
 
     describe('Second petition should be completed even if the first callback is incorrect', function () {
 
-        it('Should', function (done) {
+        it('Consumer should not die even if the callback is not responding', function (done) {
             prepareServerAndSendPetition('POST', content, 'http://localhost:8888', done);
         })
 
-        it('Should', function (done) {
+        it('Should receive a callback even if the callback of the last petition was incorrect', function (done) {
             makeRequest('POST', content, done);
         })
     })
