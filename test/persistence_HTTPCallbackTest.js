@@ -3,13 +3,13 @@ var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 var http = require('http');
 
-function makeRequest(type, content, done) {
+function makeRequest(type, content, done, httpCallback) {
     'use strict';
     //Variables
     var applicationContent = 'application/json',
         relayerPersitence = 'BODY',
         relayerhost = 'http://localhost:8014',
-        httpcallback = 'http://localhost:8015',
+        httpcallback = httpCallback || 'http://localhost:8016',
         personalHeader1name = 'personal-header-1',
         personalHeader1value = 'TEST1',
         personalHeader2name = 'personal-header-2',
