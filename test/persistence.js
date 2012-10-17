@@ -9,6 +9,7 @@
 var should = require('should');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
+var async = require('async');
 
 options = {};
 options.host = 'localhost';
@@ -16,79 +17,116 @@ options.port = 8030;
 options.headers = {};
 
 describe('Persistence', function () {
-    describe('#GET', function () {
-        var options = this.options;
-        options.method = 'GET';
-        options.headers['content-type'] = 'application/json';
-        options.headers['X-Relayer-Host'] = 'http://localhost:8014';
-        options.headers['X-relayer-persistence'] = 'BODY';
-        options.headers['test-header'] = 'test header';
+    var options = this.options;
+    options.method = 'GET';
+    options.headers['content-type'] = 'application/json';
+    options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+    options.headers['X-relayer-persistence'] = 'BODY';
+    options.headers['test-header'] = 'test header';
 
-        it('should return empty body and test-header', function (done) {
-            var id;
-            server.serverListener(
-                function () {
+    it('should return empty body and test-header', function (done) {
+        var id;
+        server.serverListener(
+            function () {
+                utils.makeRequest(options, '', function (err, res) {
+                    id = res;
+                    console.log(id);
+                });
+            },
+            function (method, headers, body) {
+                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                setTimeout(function () {
                     utils.makeRequest(options, '', function (err, res) {
-                        id = res;
-                        console.log(id);
+                        var JSONres = JSON.parse(res);
+                        JSONres.body.should.be.equal('');
+                        JSON.parse(JSONres.headers).should.have.property('test-header', 'test header');
+                        done();
                     });
-                },
-                function (method, headers, body) {
-                    var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    setTimeout(function () {
-                        utils.makeRequest(options, '', function (err, res) {
-                            var JSONres = JSON.parse(res);
-                            JSONres.body.should.be.equal('');
-                            JSON.parse(JSONres.headers).should.have.property('test-header', 'test header');
-                            done();
-                        });
-                    }, 100); //Waiting for Rush to create the persistence
-                }
-            );
-        });
+                }, 100); //Waiting for Rush to create the persistence
+            }
+        );
+    });
+    it('should return the same body', function (done) {
         options.method = 'POST';
-        it('should return the same body', function (done) {
-            var id;
-            server.serverListener(
-                function () {
-                    utils.makeRequest(options, 'body request', function (err, res) {
-                        id = res;
-                        console.log(id);
+        var id;
+        server.serverListener(
+            function () {
+                utils.makeRequest(options, 'body request', function (err, res) {
+                    id = res;
+                    console.log(id);
+                });
+            },
+            function (method, headers, body) {
+                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                setTimeout(function () {
+                    utils.makeRequest(options, '', function (err, res) {
+                        var JSONres = JSON.parse(res);
+                        JSONres.body.should.be.equal('body request');
+                        done();
                     });
-                },
-                function (method, headers, body) {
-                    var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    setTimeout(function () {
-                        utils.makeRequest(options, '', function (err, res) {
-                            var JSONres = JSON.parse(res);
-                            JSONres.body.should.be.equal('body request');
-                            done();
-                        });
-                    }, 100); //Waiting for Rush to create the persistence
-                }
-            );
-        });
-        options.headers['X-relayer-persistence'] = 'BODY';
-        it('should not return body neither headers', function (done) {
-            var id;
-            server.serverListener(
-                function () {
-                    utils.makeRequest(options, 'body request', function (err, res) {
-                        id = res;
-                        console.log(id);
+                }, 100); //Waiting for Rush to create the persistence
+            }
+        );
+    });
+
+    it('should not return body neither headers', function (done) {
+        options.headers['X-relayer-persistence'] = 'STATUS';
+        var id;
+        server.serverListener(
+            function () {
+                utils.makeRequest(options, 'body request', function (err, res) {
+                    id = res;
+                    console.log(id);
+                });
+            },
+            function (method, headers, body) {
+                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                setTimeout(function () {
+                    utils.makeRequest(options, '', function (err, res) {
+                        var JSONres = JSON.parse(res);
+                        JSONres.should.not.have.property('body');
+                        JSONres.should.not.have.property('headers');
+                        done();
                     });
-                },
-                function (method, headers, body) {
-                    var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    setTimeout(function () {
-                        utils.makeRequest(options, '', function (err, res) {
-                            var JSONres = JSON.parse(res);
-                            JSONres.body.should.be.equal('body request');
-                            done();
-                        });
-                    }, 100); //Waiting for Rush to create the persistence
-                }
-            );
+                }, 100); //Waiting for Rush to create the persistence
+            }
+        );
+    });
+    it('should not return body neither headers', function (done) {
+        var id;
+        options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+        async.series([
+            function (callback) {
+                utils.makeRequest(options, 'body request', function (err, res) {
+                    id = res;
+                    console.log(id);
+                    setTimeout(function(){
+                        if(!err){
+                            callback(null, res);
+                        }
+                        else{
+                            callback(err, null);
+                        }
+                    },400); //Waiting for Rush to create the persistence
+                });
+            },
+            function (callback) {
+                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                utils.makeRequest(options, '', function (err, res) {
+                    if (!err) {
+                        var JSONres = JSON.parse(res);
+                        callback(null, JSONres);
+                    }
+                    else {
+                        callback(err, null);
+                    }
+                });
+            }
+        ], function (err, res) {
+            var resGet = res[1];
+            resGet.should.have.property('error','ENOTFOUND(getaddrinfo)');
+            resGet.should.have.property('resultOk','false');
+            done();
         });
     });
 });
