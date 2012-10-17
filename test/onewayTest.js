@@ -12,8 +12,8 @@ var http = require('http');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
-var host = config.hostname;
-var port = config.port;
+var host = config.rushServer.hostname;
+var port = config.rushServer.port;
 
 describe('Oneway', function () {
 

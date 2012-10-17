@@ -1,15 +1,17 @@
+var http = require('http');
 var should = require('should');
+var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
-var http = require('http');
 
-function makeRequest(type, content, done, httpCallback) {
+
+function makeRequest(type, content, done, httpCallbackPort) {
     'use strict';
     //Variables
     var applicationContent = 'application/json',
         relayerPersitence = 'BODY',
-        relayerhost = 'http://localhost:8014',
-        httpcallback = httpCallback || 'http://localhost:8016',
+        relayerhost = 'http://localhost:' + config.simpleServerPort,
+        httpcallback = 'http://localhost:' + (httpCallbackPort || config.callBackPort),
         personalHeader1name = 'personal-header-1',
         personalHeader1value = 'TEST1',
         personalHeader2name = 'personal-header-2',
@@ -31,19 +33,19 @@ function makeRequest(type, content, done, httpCallback) {
 
             //Petition method
             var options = {};
-            options.host = 'localhost';
-            options.port = '8030';
+            options.host = config.rushServer.hostname;
+            options.port = config.rushServer.port;
             options.method = type;
             options.headers = {};
             options.headers['content-type'] = applicationContent;
-            options.headers['X-relayer-persistence'] = relayerPersitence;
-            options.headers['X-Relayer-Host'] = relayerhost;
+            options.headers['x-relayer-persistence'] = relayerPersitence;
+            options.headers['x-relayer-host'] = relayerhost;
             options.headers['x-relayer-httpcallback'] = httpcallback;
             options.headers[personalHeader1name] = personalHeader1value;
             options.headers[personalHeader2name] = personalHeader2value;
 
             utils.makeRequest(options, content, function (e, data) {
-                id = data;
+                id = JSON.parse(data).id;
             });
         },
 
@@ -51,42 +53,48 @@ function makeRequest(type, content, done, httpCallback) {
             method.should.be.equal(type);
             testHeraders(headers);
             contentReceived.should.be.equal(content);
+
+            if (httpCallbackPort && httpCallbackPort !== config.callBackPort) {
+                done();
+            }
         }
     );
 
     //Callback Server
-    server_callback = http.createServer(function (req, res) {
+    if (!httpCallbackPort || (httpCallbackPort && httpCallbackPort === config.callBackPort)) {
+        server_callback = http.createServer(function (req, res) {
 
-        var response = '';
+            var response = '';
 
-        req.on('data',
-            function (chunk) {
-                response += chunk;
+            req.on('data',
+                function (chunk) {
+                    response += chunk;
+                });
+
+            req.on('end', function () {
+                res.writeHead(200);
+                res.end();
+                server_callback.close();
+
+                //Check content and headers
+                var JSONRes = JSON.parse(response);
+                JSONRes.result.body.should.be.equal(content);
+
+                testHeraders(JSONRes.result.headers);
+
+                // Check persistence
+                var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                utils.makeRequest(options, '', function (err, data) {
+                    var JSONRes = JSON.parse(data);
+                    JSONRes.body.should.be.equal(content);
+                    testHeraders(JSON.parse(JSONRes.headers));
+
+                    done();
+                });
+
             });
-
-        req.on('end', function () {
-            res.writeHead(200);
-            res.end();
-            server_callback.close();
-
-            //Check content and headers
-            var JSONRes = JSON.parse(response);
-            JSONRes.body.should.be.equal(content);
-
-            testHeraders(JSONRes.headers);
-
-            // Check persistence
-            var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
-            utils.makeRequest(options, '', function (err, data) {
-                var JSONRes = JSON.parse(data);
-                JSONRes.body.should.be.equal(content);
-                testHeraders(JSON.parse(JSONRes.headers));
-
-                done();
-            });
-
-        });
-    }).listen(8015);
+        }).listen(config.callBackPort);
+    }
 }
 
 describe('Persistence_HTTPCallback', function () {
@@ -118,6 +126,17 @@ describe('Persistence_HTTPCallback', function () {
 
         it('Should ', function (done) {
             makeRequest('DELETE', '', done);
+        })
+    })
+
+    describe('Second petition should be completed even if the first callback is incorrect', function () {
+
+        it('CallBack Incorrect', function (done) {
+            makeRequest('POST', content, done, 8888);
+        })
+
+        it('CallBack Correct', function (done) {
+            makeRequest('POST', content, done);
         })
     })
 });
