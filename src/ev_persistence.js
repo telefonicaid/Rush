@@ -35,6 +35,7 @@ function init(emitter, callback) {
 
 function do_persistence(task, resp_obj, type, callback) {
     'use strict';
+    console.log(type);
     logger.debug('do_persistence(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
     if (type === 'BODY' || type === 'STATUS' || type === 'HEADER' || type === 'ERROR') {
       task.topic = task.headers[MG.HEAD_RELAYER_TOPIC];
