@@ -10,6 +10,7 @@ logger.prefix = path.basename(module.filename,'.js');
 
 function init(emitter, callback) {
     'use strict';
+    
     emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
         logger.debug('onNewEvent(data)', [data]);
 
@@ -31,6 +32,7 @@ function init(emitter, callback) {
             });
         }
     });
+    callback(null);
 }
 
 function do_persistence(task, resp_obj, type, callback) {
