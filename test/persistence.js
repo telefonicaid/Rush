@@ -13,7 +13,7 @@ var async = require('async');
 
 options = {};
 options.host = 'localhost';
-options.port = 8030;
+options.port = 3001;
 options.headers = {};
 
 describe('Persistence', function () {
@@ -29,14 +29,15 @@ describe('Persistence', function () {
         server.serverListener(
             function () {
                 utils.makeRequest(options, '', function (err, res) {
-                    id = res;
+                    id = JSON.parse(res).id;
                     console.log(id);
                 });
             },
             function (method, headers, body) {
-                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 setTimeout(function () {
                     utils.makeRequest(options, '', function (err, res) {
+
                         var JSONres = JSON.parse(res);
                         JSONres.body.should.be.equal('');
                         JSON.parse(JSONres.headers).should.have.property('test-header', 'test header');
@@ -52,12 +53,12 @@ describe('Persistence', function () {
         server.serverListener(
             function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
-                    id = res;
+                    id = JSON.parse(res).id;
                     console.log(id);
                 });
             },
             function (method, headers, body) {
-                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 setTimeout(function () {
                     utils.makeRequest(options, '', function (err, res) {
                         var JSONres = JSON.parse(res);
@@ -75,12 +76,12 @@ describe('Persistence', function () {
         server.serverListener(
             function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
-                    id = res;
+                    id = JSON.parse(res).id;
                     console.log(id);
                 });
             },
             function (method, headers, body) {
-                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 setTimeout(function () {
                     utils.makeRequest(options, '', function (err, res) {
                         var JSONres = JSON.parse(res);
@@ -98,7 +99,7 @@ describe('Persistence', function () {
         async.series([
             function (callback) {
                 utils.makeRequest(options, 'body request', function (err, res) {
-                    id = res;
+                    id = JSON.parse(res).id;
                     console.log(id);
                     setTimeout(function(){
                         if(!err){
@@ -111,7 +112,7 @@ describe('Persistence', function () {
                 });
             },
             function (callback) {
-                var options = { port: 8030, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 utils.makeRequest(options, '', function (err, res) {
                     if (!err) {
                         var JSONres = JSON.parse(res);
