@@ -17,12 +17,10 @@ var service_router = require('./service_router');
 var G = require('./my_globals').C;
 var emitter = require('./emitter_module.js').get();
 
-var path = require('path');
-var log = require('PDITCLogger');
 
 var obsQueues = service_router.getQueues();
 
-var max_poppers = 500;
+var max_poppers = config_global.consumer.max_poppers;
 
 
 var ev_lsnr = require('./ev_lsnr');
@@ -42,8 +40,8 @@ function consume(idconsumer, start) {
     store.get(obsQueues, idconsumer, processing_consumed_task);
   }
 
-  function processing_consumed_task(err, resp) {
-    logger.debug('processing_consumed_task(err, resp)', [err, resp]);
+  function processing_consumed_task(err, job) {
+    logger.debug('processing_consumed_task(err, resp)', [err, job]);
 
     var st;
     if (err) {
@@ -56,22 +54,22 @@ function consume(idconsumer, start) {
       };
       emitter.emit(G.EVENT_ERR, errev);
     } else {
-      if (resp && resp.task) {
-        logger.debug("processing_consumed_task - resp", resp);
+      if (job && job.task) {
+        logger.debug("processing_consumed_task - resp", job);
         //EMIT PROCESSING
         st = {
-          id: resp.task.id,
-          topic: resp.task.headers[G.HEAD_RELAYER_TOPIC],
+          id: job.task.id,
+          topic: job.task.headers[G.HEAD_RELAYER_TOPIC],
           state: G.STATE_PROCESSING,
           date: new Date(),
-          task: resp.task,
+          task: job.task,
           idConsumer: idconsumer
         };
         emitter.emit(G.EVENT_NEWSTATE, st);
 
-        if (resp.queueId !== obsQueues.control) {
-          var do_job = service_router.getWorker(resp);
-          do_job(resp.task,
+        if (job.queueId !== obsQueues.control) {
+          var do_job = service_router.getWorker(job);
+          do_job(job.task,
             function onJobEnd(dojoberr, jobresult) { //job results add
               logger.debug('onJobEnd(dojoberr, jobresult)',
                 [dojoberr, jobresult]);
@@ -79,19 +77,19 @@ function consume(idconsumer, start) {
                 logger.warning('onJobEnd', dojoberr);
                 //EMIT ERROR
                 var errev = {
-                  id: resp.task.id,
-                  topic: resp.task.headers[G.HEAD_RELAYER_TOPIC],
+                  id: job.task.id,
+                  topic: job.task.headers[G.HEAD_RELAYER_TOPIC],
                   date: new Date(),
                   err: dojoberr
                 };
                 emitter.emit(G.EVENT_ERR, errev);
                 //EMIT ERROR STATE
                 st = {
-                  id: resp.task.id,
-                  topic: resp.task.headers[G.HEAD_RELAYER_TOPIC],
+                  id: job.task.id,
+                  topic: job.task.headers[G.HEAD_RELAYER_TOPIC],
                   state: G.STATE_ERROR,
                   date: new Date(),
-                  task: resp.task,
+                  task: job.task,
                   idConsumer: idconsumer,
                   err: dojoberr,
                   result: jobresult
@@ -102,11 +100,11 @@ function consume(idconsumer, start) {
               else {
                 //EMIT COMPLETED
                 st = {
-                  id: resp.task.id,
-                  topic: resp.task.headers[G.HEAD_RELAYER_TOPIC],
+                  id: job.task.id,
+                  topic: job.task.headers[G.HEAD_RELAYER_TOPIC],
                   state: G.STATE_COMPLETED,
                   date: new Date(),
-                  task: resp.task,
+                  task: job.task,
                   result: jobresult
                 };
                 emitter.emit(G.EVENT_NEWSTATE, st);
