@@ -34,6 +34,6 @@ exports.C = {
     'RD_POSTDATA':'Postdata',
     'RD_RELAYED_REQUEST':'RelayedRequest',
     'EVENT_NEWSTATE': 'newstate',
-    'EVENT_ERR' : 'error'
+    'EVENT_ERR' : 'failure'
 };
 
