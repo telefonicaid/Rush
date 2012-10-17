@@ -5,42 +5,42 @@ var config_global = require('./config_base.js');
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
-logger.prefix = path.basename(module.filename,'.js');
+logger.prefix = path.basename(module.filename, '.js');
 
 
-function init(emitter, callback) {
+function init(emitter) {
     'use strict';
-    
-    emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
-        logger.debug('onNewEvent(data)', [data]);
+    return function (callback) {
+        emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
+            logger.debug('onNewEvent(data)', [data]);
 
-        if (data.state === MG.STATE_ERROR ||data.state === MG.STATE_COMPLETED) {
-            var type = data.state === MG.STATE_ERROR?'ERROR':data.task.headers[MG.HEAD_RELAYER_PERSISTENCE];
-            do_persistence(data.task, data.result || data.err, type, function (error, result) {
-                if (error || result) {
-                    var st = {
-                        id:data.task.id,
-                        topic: data.task.headers[MG.HEAD_RELAYER_TOPIC],
-                        state:MG.STATE_PERSISTENCE,
-                        date:new Date(),
-                        task:data.task,
-                        err:error,
-                        result:result
-                    };
-                    emitter.emit(MG.EVENT_NEWSTATE, st);
-                }
-            });
-        }
-    });
-    callback(null);
+            if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
+                var type = data.state === MG.STATE_ERROR ? 'ERROR' : data.task.headers[MG.HEAD_RELAYER_PERSISTENCE];
+                do_persistence(data.task, data.result || data.err, type, function (error, result) {
+                    if (error || result) {
+                        var st = {
+                            id:data.task.id,
+                            topic:data.task.headers[MG.HEAD_RELAYER_TOPIC],
+                            state:MG.STATE_PERSISTENCE,
+                            date:new Date(),
+                            task:data.task,
+                            err:error,
+                            result:result
+                        };
+                        emitter.emit(MG.EVENT_NEWSTATE, st);
+                    }
+                });
+            }
+        });
+        callback(null, "ev_persistence OK");
+    };
 }
-
 function do_persistence(task, resp_obj, type, callback) {
     'use strict';
     logger.debug('do_persistence(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
     if (type === 'BODY' || type === 'STATUS' || type === 'HEADER' || type === 'ERROR') {
-      task.topic = task.headers[MG.HEAD_RELAYER_TOPIC];
-      set_object(task, resp_obj, type, callback);
+        task.topic = task.headers[MG.HEAD_RELAYER_TOPIC];
+        set_object(task, resp_obj, type, callback);
     } else {
         if (!type && callback) {
             callback(null, null);
@@ -56,9 +56,10 @@ function do_persistence(task, resp_obj, type, callback) {
     }
 }
 
+
 function set_object(task, resp_obj, type, callback) {
     'use strict';
-    logger.debug('set_object(task, resp_obj, type, callback)', [task, resp_obj, type, callback] );
+    logger.debug('set_object(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
 
     //remove from response what is not needed
     var err_msg,
@@ -77,8 +78,8 @@ function set_object(task, resp_obj, type, callback) {
 
     db.update(task.id, set_obj, function onUpdated(err) {
 
-        if(err) {
-               logger.warning('onUpdated', err);
+        if (err) {
+            logger.warning('onUpdated', err);
         }
 
         if (callback) {
