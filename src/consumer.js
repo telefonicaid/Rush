@@ -17,18 +17,30 @@ var service_router = require('./service_router');
 var G = require('./my_globals').C;
 var emitter = require('./emitter_module.js').get();
 
-
 var obsQueues = service_router.getQueues();
 
 var max_poppers = config_global.consumer.max_poppers;
 
-
 var ev_lsnr = require('./ev_lsnr');
-ev_lsnr.init(emitter);
 var ev_callback = require('./ev_callback');
-ev_callback.init(emitter);
 var ev_persistence = require('./ev_persistence');
-ev_persistence.init(emitter);
+
+var async = require("async");
+
+async.parallel([ev_lsnr.init(emitter), ev_callback.init(emitter), ev_persistence.init(emitter) ],
+    function onSubscribed(err, results) {
+        'use strict';
+        logger.debug('onSubscribed(err, results)', [err, results]);
+        if(err){
+            console.log('error subscribing event listener', err);
+            throw new Error(['error subscribing event listener', err]);
+        }
+        else {
+            for (var i = 0; i < max_poppers; i++) {
+                consume(config_global.consumer_id + i, true);
+            }    
+        }      
+    });
 
 function consume(idconsumer, start) {
   'use strict';
@@ -141,6 +153,4 @@ function consume(idconsumer, start) {
 }
 
 
-for (var i = 0; i < max_poppers; i++) {
-  consume(config_global.consumer_id + i, true);
-}
+
