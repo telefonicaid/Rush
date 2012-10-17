@@ -20,7 +20,7 @@ exports.logger.Console = {
 };
 exports.logger.File ={ 
     level:'debug', filename:'pditclogger.log', timestamp:true, json:false ,
-    maxsize: 100,
+    maxsize: 1024*1024,
     maxFiles: 3
 };
 
@@ -43,5 +43,9 @@ exports.ev_lsnr.mongo_db =  'rush';
 exports.ev_lsnr.collectionState= 'RushState';
 exports.ev_lsnr.collectionError= 'RushError';
 
+exports.listener = {};
+exports.listener.port = 3001;
 
+exports.consumer = {};
+exports.consumer.max_poppers = 500;
 
