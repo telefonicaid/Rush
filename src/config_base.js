@@ -31,7 +31,7 @@ exports.queue.redis_host = 'localhost';
 exports.dbrelayer = {};
 exports.dbrelayer.key_prefix = 'wrH:';
 exports.dbrelayer.redis_host = 'localhost';
-exports.expire_time = 60;
+exports.expire_time = 60*60;
 
 exports.consumer_id = "consumerA:";
 
