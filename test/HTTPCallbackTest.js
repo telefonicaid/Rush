@@ -4,16 +4,24 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var applicationContent = 'application/json',
+    personalHeader1name = 'personal-header-1',
+    personalHeader1value = 'TEST1',
+    personalHeader2name = 'personal-header-2',
+    personalHeader2value = 'TEST2';
+
+var options = {};
+options.host = config.rushServer.hostname;
+options.port = config.rushServer.port;
+options.headers = {};
+options.headers['content-type'] = applicationContent;
+options.headers[personalHeader1name] = personalHeader1value;
+options.headers[personalHeader2name] = personalHeader2value;
+
 function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
     'use strict';
     //Variables
-    var applicationContent = 'application/json',
-        relayerhost = 'http://localhost:' + config.simpleServerPort,
-        httpcallback = httpCallBack,
-        personalHeader1name = 'personal-header-1',
-        personalHeader1value = 'TEST1',
-        personalHeader2name = 'personal-header-2',
-        personalHeader2value = 'TEST2';
+    var relayerhost = 'http://localhost:' + config.simpleServerPort;
 
     //Start up the server
     server.serverListener(
@@ -21,16 +29,9 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
         function () {
 
             //Petition method
-            var options = {};
-            options.host = config.rushServer.hostname;
-            options.port = config.rushServer.port;
             options.method = type;
-            options.headers = {};
-            options.headers['content-type'] = applicationContent;
-            options.headers['X-Relayer-Host'] = relayerhost;
-            options.headers['x-relayer-httpcallback'] = httpcallback;
-            options.headers[personalHeader1name] = personalHeader1value;
-            options.headers[personalHeader2name] = personalHeader2value;
+            options.headers['x-relayer-host'] = relayerhost;
+            options.headers['x-relayer-httpcallback'] = httpCallBack;
 
             utils.makeRequest(options, content, function (err, data) { });
 
@@ -43,7 +44,7 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
             //Test headers
             headers.should.have.property('content-type', applicationContent);
             headers.should.have.property('x-relayer-host', relayerhost);
-            headers.should.have.property('x-relayer-httpcallback', httpcallback);
+            headers.should.have.property('x-relayer-httpcallback', httpCallBack);
             headers.should.have.property(personalHeader1name, personalHeader1value);
             headers.should.have.property(personalHeader2name, personalHeader2value);
 
@@ -60,7 +61,7 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
 function makeRequest(type, content, done) {
     'use strict';
     //Variables
-    var portCallBack = 8015, server_callback;
+    var portCallBack = config.callBackPort, server_callback;
 
     //Callback Server
     server_callback = http.createServer(function (req, res) {
@@ -126,4 +127,60 @@ describe('HTTP_Callback', function () {
             makeRequest('POST', content, done);
         })
     })
+
+    describe('Callback has to be called even if the Host is incorrect', function () {
+        it('Should receive a callback with an error', function (done) {
+
+            var portCallBack = config.callBackPort,
+                server_callback,
+                relayerHost = 'http://noexiste:1234',
+                httpCallBack = 'http://localhost:' + portCallBack;
+
+            //Callback Server
+            server_callback = http.createServer(function (req, res) {
+
+                var response = '';
+
+                req.on('data',
+                    function (chunk) {
+                        response += chunk;
+                    });
+
+                req.on('end',
+                    function () {
+
+                        var parsedJSON = JSON.parse(response);
+                        should.not.exist(parsedJSON.result);
+
+                        //Test content
+                        parsedJSON.should.have.property('err');
+                        var err = parsedJSON.err;
+                        err.should.have.property('resultOk', false);
+                        err.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
+
+                        //Test headers
+                        var headers = parsedJSON.task.headers;
+                        headers.should.have.property('content-type', applicationContent);
+                        headers.should.have.property('x-relayer-host', relayerHost);
+                        headers.should.have.property('x-relayer-httpcallback', httpCallBack);
+                        headers.should.have.property(personalHeader1name, personalHeader1value);
+                        headers.should.have.property(personalHeader2name, personalHeader2value);
+
+                        res.writeHead(200);
+                        res.end();
+                        server_callback.close();
+                        done();
+                    });
+
+            }).listen(portCallBack,
+                function () {
+                    options.method = 'POST';
+                    options.headers['X-Relayer-Host'] = relayerHost;
+                    options.headers['x-relayer-httpcallback'] = httpCallBack;
+
+                    utils.makeRequest(options, content, function (err, data) { });
+                }
+            );
+        })
+    });
 });
