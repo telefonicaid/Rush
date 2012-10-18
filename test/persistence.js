@@ -34,8 +34,8 @@ describe('Persistence', function () {
                 });
             },
             function (method, headers, body) {
-                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 setTimeout(function () {
+                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                     utils.makeRequest(options, '', function (err, res) {
 
                         var JSONres = JSON.parse(res);
@@ -58,8 +58,8 @@ describe('Persistence', function () {
                 });
             },
             function (method, headers, body) {
-                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 setTimeout(function () {
+                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                     utils.makeRequest(options, '', function (err, res) {
                         var JSONres = JSON.parse(res);
                         JSONres.body.should.be.equal('body request');
@@ -81,8 +81,8 @@ describe('Persistence', function () {
                 });
             },
             function (method, headers, body) {
-                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                 setTimeout(function () {
+                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                     utils.makeRequest(options, '', function (err, res) {
                         var JSONres = JSON.parse(res);
                         JSONres.should.not.have.property('body');
@@ -101,32 +101,32 @@ describe('Persistence', function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
                     id = JSON.parse(res).id;
                     console.log(id);
-                    setTimeout(function(){
-                        if(!err){
-                            callback(null, res);
-                        }
-                        else{
-                            callback(err, null);
-                        }
-                    },400); //Waiting for Rush to create the persistence
-                });
-            },
-            function (callback) {
-                var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                utils.makeRequest(options, '', function (err, res) {
                     if (!err) {
-                        var JSONres = JSON.parse(res);
-                        callback(null, JSONres);
+                        callback(null, res);
                     }
                     else {
                         callback(err, null);
                     }
                 });
+            },
+            function (callback) {
+                setTimeout(function () {
+                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
+                    utils.makeRequest(options, '', function (err, res) {
+                        if (!err) {
+                            var JSONres = JSON.parse(res);
+                            callback(null, JSONres);
+                        }
+                        else {
+                            callback(err, null);
+                        }
+                    });
+                }, 400);
             }
         ], function (err, res) {
             var resGet = res[1];
-            resGet.should.have.property('error','ENOTFOUND(getaddrinfo)');
-            resGet.should.have.property('resultOk','false');
+            resGet.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
+            resGet.should.have.property('resultOk', 'false');
             done();
         });
     });
