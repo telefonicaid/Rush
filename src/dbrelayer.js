@@ -32,8 +32,15 @@ function update(key, obj, cllbk) {
       o_aux[p] = obj[p];
     }
   }
+
   rcli.hmset(config.key_prefix + key, o_aux, function onHmset(err, res) {
     logger.debug('onHmset(err, res) ', [err, res]);
+    rcli.expire(config.key_prefix + key, config_global.expire_time, function(err){
+      if (err) {
+        logger.error('expire(err, res) ', [config.key_prefix + key, config_global.persistenceTTL]);
+      }
+
+    });
     if (cllbk) {
       cllbk(err, res);
     }
