@@ -24,8 +24,8 @@ function urlErrors(pUrl) {
         if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
             return ('Invalid protocol ' + pUrl );
         }
-        if (!parsedUrl.hostname){
-          return ('Hostname expected' + pUrl);
+        else if (!parsedUrl.hostname){
+          return ('Hostname expected. Empty host after protocol');
         }
     }
 
