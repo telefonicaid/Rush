@@ -187,7 +187,7 @@ function do_retry(task, error, callback) {
 function delXrelayerHeaders(headers) {
     "use strict";
     
-    var cleanHeaders;
+    var cleanHeaders = {};
     for(var h in headers) {
         if (headers.hasOwnProperty(h)) {
             if(h.toLowerCase().indexOf('x-relayer')!==0) {
