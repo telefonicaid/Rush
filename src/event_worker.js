@@ -91,7 +91,7 @@ function doJob(task, callback) {
             httpModule = http;
         }
         
-        options.headers = task.headers;
+        options.headers = delXrelayerHeaders(task.headers);
         options.method = task.method;
         req = httpModule.request(options, function (rly_res) {
             if (Math.floor(rly_res.statusCode / 100) !== 5) {
@@ -182,6 +182,20 @@ function do_retry(task, error, callback) {
             callback(error, null);
         }
     }
+}
+
+function delXrelayerHeaders(headers) {
+    "use strict";
+    
+    var cleanHeaders;
+    for(var h in headers) {
+        if (headers.hasOwnProperty(h)) {
+            if(h.toLowerCase().indexOf('x-relayer')!==0) {
+                cleanHeaders[h] = headers[h];
+            }             
+        }
+    }
+    return cleanHeaders;
 }
 exports.doJob = doJob;
 exports.createTask = createTask;
