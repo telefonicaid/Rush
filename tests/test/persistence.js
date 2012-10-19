@@ -82,7 +82,6 @@ describe('Persistence', function () {
                     var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
                     utils.makeRequest(options, '', function (err, res) {
                         var JSONres = JSON.parse(res);
-                        console.log(res);
                         JSONres.should.not.have.property('body');
                         JSONres.should.not.have.property('headers');
                         done();
@@ -98,7 +97,6 @@ describe('Persistence', function () {
             function (callback) {
                 utils.makeRequest(options, 'body request', function (err, res) {
                     id = JSON.parse(res).id;
-                    console.log(id);
                     if (!err) {
                         callback(null, res);
                     }
