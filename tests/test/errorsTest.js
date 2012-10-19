@@ -13,72 +13,71 @@ options.headers['content-type'] = 'application/json';
 //options.headers['x-relayer-httpcallback'] = httpcallback;
 
 
+describe('errors Test', function () {
 
-describe('Request Test',function(){
-
-    it('Should return protocol error(test 1)',function(done){
+    it('Should return protocol error(test 1)', function (done) {
         options.headers['X-Relayer-Host'] = 'localhost:3001';
-        utils.makeRequest(options,'Protocol error test', function(e,data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             JSON.parse(data).errors[0].should.be.equal('Invalid protocol localhost:3001');
             done();
         });
     });
 
 
-    it('Should return protocol error (test 2)',function(done){
+    it('Should return protocol error (test 2)', function (done) {
         options.headers['X-Relayer-Host'] = 'no protocol';
-        utils.makeRequest(options,'Protocol error test', function(e,data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             JSON.parse(data).errors[0].should.be.equal('Invalid protocol no protocol');
             done();
         });
     });
 
 
-    it('Should return invalid host error (test 3)',function(done){
+    it('Should return invalid host error (test 3)', function (done) {
         options.headers['X-Relayer-Host'] = 'http://';
-        utils.makeRequest(options,'host error test', function(e,data){
+        utils.makeRequest(options, 'host error test', function (e, data) {
             JSON.parse(data).errors[0].should.be.equal('Hostname expected. Empty host after protocol');
             done();
         });
     });
 
 
-    it('Should return invalid host error (test 4)',function(done){
+    it('Should return invalid host error (test 4)', function (done) {
         options.headers['X-Relayer-Host'] = 'https://';
-        utils.makeRequest(options,'host error test', function(e,data){
+        utils.makeRequest(options, 'host error test', function (e, data) {
             JSON.parse(data).errors[0].should.be.equal('Hostname expected. Empty host after protocol');
             done();
         });
     });
 
-    it('Should return invalid host error (test 5)',function(done){
+    it('Should return invalid host error (test 5)', function (done) {
         options.headers['X-Relayer-Host'] = 'http://:8888';
-        utils.makeRequest(options,'host error test', function(e,data){
+        utils.makeRequest(options, 'host error test', function (e, data) {
             JSON.parse(data).errors[0].should.be.equal('Hostname expected. Empty host after protocol');
             done();
         });
     });
 
 
-    it('Should return X-Relayer-Host missing error',function(done){
+    it('Should return X-Relayer-Host missing error', function (done) {
         delete options.headers['X-Relayer-Host'];
-        utils.makeRequest(options,'X-Relayer-Host missing test', function(e,data){
-             JSON.parse(data).errors[0].should.be.equal('x-relayer-host is missing');
+        utils.makeRequest(options, 'X-Relayer-Host missing test', function (e, data) {
+            JSON.parse(data).errors[0].should.be.equal('x-relayer-host is missing');
             done();
         });
     });
 
-    it('Should return invialid protocol',function(done){
+    it('Should return invialid protocol', function (done) {
         options.headers['X-Relayer-Host'] = 'ftp://localhost:3001';
-        utils.makeRequest(options,'Protocol error test', function(e,data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             JSON.parse(data).errors[0].should.be.equal('Invalid protocol ftp://localhost:3001');
             done();
         });
     });
 
-    it('Should return invialid protocol',function(done){
+    it('Should return invialid protocol', function (done) {
         options.headers['X-Relayer-Host'] = 'http://localhost:3001';
-        utils.makeRequest(options,'Protocol error test', function(e, data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
             parsedJSON.should.have.property('id');
             parsedJSON.should.not.have.property('errors');
@@ -87,9 +86,9 @@ describe('Request Test',function(){
         });
     });
 
-    it('Should return invialid protocol',function(done){
+    it('Should return invialid protocol', function (done) {
         options.headers['X-Relayer-Host'] = 'https://localhost:3001';
-        utils.makeRequest(options,'Protocol error test', function(e,data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
             parsedJSON.should.have.property('id');
             parsedJSON.should.not.have.property('errors');
@@ -98,9 +97,9 @@ describe('Request Test',function(){
         });
     });
 
-    it('Should return invialid protocol',function(done){
+    it('Should return invialid protocol', function (done) {
         options.headers['X-Relayer-Host'] = 'http://localhost';
-        utils.makeRequest(options,'Protocol error test', function(e, data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
             parsedJSON.should.have.property('id');
             parsedJSON.should.not.have.property('errors');
@@ -109,9 +108,9 @@ describe('Request Test',function(){
         });
     });
 
-    it('Should return invialid protocol',function(done){
+    it('Should return invialid protocol', function (done) {
         options.headers['X-Relayer-Host'] = 'https://localhost';
-        utils.makeRequest(options,'Protocol error test', function(e,data){
+        utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
             parsedJSON.should.have.property('id');
             parsedJSON.should.not.have.property('errors');
@@ -120,7 +119,18 @@ describe('Request Test',function(){
         });
     });
 
+    it('invalid persistence type should throw error', function (done) {
+        var id;
+        options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+        options.headers['X-Relayer-Persistence'] = 'INVALID';
 
-
-
+        utils.makeRequest(options, 'body request', function (err, res) {
+            should.not.exist(err);
+            var jsonRes = JSON.parse(res);
+            jsonRes.should.have.property('ok', false);
+            jsonRes.should.have.property('errors');
+            jsonRes.errors.should.include('invalid persistence type: INVALID');
+            done();
+        });
+    });
 });
