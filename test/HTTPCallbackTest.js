@@ -75,7 +75,11 @@ function makeRequest(type, content, done) {
 
         req.on('end',
             function () {
-                JSON.parse(response).result.body.should.be.equal(content);
+                var parsedJSON = JSON.parse(response);
+                parsedJSON.result.should.have.property('body', content);
+                parsedJSON.result.should.have.property('resultOk', true);
+                parsedJSON.result.should.have.property('statusCode', 200);
+
                 res.writeHead(200);
                 res.end();
                 server_callback.close();

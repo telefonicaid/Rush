@@ -79,11 +79,16 @@ function makeRequest(type, persistence, content, done) {
             testHeraders(JSONRes.result.headers);
             JSONRes.result.headers.should.have.property('x-relayer-httpcallback', httpcallback);
 
+            //Check resultOk
+            JSONRes.result.resultOk.should.be.equal(true);
+
             // Check persistence
             var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
             utils.makeRequest(options, '', function (err, data) {
 
                 var JSONRes = JSON.parse(data);
+
+                JSONRes.resultOk.should.be.equal('true');   //Should be true without quotes (consistency)
 
                 if (persistence === 'BODY') {
 
@@ -283,7 +288,7 @@ describe('Persistence_HTTPCallback', function () {
 
                             var JSONparsed = JSON.parse(data);
 
-                            JSONparsed.should.have.property('resultOk', 'false');
+                            JSONparsed.should.have.property('resultOk', 'false');       //Should be false without quotes (consistency)
                             JSONparsed.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
                             JSONparsed.should.have.property('callback_status', '200');
 
