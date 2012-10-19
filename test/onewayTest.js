@@ -35,7 +35,6 @@ describe('Oneway', function () {
                 });
             }, function (method, headers, body) {
                 method.should.equal('GET');
-                JSON.stringify(headers).should.include(JSON.stringify(options.headers['X-Relayer-Host']));
                 done();
             })
         });
@@ -66,7 +65,6 @@ describe('Oneway', function () {
             }, function (method, headers, body) {
                 method.should.equal('POST');
                 JSON.stringify(headers).should.include(JSON.stringify(options.headers['content-type']));
-                JSON.stringify(headers).should.include(JSON.stringify(options.headers['X-Relayer-Host']));
                 JSON.parse(body).content.should.include(content['content']);
                 done();
             });
@@ -97,7 +95,6 @@ describe('Oneway', function () {
             }, function (method, headers, body) {
                 method.should.equal('PUT');
                 JSON.stringify(headers).should.include(JSON.stringify(options.headers['content-type']));
-                JSON.stringify(headers).should.include(JSON.stringify(options.headers['X-Relayer-Host']));
                 JSON.parse(body).content.should.include(content['content']);
                 done();
             });
@@ -122,7 +119,6 @@ describe('Oneway', function () {
                 });
             }, function (method, headers, body) {
                 method.should.equal('DELETE');
-                JSON.stringify(headers).should.include(JSON.stringify(options.headers['X-Relayer-Host']));
                 done();
             })
         });

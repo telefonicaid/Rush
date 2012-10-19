@@ -43,8 +43,6 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
 
             //Test headers
             headers.should.have.property('content-type', applicationContent);
-            headers.should.have.property('x-relayer-host', relayerhost);
-            headers.should.have.property('x-relayer-httpcallback', httpCallBack);
             headers.should.have.property(personalHeader1name, personalHeader1value);
             headers.should.have.property(personalHeader2name, personalHeader2value);
 
@@ -165,8 +163,6 @@ describe('HTTP_Callback', function () {
                         //Test headers
                         var headers = parsedJSON.task.headers;
                         headers.should.have.property('content-type', applicationContent);
-                        headers.should.have.property('x-relayer-host', relayerHost);
-                        headers.should.have.property('x-relayer-httpcallback', httpCallBack);
                         headers.should.have.property(personalHeader1name, personalHeader1value);
                         headers.should.have.property(personalHeader2name, personalHeader2value);
 

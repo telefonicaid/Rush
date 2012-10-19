@@ -58,7 +58,6 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
             //Test petition
             method.should.be.equal('POST');
             headers['content-type'].should.be.equal(APPLICATION_CONTENT);
-            headers['x-relayer-host'].should.be.equal(RELAYER_HOST);
             contentReceived.should.be.equal(CONTENT);
 
             if (petitionsReceived === serverTimes) {

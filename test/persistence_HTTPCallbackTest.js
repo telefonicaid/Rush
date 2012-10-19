@@ -21,7 +21,6 @@ options.headers[personalHeader2name] = personalHeader2value;
 
 function testHeraders (headers) {
     headers.should.have.property('content-type', applicationContent);
-    headers.should.have.property('x-relayer-host', relayerHost);
     headers.should.have.property(personalHeader1name, personalHeader1value);
     headers.should.have.property(personalHeader2name, personalHeader2value);
 }
@@ -52,7 +51,6 @@ function makeRequest(type, persistence, content, done) {
         function (method, headers, contentReceived) {
             method.should.be.equal(type);
             testHeraders(headers);
-            headers.should.have.property('x-relayer-httpcallback', httpcallback);
             contentReceived.should.be.equal(content);
         }
     );
@@ -77,7 +75,6 @@ function makeRequest(type, persistence, content, done) {
             JSONRes.result.body.should.be.equal(content);
 
             testHeraders(JSONRes.result.headers);
-            JSONRes.result.headers.should.have.property('x-relayer-httpcallback', httpcallback);
 
             //Check resultOk
             JSONRes.result.resultOk.should.be.equal(true);
@@ -95,7 +92,6 @@ function makeRequest(type, persistence, content, done) {
                     JSONRes.body.should.be.equal(content);
                     var headers = JSON.parse(JSONRes.headers);
                     testHeraders(headers);
-                    headers.should.have.property('x-relayer-httpcallback', httpcallback);
                     JSONRes.should.have.property('statusCode', '200');
 
                 } else if (persistence === 'HEADER') {
@@ -104,7 +100,6 @@ function makeRequest(type, persistence, content, done) {
                     JSONRes.should.not.have.property('body');
                     var headers = JSON.parse(JSONRes.headers);
                     testHeraders(headers);
-                    headers.should.have.property('x-relayer-httpcallback', httpcallback);
                     JSONRes.should.have.property('statusCode', '200');
 
                 } else if (persistence === 'STATUS') {
@@ -210,7 +205,6 @@ describe('Persistence_HTTPCallback', function () {
                 function (method, headers, contentReceived) {
                     method.should.be.equal(type);
                     testHeraders(headers);
-                    headers.should.have.property('x-relayer-httpcallback', httpCallBack);
                     contentReceived.should.be.equal(content);
 
                     setTimeout(
@@ -223,7 +217,6 @@ describe('Persistence_HTTPCallback', function () {
                                 JSONRes.body.should.be.equal(content);
                                 var headers = JSON.parse(JSONRes.headers);
                                 testHeraders(headers);
-                                headers.should.have.property('x-relayer-httpcallback', httpCallBack);
 
                                 JSONRes.should.have.property('statusCode', '200');
                                 JSONRes.should.have.property('callback_err', 'ENOTFOUND(getaddrinfo)');
@@ -273,11 +266,7 @@ describe('Persistence_HTTPCallback', function () {
 
                         //Test headers
                         var headers = parsedJSON.task.headers;
-                        headers.should.have.property('content-type', applicationContent);
-                        headers.should.have.property('x-relayer-host', relayerHost);
-                        headers.should.have.property('x-relayer-httpcallback', httpCallBack);
-                        headers.should.have.property(personalHeader1name, personalHeader1value);
-                        headers.should.have.property(personalHeader2name, personalHeader2value);
+                        testHeraders(headers);
 
                         res.writeHead(200);
                         res.end();
