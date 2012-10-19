@@ -1,7 +1,60 @@
-/**
- * Created with JetBrains WebStorm.
- * User: oelmaallem
- * Date: 19/10/12
- * Time: 9:58
- * To change this template use File | Settings | File Templates.
- */
+var http = require('http');
+var should = require('should');
+var config = require('./config.js');
+var server = require('./simpleServer.js');
+var utils = require('./utils.js');
+
+var options = {};
+options.host = 'localhost';
+options.port = 3001;
+options.method = 'POST';
+options.headers = {};
+options.headers['content-type'] = 'application/json';
+//options.headers['x-relayer-httpcallback'] = httpcallback;
+
+
+
+describe('Request Test',function(){
+    it('Should return protocol error(test 1)',function(done){
+        options.headers['X-Relayer-Host'] = 'localhost:3001';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            console.log(data);
+            JSON.parse(data).errors[0].should.be.equal('Invalid protocol localhost:3001');
+            done();
+        });
+    });
+
+
+    it('Should return protocol error (test 2)',function(done){
+        options.headers['X-Relayer-Host'] = 'no protocol';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            console.log(data);
+            JSON.parse(data).errors[0].should.be.equal('Invalid protocol no protocol');
+            done();
+        });
+    });
+
+
+    it('Should return protocol error (test 3)',function(done){
+        options.headers['X-Relayer-Host'] = 'http://';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            console.log(data);
+            JSON.parse(data).errors[0].should.be.equal('Invalid protocol http://');
+            done();
+        });
+    });
+
+
+    it('Should return protocol error (test 4)',function(done){
+        options.headers['X-Relayer-Host'] = 'https://';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            console.log(data);
+            JSON.parse(data).errors[0].should.be.equal('Invalid protocol https://');
+            done();
+        });
+    });
+
+
+
+
+});
