@@ -75,7 +75,7 @@ describe('errors Test', function () {
         });
     });
 
-    it('Should return invialid protocol', function (done) {
+    it('Should not return an error. Should return and ID', function (done) {
         options.headers['X-Relayer-Host'] = 'http://localhost:3001';
         utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
@@ -86,7 +86,7 @@ describe('errors Test', function () {
         });
     });
 
-    it('Should return invialid protocol', function (done) {
+    it('Should not return an error. Should return and ID', function (done) {
         options.headers['X-Relayer-Host'] = 'https://localhost:3001';
         utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
@@ -97,7 +97,7 @@ describe('errors Test', function () {
         });
     });
 
-    it('Should return invialid protocol', function (done) {
+    it('Should not return an error. Should return and ID', function (done) {
         options.headers['X-Relayer-Host'] = 'http://localhost';
         utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
@@ -108,7 +108,7 @@ describe('errors Test', function () {
         });
     });
 
-    it('Should return invialid protocol', function (done) {
+    it('Should not return an error. Should return and ID', function (done) {
         options.headers['X-Relayer-Host'] = 'https://localhost';
         utils.makeRequest(options, 'Protocol error test', function (e, data) {
             var parsedJSON = JSON.parse(data);
