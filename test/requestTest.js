@@ -15,6 +15,7 @@ options.headers['content-type'] = 'application/json';
 
 
 describe('Request Test',function(){
+
     it('Should return protocol error(test 1)',function(done){
         options.headers['X-Relayer-Host'] = 'localhost:3001';
         utils.makeRequest(options,'Protocol error test', function(e,data){
@@ -36,7 +37,7 @@ describe('Request Test',function(){
     it('Should return invalid host error (test 3)',function(done){
         options.headers['X-Relayer-Host'] = 'http://';
         utils.makeRequest(options,'host error test', function(e,data){
-            JSON.parse(data).errors[0].should.be.equal('Host not specify');
+            JSON.parse(data).errors[0].should.be.equal('Hostname expected. Empty host after protocol');
             done();
         });
     });
@@ -45,7 +46,15 @@ describe('Request Test',function(){
     it('Should return invalid host error (test 4)',function(done){
         options.headers['X-Relayer-Host'] = 'https://';
         utils.makeRequest(options,'host error test', function(e,data){
-            JSON.parse(data).errors[0].should.be.equal('Host not specify');
+            JSON.parse(data).errors[0].should.be.equal('Hostname expected. Empty host after protocol');
+            done();
+        });
+    });
+
+    it('Should return invalid host error (test 5)',function(done){
+        options.headers['X-Relayer-Host'] = 'http://:8888';
+        utils.makeRequest(options,'host error test', function(e,data){
+            JSON.parse(data).errors[0].should.be.equal('Hostname expected. Empty host after protocol');
             done();
         });
     });
@@ -55,6 +64,58 @@ describe('Request Test',function(){
         delete options.headers['X-Relayer-Host'];
         utils.makeRequest(options,'X-Relayer-Host missing test', function(e,data){
              JSON.parse(data).errors[0].should.be.equal('x-relayer-host is missing');
+            done();
+        });
+    });
+
+    it('Should return invialid protocol',function(done){
+        options.headers['X-Relayer-Host'] = 'ftp://localhost:3001';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            JSON.parse(data).errors[0].should.be.equal('Invalid protocol ftp://localhost:3001');
+            done();
+        });
+    });
+
+    it('Should return invialid protocol',function(done){
+        options.headers['X-Relayer-Host'] = 'http://localhost:3001';
+        utils.makeRequest(options,'Protocol error test', function(e, data){
+            var parsedJSON = JSON.parse(data);
+            parsedJSON.should.have.property('id');
+            parsedJSON.should.not.have.property('errors');
+            parsedJSON.should.have.property('ok', true);
+            done();
+        });
+    });
+
+    it('Should return invialid protocol',function(done){
+        options.headers['X-Relayer-Host'] = 'https://localhost:3001';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            var parsedJSON = JSON.parse(data);
+            parsedJSON.should.have.property('id');
+            parsedJSON.should.not.have.property('errors');
+            parsedJSON.should.have.property('ok', true);
+            done();
+        });
+    });
+
+    it('Should return invialid protocol',function(done){
+        options.headers['X-Relayer-Host'] = 'http://localhost';
+        utils.makeRequest(options,'Protocol error test', function(e, data){
+            var parsedJSON = JSON.parse(data);
+            parsedJSON.should.have.property('id');
+            parsedJSON.should.not.have.property('errors');
+            parsedJSON.should.have.property('ok', true);
+            done();
+        });
+    });
+
+    it('Should return invialid protocol',function(done){
+        options.headers['X-Relayer-Host'] = 'https://localhost';
+        utils.makeRequest(options,'Protocol error test', function(e,data){
+            var parsedJSON = JSON.parse(data);
+            parsedJSON.should.have.property('id');
+            parsedJSON.should.not.have.property('errors');
+            parsedJSON.should.have.property('ok', true);
             done();
         });
     });
