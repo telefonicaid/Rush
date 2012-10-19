@@ -25,9 +25,25 @@ var dbrelayer = require('./dbrelayer');
 var ev_lsnr = require('./ev_lsnr');
 ev_lsnr.init(emitter);
 
+var async = require("async");
 
-http.createServer(function serveReq(req, res) {
+async.parallel([ev_lsnr.init(emitter)],
+    function onSubscribed(err, results) {
+        'use strict';
+        logger.debug('onSubscribed(err, results)', [err, results]);
+        if(err){
+            console.log('error subscribing event listener', err);
+            throw new Error(['error subscribing event listener', err]);
+        }
+        else {
+            startListener();
+        }
+    });
+
+function startListener() {
     'use strict';
+
+    http.createServer(function serveReq(req, res) {
 
     var data = '', parsedUrl, retrievePath = 'response', pathComponents, response_id, response_json, reqLog = {};
 
@@ -90,6 +106,7 @@ http.createServer(function serveReq(req, res) {
         }
     });
 }).listen(config.listener.port);
+}
 
 
 function assign_request(request, data, callback) {

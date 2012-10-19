@@ -16,82 +16,98 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 
 
-var clients = [];
+function init(emitter) {
+    "use strict";
+    return function (cb_async) {
+        var callback = function(error,result) {
+             cb_async(error?"ev_lsnr "+String(error): null,
+                      !error?"ev_lsnr OK": null);
+        };
+        var client = new mongodb.Db(config.mongo_db,
+            new mongodb.Server(config.mongo_host, config.mongo_port, {}));
 
-function init(emitter, callback) {
-  "use strict";
-
-  var client = new mongodb.Db(config.mongo_db,
-    new mongodb.Server(config.mongo_host, config.mongo_port, {}));
-
-  client.open(function(err, p_client) {
-    if (err) {
-      logger.warning('open', err);
-      if (callback) {
-        callback(err);
-      }
-    } else {
-      client.collection(config.collectionState, function(err, c) {
-        if (err) {
-            logger.warning('collection', err);
-            if (callback) {
-            callback(err);
-          }
-        } else {
-          var collection = c;
-          emitter.on(G.EVENT_NEWSTATE, function new_event(data) {
-            try {
-              logger.debug('new_event', data);
-              collection.insert(data, function(err, docs) {
+        function subscribeStateCol(callback) {
+            client.collection(config.collectionState, function (err, c) {
                 if (err) {
-                    logger.warning('insert', err);
+                    logger.warning('collection', err);
+                    if (callback) {
+                        callback(err);
+                    }
                 } else {
-                  logger.debug('insert', docs);
-                }
-              });
-            } catch (e) {
-                logger.warning('new_event', e);
-            }
-          });
-          if (callback) {
-            callback(null);
-          }
-        }
-      });
-
-      client.collection(config.collectionError, function(err, c) {
-
-          if (err) {
-            logger.warning('collectionError', err);
-            if (callback) {
-              callback(err);
-            }
-          } else {
-            var collection = c;
-            emitter.on(G.EVENT_ERR, function new_error(data) {
-                try {
-                logger.debug('new_error', data);
-
-              collection.insert(data, function(err, docs) {
-                if (err) {
-                    logger.warning('insert', err);
-                } else {
-                    logger.debug('insert', docs);
-                }
-              });
-                } catch (e) {
-                    logger.warning('new_error', e);
+                    var collection = c;
+                    emitter.on(G.EVENT_NEWSTATE, function new_event(data) {
+                        try {
+                            logger.debug('new_event', data);
+                            collection.insert(data, function (err, docs) {
+                                if (err) {
+                                    logger.warning('insert', err);
+                                } else {
+                                    logger.debug('insert', docs);
+                                }
+                            });
+                        } catch (e) {
+                            logger.warning('new_event', e);
+                        }
+                    });
+                    if (callback) {
+                        callback(null);
+                    }
                 }
             });
-            if (callback) {
-              callback(null);
-            }
-          }
+        }
 
-      });
-      clients.push(client);
-    }
-  });
+        function subscribeErrorCol(callback) {
+            client.collection(config.collectionError, function (err, c) {
+
+                if (err) {
+                    logger.warning('collectionError', err);
+                    if (callback) {
+                        callback(err);
+                    }
+                } else {
+                    var collection = c;
+                    emitter.on(G.EVENT_ERR, function new_error(data) {
+                        try {
+                            logger.debug('new_error', data);
+
+                            collection.insert(data, function (err, docs) {
+                                if (err) {
+                                    logger.warning('insert', err);
+                                } else {
+                                    logger.debug('insert', docs);
+                                }
+                            });
+                        } catch (e) {
+                            logger.warning('new_error', e);
+                        }
+                    });
+                    if (callback) {
+                        callback(null);
+                    }
+                }
+
+            });
+        }
+
+        client.open(function (err, p_client) {
+            if (err) {
+                logger.warning('open', err);
+                if (callback) {
+                    callback(err);
+                }
+            } else {
+                subscribeStateCol(function (err) {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        subscribeErrorCol(callback);
+                    }
+                });
+
+            }
+        });
+    };
 }
 
 exports.init = init;
