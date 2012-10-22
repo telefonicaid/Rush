@@ -24,10 +24,6 @@ exports.logger.File ={
     maxFiles: 3
 };
 
-
-exports.evModules = ['./ev_lsnr', './ev_callback', './ev_persistence'];
-
-
 // redis host
 exports.queue= {};
 exports.queue.redis_host = 'localhost';
