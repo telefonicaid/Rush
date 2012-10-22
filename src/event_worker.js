@@ -103,7 +103,7 @@ function doJob(task, callback) {
     }
 
     req = httpModule.request(options, function(rly_res) {
-      if (Math.floor(rly_res.statusCode / 100) !== 5) {
+      if (Math.floor(rly_res.statusCode / 100) === 2) {
         //if no 5XX ERROR
         get_response(rly_res, task, function(task, resp_obj) {
           //PERSISTENCE
@@ -116,7 +116,7 @@ function doJob(task, callback) {
           var e = {
             id: task.id,
             topic: task.headers[MG.HEAD_RELAYER_TOPIC],
-            error: 'Internal Server Error '+rly_res.statusCode,
+            error: 'Not relayed request '+rly_res.statusCode,
             statusCode: rly_res.statusCode,
             headers: rly_res.headers,
             body: resp_obj.body
