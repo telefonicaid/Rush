@@ -90,7 +90,7 @@ describe('Persistence', function () {
             }
         );
     });
-    it('should not return body neither headers', function (done) {
+    it('should return error headers (ENOTFOUND)', function (done) {
         var id;
         options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
         async.series([

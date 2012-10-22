@@ -25,6 +25,10 @@
         "mongodb":"*",
         "logger" : "https://github.com/telefonicaid/pditclogger/tarball/master"
     },
+    "devDependencies":{
+        "mocha":"1.6.0",
+        "should":"1.2.0"
+    },
     "license":"AGPL",
     "engine":{
         "node":"0.6.6"
