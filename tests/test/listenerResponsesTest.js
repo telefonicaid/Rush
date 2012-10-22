@@ -4,16 +4,20 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
-var options = {};
-options.host = 'localhost';
-options.port = 3001;
-options.method = 'POST';
-options.headers = {};
-options.headers['content-type'] = 'application/json';
-//options.headers['x-relayer-httpcallback'] = httpcallback;
-
-
 describe('errors Test', function () {
+
+    var options;
+
+    beforeEach(function (done) {
+        options = {};
+        options.host = 'localhost';
+        options.port = 3001;
+        options.method = 'POST';
+        options.headers = {};
+        options.headers['content-type'] = 'application/json';
+
+        done();
+    });
 
     it('Should return protocol error(test 1)', function (done) {
         options.headers['X-Relayer-Host'] = 'localhost:3001';
@@ -121,15 +125,61 @@ describe('errors Test', function () {
 
     it('invalid persistence type should throw error', function (done) {
         var id;
+        var options2 = options;
+        options2.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+        options2.headers['X-Relayer-Persistence'] = 'INVALID';
+
+        utils.makeRequest(options2, 'body request', function (err, res) {
+            should.not.exist(err);
+            var jsonRes = JSON.parse(res);
+            jsonRes.should.have.property('ok', false);
+            jsonRes.should.have.property('errors');
+            jsonRes.errors.should.include('invalid persistence type: INVALID');
+            done();
+        });
+    });
+
+    it('invalid retry parameter should throw error', function (done) {
+        var id;
         options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
-        options.headers['X-Relayer-Persistence'] = 'INVALID';
+        options.headers['X-Relayer-Retry'] = '5-7,4,8';
 
         utils.makeRequest(options, 'body request', function (err, res) {
             should.not.exist(err);
             var jsonRes = JSON.parse(res);
             jsonRes.should.have.property('ok', false);
             jsonRes.should.have.property('errors');
-            jsonRes.errors.should.include('invalid persistence type: INVALID');
+            jsonRes.errors.should.include('invalid retry value: 5-7,4,8');
+            done();
+        });
+    });
+
+    it('invalid httpcallback should throw error', function (done) {
+        var id;
+        options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+        options.headers['X-Relayer-httpcallback'] = 'http://';
+
+        utils.makeRequest(options, 'body request', function (err, res) {
+            should.not.exist(err);
+            var jsonRes = JSON.parse(res);
+            jsonRes.should.have.property('ok', false);
+            jsonRes.should.have.property('errors');
+            jsonRes.errors.should.include('Hostname expected. Empty host after protocol');
+            done();
+        });
+    });
+
+    it('invalid httpcallback should throw error', function (done) {
+        var id;
+        options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+        options.headers['X-Relayer-httpcallback'] = 'localhost:8000';
+
+        utils.makeRequest(options, 'body request', function (err, res) {
+            should.not.exist(err);
+            var jsonRes = JSON.parse(res);
+            jsonRes.should.have.property('ok', false);
+            jsonRes.should.have.property('errors');
+            jsonRes.errors.should.include('Invalid protocol localhost:8000');
             done();
         });
     });
