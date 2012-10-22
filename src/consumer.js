@@ -103,8 +103,7 @@ function consume(idconsumer, start) {
                   date: new Date(),
                   task: job.task,
                   idConsumer: idconsumer,
-                  err: dojoberr,
-                  result: jobresult
+                  result: dojoberr
                 };
                 emitter.emit(G.EVENT_NEWSTATE, st);
               }
