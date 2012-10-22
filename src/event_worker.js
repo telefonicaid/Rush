@@ -16,6 +16,8 @@ var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
 
+http.globalAgent.max_sockets = config.max_sockets;
+https.globalAgent.max_sockets = config.max_sockets;
 
 function urlErrors(pUrl) {
     "use strict";
@@ -97,6 +99,7 @@ function doJob(task, callback) {
         if(config.agent !== undefined) {
             options.agent = config.agent;
         }
+
         req = httpModule.request(options, function (rly_res) {
             if (Math.floor(rly_res.statusCode / 100) !== 5) {
                 //if no 5XX ERROR

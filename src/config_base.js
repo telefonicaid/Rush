@@ -49,5 +49,6 @@ exports.consumer = {};
 exports.consumer.max_poppers = 500;
 // agent: undefined -> globalAgent | false -> no agent
 exports.consumer.agent = undefined;
+exports.consumer.max_sockets = 10;
 
 
