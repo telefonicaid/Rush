@@ -9,6 +9,7 @@ var https = require('https');
 var MG = require('./my_globals').C;
 var url = require('url');
 var config_global = require('./config_base.js');
+var config = config_global.consumer;
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -93,6 +94,9 @@ function doJob(task, callback) {
         
         options.headers = delXrelayerHeaders(task.headers);
         options.method = task.method;
+        if(config.agent !== undefined) {
+            options.agent = config.agent;
+        }
         req = httpModule.request(options, function (rly_res) {
             if (Math.floor(rly_res.statusCode / 100) !== 5) {
                 //if no 5XX ERROR

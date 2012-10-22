@@ -47,4 +47,7 @@ exports.listener.port = 3001;
 
 exports.consumer = {};
 exports.consumer.max_poppers = 500;
+// agent: undefined -> globalAgent | false -> no agent
+exports.consumer.agent = undefined;
+
 
