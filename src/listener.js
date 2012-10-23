@@ -26,8 +26,13 @@ var ev_lsnr = require('./ev_lsnr');
 ev_lsnr.init(emitter);
 
 var async = require("async");
+var evModules = config.listener.evModules;
+var evInitArray = evModules.map(function (x) {
+    'use strict';
+    return require(x).init(emitter);
+});
 
-async.parallel([ev_lsnr.init(emitter)],
+async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);

@@ -27,7 +27,7 @@ describe('Topic', function () {
 
 
 
-    it('should return empty body and test-header', function (done) {
+    it('should return  the correct topic id (GET)', function (done) {
         var id;
         server.serverListener(
             function () {
@@ -54,7 +54,7 @@ describe('Topic', function () {
 
 
 
-    it('should return the same body', function (done) {
+    it('should return  the correct topic id (POST)', function (done) {
         options.method = 'POST';
         var id;
         server.serverListener(
@@ -79,7 +79,8 @@ describe('Topic', function () {
     });
 
 
-    it('should not return body neither headers', function (done) {
+    it('should return  the correct topic id (PUT)', function (done) {
+        options.method = 'PUT';
         options.headers['X-relayer-persistence'] = 'STATUS';
         var id;
         server.serverListener(
@@ -102,44 +103,5 @@ describe('Topic', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
-    });
-
-
-    it('should not return body neither headers', function (done) {
-        var id;
-        options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
-        async.series([
-            function (callback) {
-                utils.makeRequest(options, 'body request', function (err, res) {
-                    id = JSON.parse(res).id;
-                   // console.log(id);
-                    if (!err) {
-                        callback(null, res);
-                    }
-                    else {
-                        callback(err, null);
-                    }
-                });
-            },
-            function (callback) {
-                setTimeout(function () {
-                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    utils.makeRequest(options, '', function (err, res) {
-                        if (!err) {
-                            var JSONres = JSON.parse(res);
-                            callback(null, JSONres);
-                        }
-                        else {
-                            callback(err, null);
-                        }
-                    });
-                }, 400);
-            }
-        ], function (err, res) {
-            var resGet = res[1];
-            resGet.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
-            resGet.should.have.property('resultOk', 'false');
-            done();
-        });
     });
 });

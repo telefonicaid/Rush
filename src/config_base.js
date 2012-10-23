@@ -44,7 +44,13 @@ exports.ev_lsnr.collectionError= 'RushError';
 
 exports.listener = {};
 exports.listener.port = 3001;
+exports.listener.evModules = ['./ev_lsnr'];
 
 exports.consumer = {};
+exports.consumer.evModules = ['./ev_lsnr', './ev_callback', './ev_persistence'];
 exports.consumer.max_poppers = 500;
+// agent: undefined -> globalAgent | false -> no agent
+exports.consumer.agent = undefined;
+exports.consumer.max_sockets = 10;
+
 

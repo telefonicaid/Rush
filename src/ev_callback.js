@@ -47,12 +47,12 @@ function init(emitter) {
 
             logger.debug('onNewEvent(data)', [data]);
             if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
-                do_http_callback(data.task, data,
+                do_http_callback(data.task, data.result,
                     data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK], 'callback',
                     getHttpCallback(MG.STATE_CALLBACK, 'callback_err'));
             }
             if (data.state === MG.STATE_ERROR) {
-                do_http_callback(data.task, data,
+                do_http_callback(data.task, data.result,
                     data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK_ERROR],
                     'on_err_callback',
                     getHttpCallback(MG.STATE_ONERR_CALLBACK, 'on_err_callback_err'));
