@@ -21,13 +21,14 @@ var obsQueues = service_router.getQueues();
 
 var max_poppers = config_global.consumer.max_poppers;
 
-var ev_lsnr = require('./ev_lsnr');
-var ev_callback = require('./ev_callback');
-var ev_persistence = require('./ev_persistence');
-
 var async = require("async");
+var evModules = config_global.consumer.evModules;
+var evInitArray = evModules.map(function (x) {
+    'use strict';
+    return require(x).init(emitter);
+});
 
-async.parallel([ev_lsnr.init(emitter), ev_callback.init(emitter), ev_persistence.init(emitter) ],
+async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);
@@ -103,8 +104,7 @@ function consume(idconsumer, start) {
                   date: new Date(),
                   task: job.task,
                   idConsumer: idconsumer,
-                  err: dojoberr,
-                  result: jobresult
+                  result: dojoberr
                 };
                 emitter.emit(G.EVENT_NEWSTATE, st);
               }

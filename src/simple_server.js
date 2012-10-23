@@ -31,3 +31,18 @@ var srv2 = http.createServer(function (req, res) {
 
 // now that server is running
 srv2.listen(8125);
+
+var srv3 = http.createServer(function (req, res) {
+    req.on('data', function (data) {
+        console.log("(ERROR CB):"+data);
+    });
+    req.on('end', function() {
+        setTimeout( function() {
+            res.writeHead(404, {'Content-Type': 'text/plain'});
+            res.end('fallo mortal');
+        }, 2*1000);
+    });
+});
+
+// now that server is running
+srv3.listen(8126);
