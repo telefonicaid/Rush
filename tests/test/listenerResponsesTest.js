@@ -121,10 +121,11 @@ describe('errors Test', function () {
 
     it('invalid persistence type should throw error', function (done) {
         var id;
-        options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
-        options.headers['X-Relayer-Persistence'] = 'INVALID';
+        var _options = options;
+        _options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+        _options.headers['X-Relayer-Persistence'] = 'INVALID';
 
-        utils.makeRequest(options, 'body request', function (err, res) {
+        utils.makeRequest(_options, 'body request', function (err, res) {
             should.not.exist(err);
             var jsonRes = JSON.parse(res);
             jsonRes.should.have.property('ok', false);
