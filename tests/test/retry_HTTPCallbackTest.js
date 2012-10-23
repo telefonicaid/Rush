@@ -86,29 +86,23 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
             if (petitionCorrect > serverTimes) {
                 parsedJSON = JSON.parse(response);
 
-                parsedJSON.should.have.property('err');
-                var err = parsedJSON.err;
+                parsedJSON.should.have.property('error', 'Not relayed request 500');
+                parsedJSON.should.have.property('statusCode', 500);
 
-                err.should.have.property('resultOk', false);
-                err.should.have.property('statusCode', 500);
-                err.should.have.property('headers');
-                err.should.have.property('body');
-                headers = err.headers;
-                body = err.body;
+                parsedJSON.should.have.property('headers');
+                parsedJSON.should.have.property('body');
+                headers = parsedJSON.headers;
+                body = parsedJSON.body;
 
             } else {
 
                 parsedJSON = JSON.parse(response);
 
-                parsedJSON.should.have.property('result');
-                var result = parsedJSON.result;
-
-                result.should.have.property('resultOk', true);
-                result.should.have.property('statusCode', 200);
-                result.should.have.property('headers');
-                result.should.have.property('body');
-                headers = result.headers;
-                body = result.body;
+                parsedJSON.should.have.property('statusCode', 200);
+                parsedJSON.should.have.property('headers');
+                parsedJSON.should.have.property('body');
+                headers = parsedJSON.headers;
+                body = parsedJSON.body;
 
 
             }
