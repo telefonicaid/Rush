@@ -151,7 +151,7 @@ function assign_request(request, data, callback) {
                 var st;
                 if (error) {
                     logger.warning('onWrittenReq', error);
-                    response.statusCode(500);
+                    response.statusCode=500;
                     response.data = error.toString();
                     //EMIT ERROR
                     var errev = {
