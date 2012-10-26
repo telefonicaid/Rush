@@ -17,4 +17,4 @@ exports.mongo_port = 3001;
 exports.mongo_db =  'rush';
 exports.collection= 'RushGeneric';
 exports.filter = { state :"error"};
-exports.take = ["id", "topic", {task:["body"], result:['statusCode']}];
+exports.take= {id: 'id', topic: 'topic', body:  'task.body', statusCode:'result.statusCode'};

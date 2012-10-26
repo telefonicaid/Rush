@@ -94,19 +94,22 @@ function filterObj(obj, filter) {
     return false;
 }
 
-function trim(obj, propertiesArr) {
-    var resObj = {};
-    for(var i = 0; i < propertiesArr.length; i++) {
-        if(typeof propertiesArr[i] === 'string') {
-            resObj[propertiesArr[i]] = obj[propertiesArr[i]];
-        }
-        else if (typeof propertiesArr[i] === 'object') {
-            for (var p in propertiesArr[i]) {
-                if (propertiesArr[i].hasOwnProperty(p)) {
-                    resObj[p] = trim(obj[p], propertiesArr[i][p]); ;
-                }
-            }
+function trim(object,propertiesHash) {
+   var resObj = {};
+
+    for (var p in propertiesHash) {
+        if (propertiesHash.hasOwnProperty(p)) {
+            resObj[p] = extractField(object, propertiesHash[p]); ;
         }
     }
     return resObj;
+}
+function extractField(object, field) {
+    var arrayFields = field.split('.'), fieldValue = object;
+    for(var i =0; i < arrayFields.length; i++) {
+        fieldValue = fieldValue[arrayFields[i]];
+        if(fieldValue === null || fieldValue ===undefined || typeof fieldValue !== 'object') {
+            return fieldValue;
+        }
+    }
 }
