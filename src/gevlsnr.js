@@ -24,7 +24,7 @@ logger.prefix = path.basename(module.filename, '.js');
 
 
 function init(emitter) {
-    "use strict";
+    'use strict';
     return function (cb_async) {
         var callback = function (error, result) {
             cb_async(error ? "gevlsnr " + String(error) : null,
@@ -84,6 +84,8 @@ function init(emitter) {
 exports.init = init;
 
 function filterObj(obj, filter) {
+    'use strict';
+    
     for (var p in filter) {
         if (filter.hasOwnProperty(p)) {
             if (obj[p] === filter[p]) {
@@ -94,8 +96,10 @@ function filterObj(obj, filter) {
     return false;
 }
 
-function trim(object,propertiesHash) {
-   var resObj = {};
+function trim(object, propertiesHash) {
+   'use strict';
+   
+    var resObj = {};
 
     for (var p in propertiesHash) {
         if (propertiesHash.hasOwnProperty(p)) {
@@ -105,8 +109,11 @@ function trim(object,propertiesHash) {
     return resObj;
 }
 function extractField(object, field) {
+    'use strict';
+    
     var arrayFields = field.split('.'), fieldValue = object;
-    for(var i =0; i < arrayFields.length; i++) {
+    
+    for(var i = 0; i < arrayFields.length; i++) {
         fieldValue = fieldValue[arrayFields[i]];
         if(fieldValue === null || fieldValue ===undefined || typeof fieldValue !== 'object') {
             return fieldValue;
