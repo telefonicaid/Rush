@@ -11,26 +11,6 @@
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 
-/**
- * Level for logger
- * debug
- * warning
- * error
- *
- * @type {String}
- */
-exports.logger = {};
-exports.logger.logLevel = 'debug';
-exports.logger.inspectDepth = 1 ;
-exports.logger.Console = { 
-    level: 'debug', timestamp:true
-};
-exports.logger.File ={ 
-    level:'debug', filename:'pditclogger.log', timestamp:true, json:false ,
-    maxsize: 1024*1024,
-    maxFiles: 3
-};
-
 // redis host
 exports.queue= {};
 exports.queue.redis_host = 'localhost';
@@ -61,4 +41,39 @@ exports.consumer.max_poppers = 500;
 exports.consumer.agent = undefined;
 exports.consumer.max_sockets = 10;
 
+/**
+ * Level for logger
+ * debug
+ * warning
+ * error
+ *
+ * @type {String}
+ */
+
+exports.consumer.logger = {};
+exports.consumer.logger.logLevel = 'debug';
+exports.consumer.logger.inspectDepth = 1 ;
+exports.consumer.logger.Console = {
+  level: 'debug', timestamp:true
+};
+
+exports.consumer.logger.File ={
+  level:'debug', filename:'./consumer.log', timestamp:true, json:false ,
+  maxsize: 1024*1024,
+  maxFiles: 3
+};
+
+
+exports.listener.logger = {};
+exports.listener.logger.logLevel = 'debug';
+exports.listener.logger.inspectDepth = 1 ;
+exports.listener.logger.Console = {
+  level: 'debug', timestamp:true
+};
+
+exports.listener.logger.File ={
+  level:'debug', filename:'./listener.log', timestamp:true, json:false ,
+  maxsize: 1024*1024,
+  maxFiles: 3
+};
 

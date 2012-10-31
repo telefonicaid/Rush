@@ -13,8 +13,7 @@
 var config_global = require('./config_base.js');
 var path = require('path');
 var log = require('PDITCLogger');
-config_global.logger.File.filename = 'consumer.log';
-log.setConfig(config_global.logger);
+log.setConfig(config_global.consumer.logger);
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
                                                             
