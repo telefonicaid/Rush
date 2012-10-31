@@ -39,18 +39,34 @@ var evInitArray = evModules.map(function (x) {
     return require(x).init(emitter);
 });
 
+logger.info('Node version:', process.versions.node);
+logger.info('V8 version:', process.versions.v8);
+logger.info('Current directory: ' , process.cwd());
+logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
+
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
-            console.log('error subscribing event listener', err);
+            logger.error('error subscribing event listener', err);
             throw new Error(['error subscribing event listener', err]);
         }
         else {
             startListener();
         }
     });
+
+
+
+process.on('uncaughtException', function onUncaughtException (err) {
+    'use strict';
+    logger.error('onUncaughtException', err);
+
+});
+
+
+
 
 function startListener() {
     'use strict';
@@ -187,7 +203,7 @@ function assign_request(request, data, callback) {
                 callback(response);
             });
         } else {
-            response.statusCode = 404;
+            response.statusCode = 400;
             response.data = JSON.stringify({ok: false, errors: err.message});
             logger.info('response', response);
             callback(response);
