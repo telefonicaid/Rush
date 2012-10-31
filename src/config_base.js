@@ -10,6 +10,10 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
+var dir_prefix = './';
+if(process.env.RUSH_DIR_PREFIX) {
+    dir_prefix =process.env.RUSH_DIR_PREFIX; 
+}
 
 // redis host
 exports.queue= {};
@@ -31,12 +35,12 @@ exports.ev_lsnr.collectionError= 'RushError';
 
 exports.listener = {};
 exports.listener.port = 3001;
-exports.listener.evModules = ['./ev_lsnr'];
+exports.listener.evModules = [];
 
 exports.consumer = {};
-exports.consumer.evModules = ['./ev_lsnr', './ev_callback', './ev_persistence','./gevlsnr'];
+exports.consumer.evModules = ['./ev_callback', './ev_persistence','./gevlsnr'];
 
-exports.consumer.max_poppers = 500;
+exports.consumer.max_poppers = 1;
 // agent: undefined -> globalAgent | false -> no agent
 exports.consumer.agent = undefined;
 exports.consumer.max_sockets = 10;
@@ -54,13 +58,12 @@ exports.consumer.logger = {};
 exports.consumer.logger.logLevel = 'debug';
 exports.consumer.logger.inspectDepth = 1 ;
 exports.consumer.logger.Console = {
-  level: 'debug', timestamp:true
+  level: 'debug', timestamp:true 
 };
 
 exports.consumer.logger.File ={
-  level:'debug', filename:'./consumer.log', timestamp:true, json:false ,
-  maxsize: 1024*1024,
-  maxFiles: 3
+  level:'debug', filename: dir_prefix + '/consumer.log', timestamp:true, json:false, 
+  maxsize: 1024*1024, maxFiles: 3
 };
 
 
@@ -70,9 +73,8 @@ exports.listener.logger.inspectDepth = 1 ;
 exports.listener.logger.Console = {
   level: 'debug', timestamp:true
 };
-
 exports.listener.logger.File ={
-  level:'debug', filename:'./listener.log', timestamp:true, json:false ,
+  level:'debug', filename:dir_prefix + '/listener.log', timestamp:true, json:false,
   maxsize: 1024*1024,
   maxFiles: 3
 };
