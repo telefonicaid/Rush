@@ -15,7 +15,7 @@ var mongodb = require('mongodb');
 
 var G = require('./my_globals').C;
 var config_global = require('./config_base');
-var config = require('./gevlsnrcfg');
+var config = config_global.gevlsnr;
 
 var path = require('path');
 var log = require('PDITCLogger');

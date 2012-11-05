@@ -79,3 +79,18 @@ exports.listener.logger.File ={
   maxFiles: 3
 };
 
+
+/* generic event listener */
+var gevlsnr_mongo = 'localhost';
+if(process.env.RUSH_GEN_MONGO) {
+    gevlsnr_mongo =process.env.RUSH_GEN_MONGO;
+}
+
+exports.gevlsnr = {};
+exports.gevlsnr.mongo_host = gevlsnr_mongo;
+//exports.gevlsnr.mongo_port = 27017;
+exports.gevlsnr.mongo_port = 27017;
+exports.gevlsnr.mongo_db =  'rush';
+exports.gevlsnr.collection= 'RushGeneric';
+exports.gevlsnr.filter = { state :"error"};
+exports.gevlsnr.take= {id: 'id', topic: 'topic', body:  'task.body', statusCode:'result.statusCode'}
