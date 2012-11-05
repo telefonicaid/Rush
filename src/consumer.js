@@ -39,6 +39,8 @@ logger.info('Node version:', process.versions.node);
 logger.info('V8 version:', process.versions.v8);
 logger.info('Current directory: ' + process.cwd());
 logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
+logger.info('RUSH_GEN_MONGO: ' , process.env.RUSH_GEN_MONGO);
+
 
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
