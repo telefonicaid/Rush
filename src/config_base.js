@@ -88,7 +88,6 @@ if(process.env.RUSH_GEN_MONGO) {
 
 exports.gevlsnr = {};
 exports.gevlsnr.mongo_host = gevlsnr_mongo;
-//exports.gevlsnr.mongo_port = 27017;
 exports.gevlsnr.mongo_port = 27017;
 exports.gevlsnr.mongo_db =  'rush';
 exports.gevlsnr.collection= 'RushGeneric';
