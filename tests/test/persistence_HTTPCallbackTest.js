@@ -258,17 +258,16 @@ describe('Persistence_HTTPCallback', function () {
                         server_callback.close();
 
                         var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                        utils.makeRequest(options, '', function (err, data) {
+                        setTimeout(function () {
+                            utils.makeRequest(options, '', function (err, data) {
+                                var JSONparsed = JSON.parse(data);
+                                JSONparsed.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
+                                JSONparsed.should.have.property('callback_status', '200');
+                                done();
+                            });
+                        }, 30)
 
-                            var JSONparsed = JSON.parse(data);
-
-                            JSONparsed.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
-                            JSONparsed.should.have.property('callback_status', '200');
-
-                            done();
-                        });
                     });
-
             }).listen(portCallBack,
                 function () {
                     //Petition method
