@@ -1,12 +1,19 @@
+//Copyright 2012 Telefonica Investigación y Desarrollo, S.A.U
 //
-// Copyright (c) Telefonica I+D. All rights reserved.
+//This file is part of RUSH.
 //
+//  RUSH is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//  RUSH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 //
+//  You should have received a copy of the GNU Affero General Public License along with RUSH
+//  . If not, seehttp://www.gnu.org/licenses/.
+//
+//For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
+
 var config = require('./config_base.js');
 var path = require('path');
 var log = require('PDITCLogger');
-config.logger.File.filename = 'listener.log';
-log.setConfig(config.logger);
+log.setConfig(config.listener.logger);
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
@@ -32,18 +39,34 @@ var evInitArray = evModules.map(function (x) {
     return require(x).init(emitter);
 });
 
+logger.info('Node version:', process.versions.node);
+logger.info('V8 version:', process.versions.v8);
+logger.info('Current directory: ' , process.cwd());
+logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
+
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
-            console.log('error subscribing event listener', err);
+            logger.error('error subscribing event listener', err);
             throw new Error(['error subscribing event listener', err]);
         }
         else {
             startListener();
         }
     });
+
+
+
+process.on('uncaughtException', function onUncaughtException (err) {
+    'use strict';
+    logger.error('onUncaughtException', err);
+
+});
+
+
+
 
 function startListener() {
     'use strict';
@@ -87,14 +110,23 @@ function startListener() {
         } else {
             pathComponents = parsedUrl.pathname.split('/');
             logger.debug('pathComponents', pathComponents);
-
+            var flatted = ['headers'];
+            
             if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
                 response_id = pathComponents[2];
 
                 dbrelayer.get_data(response_id, function (err, data) {
+
                     if (err) {
                         response_json = JSON.stringify(err);
                     } else {
+                        for (var i = 0; i < flatted.length; i++) {
+                            try {
+                                data[flatted[i]] = JSON.parse(data[flatted[i]]);
+                            }
+                            catch (e) {
+                            }
+                        }
                         response_json = JSON.stringify(data);
                     }
                     res.end(response_json);
@@ -143,7 +175,7 @@ function assign_request(request, data, callback) {
                 var st;
                 if (error) {
                     logger.warning('onWrittenReq', error);
-                    response.statusCode(500);
+                    response.statusCode=500;
                     response.data = error.toString();
                     //EMIT ERROR
                     var errev = {
@@ -180,7 +212,7 @@ function assign_request(request, data, callback) {
                 callback(response);
             });
         } else {
-            response.statusCode = 404;
+            response.statusCode = 400;
             response.data = JSON.stringify({ok: false, errors: err.message});
             logger.info('response', response);
             callback(response);

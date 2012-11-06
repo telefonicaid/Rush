@@ -1,12 +1,19 @@
+//Copyright 2012 Telefonica Investigación y Desarrollo, S.A.U
 //
-// Copyright (c) Telefonica I+D. All rights reserved.
+//This file is part of RUSH.
 //
+//  RUSH is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//  RUSH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 //
+//  You should have received a copy of the GNU Affero General Public License along with RUSH
+//  . If not, seehttp://www.gnu.org/licenses/.
+//
+//For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
+
 var config_global = require('./config_base.js');
 var path = require('path');
 var log = require('PDITCLogger');
-config_global.logger.File.filename = 'consumer.log';
-log.setConfig(config_global.logger);
+log.setConfig(config_global.consumer.logger);
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
                                                             
@@ -28,12 +35,19 @@ var evInitArray = evModules.map(function (x) {
     return require(x).init(emitter);
 });
 
+logger.info('Node version:', process.versions.node);
+logger.info('V8 version:', process.versions.v8);
+logger.info('Current directory: ' + process.cwd());
+logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
+logger.info('RUSH_GEN_MONGO: ' , process.env.RUSH_GEN_MONGO);
+
+
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
-            console.log('error subscribing event listener', err);
+            logger.error('error subscribing event listener', err);
             throw new Error(['error subscribing event listener', err]);
         }
         else {
@@ -42,6 +56,12 @@ async.parallel(evInitArray,
             }    
         }      
     });
+
+process.on('uncaughtException', function onUncaughtException (err) {
+    'use strict';
+    logger.error('onUncaughtException', err);
+});
+
 
 function consume(idconsumer, start) {
   'use strict';
