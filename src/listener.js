@@ -110,14 +110,23 @@ function startListener() {
         } else {
             pathComponents = parsedUrl.pathname.split('/');
             logger.debug('pathComponents', pathComponents);
-
+            var flatted = ['headers'];
+            
             if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
                 response_id = pathComponents[2];
 
                 dbrelayer.get_data(response_id, function (err, data) {
+
                     if (err) {
                         response_json = JSON.stringify(err);
                     } else {
+                        for (var i = 0; i < flatted.length; i++) {
+                            try {
+                                data[flatted[i]] = JSON.parse(data[flatted[i]]);
+                            }
+                            catch (e) {
+                            }
+                        }
                         response_json = JSON.stringify(data);
                     }
                     res.end(response_json);
