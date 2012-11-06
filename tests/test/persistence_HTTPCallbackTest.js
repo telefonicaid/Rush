@@ -85,16 +85,14 @@ function makeRequest(type, persistence, content, done) {
                 if (persistence === 'BODY') {
 
                     JSONRes.body.should.be.equal(content);
-                    var headers = JSON.parse(JSONRes.headers);
-                    testHeraders(headers);
+                    testHeraders(JSONRes.headers);
                     JSONRes.should.have.property('statusCode', '200');
 
                 } else if (persistence === 'HEADER') {
 
 
                     JSONRes.should.not.have.property('body');
-                    var headers = JSON.parse(JSONRes.headers);
-                    testHeraders(headers);
+                    testHeraders(JSONRes.headers);
                     JSONRes.should.have.property('statusCode', '200');
 
                 } else if (persistence === 'STATUS') {
@@ -210,8 +208,7 @@ describe('Persistence_HTTPCallback', function () {
                                 var JSONRes = JSON.parse(data);
 
                                 JSONRes.body.should.be.equal(content);
-                                var headers = JSON.parse(JSONRes.headers);
-                                testHeraders(headers);
+                                testHeraders(JSONRes.headers);
 
                                 JSONRes.should.have.property('statusCode', '200');
                                 JSONRes.should.have.property('callback_err', 'ENOTFOUND(getaddrinfo)');

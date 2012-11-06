@@ -39,7 +39,7 @@ describe('Persistence', function () {
 
                         var JSONres = JSON.parse(res);
                         JSONres.body.should.be.equal('');
-                        JSON.parse(JSONres.headers).should.have.property('test-header', 'test header');
+                        JSONres.headers.should.have.property('test-header', 'test header');
                         done();
                     });
                 }, 100); //Waiting for Rush to create the persistence
