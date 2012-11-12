@@ -11,9 +11,9 @@
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 //var worker_relay = require('./worker_relay');
-var event_worker = require('./event_worker');
+var eventWorker = require('./event_worker');
 var MG = require('./my_globals').C;
-var config_global = require('./config_base.js');
+var configGlobal = require('./config_base.js');
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -52,14 +52,14 @@ function getWorker(resp) {
     "use strict";
     logger.debug("getWorker(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
-    return event_worker.doJob;
+    return eventWorker.doJob;
 }
 
 function getTask(resp, callback){
     "use strict";
     logger.debug("getTask(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
-    return event_worker.createTask(resp, callback);
+    return eventWorker.createTask(resp, callback);
 }
 
 exports.route = route;

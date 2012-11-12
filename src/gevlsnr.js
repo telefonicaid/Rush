@@ -14,8 +14,8 @@
 var mongodb = require('mongodb');
 
 var G = require('./my_globals').C;
-var config_global = require('./config_base');
-var config = config_global.gevlsnr;
+var configGlobal = require('./config_base');
+var config = configGlobal.gevlsnr;
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -25,9 +25,9 @@ logger.prefix = path.basename(module.filename, '.js');
 
 function init(emitter) {
     'use strict';
-    return function (cb_async) {
+    return function (cbAsync) {
         var callback = function (error, result) {
-            cb_async(error ? "gevlsnr " + String(error) : null,
+            cbAsync(error ? "gevlsnr " + String(error) : null,
                 !error ? "gevlsnr OK" : null);
         };
         var client = new mongodb.Db(config.mongo_db,
@@ -42,9 +42,9 @@ function init(emitter) {
                     }
                 } else {
                     var collection = c;
-                    emitter.on(G.EVENT_NEWSTATE, function new_event(data) {
+                    emitter.on(G.EVENT_NEWSTATE, function newEvent(data) {
                         try {
-                            logger.debug('new_event', data);
+                            logger.debug('newEvent', data);
                             if (filterObj(data, config.filter)) {
                                 var trimmed = trim(data, config.take);
                                 collection.insert(trimmed, function (err, docs) {
@@ -56,7 +56,7 @@ function init(emitter) {
                                 });
                             }
                         } catch (e) {
-                            logger.warning('new_event', e);
+                            logger.warning('newEvent', e);
                         }
                     });
                     if (callback) {

@@ -11,8 +11,8 @@
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 var redis = require('redis');
-var config_global = require('./config_base');
-var config = config_global.queue;
+var configGlobal = require('./config_base');
+var config = configGlobal.queue;
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -28,37 +28,35 @@ var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 
 //redis.debug_mode = true;
 
-function put(key, obj, err_fun) {
+function put(key, obj, errFun) {
     "use strict";
-    logger.debug('put(key, obj, err_fun)', [key, obj, err_fun]);
+    logger.debug('put(key, obj, errFun)', [key, obj, errFun]);
 
-    var simple_req_str = JSON.stringify(obj);
+    var simpleReqStr = JSON.stringify(obj);
 
-    logger.debug('put - simple_req_str ', simple_req_str);
+    logger.debug('put - simpleReqStr ', simpleReqStr);
 
-    rcli.lpush(key, simple_req_str,err_fun);
+    rcli.lpush(key, simpleReqStr,errFun);
 }
 
-function get(keys, aux_queue_id, callback) {
+function get(keys, auxQueueId, callback) {
     "use strict";
-    logger.debug('get(keys, aux_queue_id, callback)',[keys, aux_queue_id, callback]);
+    logger.debug('get(keys, auxQueueId, callback)',[keys, auxQueueId, callback]);
 
     rcliBlocking.brpop(keys.control, keys.hpri, keys.lpri , 0, function onPop(err, data) {
             logger.debug('onPop(err, data)',[err, data]);
             //technical DEBT dou to REDIS unsupported functionality
             //BRPOPLPUSH from multiple sources OR LUA Scripting
-            rcli.lpush(aux_queue_id, data[1], function onPush(err){
+            rcli.lpush(auxQueueId, data[1], function onPush(err){
                 var obj = JSON.parse(data[1]);
                 callback(err, { queueId: data[0], task: obj });
             });
-
     });
-
 }
 
-function get_pending(idconsumer, callback){
+function getPending(idconsumer, callback){
     "use strict";
-    logger.debug('get_pending(idconsumer, callback)',[idconsumer, callback]);
+    logger.debug('getPending(idconsumer, callback)',[idconsumer, callback]);
 
     rcli.rpop(idconsumer, function onPendingData(err, data){
         var obj = JSON.parse(data);
@@ -66,13 +64,13 @@ function get_pending(idconsumer, callback){
     });
 }
 
-function rem_processing_queue(idconsumer, callback) {
+function remProcessingQueue(idconsumer, callback) {
     "use strict";
-    logger.debug('rem_processing_queue(idconsumer, callback)', [idconsumer, callback]);
+    logger.debug('remProcessingQueue(idconsumer, callback)', [idconsumer, callback]);
     rcli.del(idconsumer, callback);
 }
 
 exports.put = put;
 exports.get = get;
-exports.rem_processing_queue = rem_processing_queue;
-exports.get_pending = get_pending;
+exports.remProcessingQueue = remProcessingQueue;
+exports.getPending = getPending;

@@ -29,8 +29,8 @@ var G = require('./my_globals').C;
 
 var dbrelayer = require('./dbrelayer');
 
-var ev_lsnr = require('./ev_lsnr');
-ev_lsnr.init(emitter);
+var evLsnr = require('./ev_lsnr');
+evLsnr.init(emitter);
 
 var async = require("async");
 var evModules = config.listener.evModules;
@@ -73,7 +73,7 @@ function startListener() {
 
     http.createServer(function serveReq(req, res) {
 
-    var data = '', parsedUrl, retrievePath = 'response', pathComponents, response_id, response_json, reqLog = {};
+    var data = '', parsedUrl, retrievePath = 'response', pathComponents, responseId, responseJson, reqLog = {};
 
     reqLog.start = Date.now();
     reqLog.url = req.url;
@@ -97,7 +97,7 @@ function startListener() {
 
     req.on('end', function onReqEnd() {
         if (parsedUrl.pathname === '/') {
-            assign_request(req, data, function write_res(result) {
+            assignRequest(req, data, function writeRes(result) {
                 res.writeHead(result.statusCode);
                 res.end(result.data);
                 reqLog.responseTime = Date.now() - reqLog.start;
@@ -113,12 +113,12 @@ function startListener() {
             var flatted = ['headers'];
             
             if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
-                response_id = pathComponents[2];
+                responseId = pathComponents[2];
 
-                dbrelayer.get_data(response_id, function (err, data) {
+                dbrelayer.getData(responseId, function (err, data) {
 
                     if (err) {
-                        response_json = JSON.stringify(err);
+                        responseJson = JSON.stringify(err);
                     } else {
                         for (var i = 0; i < flatted.length; i++) {
                             try {
@@ -127,9 +127,9 @@ function startListener() {
                             catch (e) {
                             }
                         }
-                        response_json = JSON.stringify(data);
+                        responseJson = JSON.stringify(data);
                     }
-                    res.end(response_json);
+                    res.end(responseJson);
                 });
 
             } else {
@@ -146,14 +146,14 @@ function startListener() {
 }
 
 
-function assign_request(request, data, callback) {
+function assignRequest(request, data, callback) {
     'use strict';
-    logger.debug('assign_request(request, data, callback)',
+    logger.debug('assignRequest(request, data, callback)',
         [request, data, callback]);
 
     var id = uuid.v1();
 
-    var simple_req = {
+    var simpleReq = {
         id:id,
         method:request.method,
         httpVersion:request.httpVersion,
@@ -164,7 +164,7 @@ function assign_request(request, data, callback) {
     var response = {};
 
 
-    router.route(simple_req, processTask);
+    router.route(simpleReq, processTask);
 
     function processTask(err, routeObj) {
         if (!err) {

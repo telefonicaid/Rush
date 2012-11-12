@@ -10,8 +10,8 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var config_global = require('./config_base');
-var config = config_global.dbrelayer;
+var configGlobal = require('./config_base');
+var config = configGlobal.dbrelayer;
 
 var redis = require('redis');
 
@@ -42,9 +42,9 @@ function update(key, obj, cllbk) {
 
   rcli.hmset(config.key_prefix + key, o_aux, function onHmset(err, res) {
     logger.debug('onHmset(err, res) ', [err, res]);
-    rcli.expire(config.key_prefix + key, config_global.expire_time, function(err){
+    rcli.expire(config.key_prefix + key, configGlobal.expire_time, function(err){
       if (err) {
-        logger.error('expire(err, res) ', [config.key_prefix + key, config_global.persistenceTTL]);
+        logger.error('expire(err, res) ', [config.key_prefix + key, configGlobal.persistenceTTL]);
       }
 
     });
@@ -54,9 +54,9 @@ function update(key, obj, cllbk) {
   });
 }
 
-function get_data(key, callback) {
+function getData(key, callback) {
   'use strict';
-   logger.debug('get_data(key, callback)',[key, callback]);
+   logger.debug('getData(key, callback)',[key, callback]);
   rcli.hgetall(config.key_prefix + key, function onHgetall(err, data){
     logger.debug('onHgetall(err, data)', [err, data]);
     if(err){
@@ -69,5 +69,5 @@ function get_data(key, callback) {
   });
 }
 exports.update = update;
-exports.get_data = get_data;
+exports.getData = getData;
 
