@@ -14,21 +14,18 @@
 var mongodb = require('mongodb');
 
 var G = require('./my_globals').C;
-var configGlobal = require('./config_base');
-var config = configGlobal.gevlsnr;
-
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
 
-function init(emitter) {
+function init(emitter, config) {
     'use strict';
     return function (cbAsync) {
         var callback = function (error, result) {
-            cbAsync(error ? "gevlsnr " + String(error) : null,
-                !error ? "gevlsnr OK" : null);
+            cbAsync(error ? config.name+" " + String(error) : null,
+                !error ? config.name + " OK" : null);
         };
         var client = new mongodb.Db(config.mongo_db,
             new mongodb.Server(config.mongo_host, config.mongo_port, {}));
@@ -103,7 +100,7 @@ function trim(object, propertiesHash) {
 
     for (var p in propertiesHash) {
         if (propertiesHash.hasOwnProperty(p)) {
-            resObj[p] = extractField(object, propertiesHash[p]); ;
+            resObj[p] = extractField(object, propertiesHash[p]);
         }
     }
     return resObj;

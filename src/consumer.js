@@ -32,7 +32,7 @@ var async = require("async");
 var evModules = configGlobal.consumer.evModules;
 var evInitArray = evModules.map(function (x) {
     'use strict';
-    return require(x).init(emitter);
+    return require(x.module).init(emitter, x.config);
 });
 
 logger.info('Node version:', process.versions.node);
