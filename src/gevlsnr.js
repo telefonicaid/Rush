@@ -82,6 +82,10 @@ exports.init = init;
 
 function filterObj(obj, filter) {
     'use strict';
+
+    if(filter === undefined || filter === null) {
+        return true;
+    }
     
     for (var p in filter) {
         if (filter.hasOwnProperty(p)) {
