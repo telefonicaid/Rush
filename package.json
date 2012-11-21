@@ -19,10 +19,11 @@
     },
 
     "dependencies":{
-        "redis":"*",
+        "redis":"0.7.1",
         "node-uuid":"*",
         "async":"*",
-        "mongodb":"*"
+        "mongodb":"*",
+        "logger" : "https://github.com/telefonicaid/pditclogger/tarball/master"
     },
     "license":"AGPL",
     "engine":{

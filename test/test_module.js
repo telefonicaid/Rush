@@ -3,14 +3,15 @@ var LISTENER_HOSTNAME = 'localhost', LISTENER_PORT = '8030', REDIS_HOST = 'Relay
 
 
 var http = require('http');
-var global = require('../my_globals').C;
+var global = require('../src/my_globals').C;
 var async = require('async');
 var os = require('os');
 var redis_mod = require('redis');
 var redis = redis_mod.createClient(redis_mod.DEFAULT_PORT, REDIS_HOST);
-var server, end_point_req, end_point_res, client_res, client_req, relayer_header = {}, options;
+var server, end_point_req, end_point_res, client_res, client_req, options;
 var oneway = function(method) {
   return function(callback) {
+    var relayer_header = {};
     console.log('\nONEWAY TEST FOR METHOD ' + method);
     //Create EndPoint server
     server = http.createServer(
@@ -19,7 +20,7 @@ var oneway = function(method) {
         //verify Server Side
         console.log('Verify Server Side');
         //TEST PATH
-        if (req.url == '/testpath') {
+        if (req.url === '/testpath') {
           ok(' request URL: ' + req.url);
         } else {
           fail(' request URL:' + req.url);
@@ -48,6 +49,7 @@ var oneway = function(method) {
             callback && callback();
           })
         }
+        //test
         //TEST HEADERS
         if (req.headers['testheader'] == 'FOO_TEST_VAL') {
           ok('OK HEADER FOUND: ' + req.headers['testheader']);
@@ -246,6 +248,7 @@ var persistence_get = function(type) {
 var retry = function(times, retry_value) {
   return function(callback) {
     //Create end-point Server
+    var relayer_header = {};
     var iter = 1;
     console.log('START RETRY TEST');
     var end_point_server = http.createServer(
