@@ -1,4 +1,4 @@
-"!https://travis-ci.org/telefonicaid/Rush.png!":https://travis-ci.org/telefonicaid/Rush
+[![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush)
 
 #Rush 
 ===
