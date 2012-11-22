@@ -39,7 +39,7 @@ describe('Persistence', function () {
 
                         var JSONres = JSON.parse(res);
                         JSONres.body.should.be.equal('');
-                        JSON.parse(JSONres.headers).should.have.property('test-header', 'test header');
+                        JSONres.headers.should.have.property('test-header', 'test header');
                         done();
                     });
                 }, 100); //Waiting for Rush to create the persistence
@@ -122,7 +122,6 @@ describe('Persistence', function () {
         ], function (err, res) {
             var resGet = res[1];
             resGet.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
-            resGet.should.have.property('resultOk', 'false');
             done();
         });
     });

@@ -72,12 +72,9 @@ function makeRequest(type, persistence, content, done) {
 
             //Check content and headers
             var JSONRes = JSON.parse(response);
-            JSONRes.result.body.should.be.equal(content);
+            JSONRes.body.should.be.equal(content);
 
-            testHeraders(JSONRes.result.headers);
-
-            //Check resultOk
-            JSONRes.result.resultOk.should.be.equal(true);
+            testHeraders(JSONRes.headers);
 
             // Check persistence
             var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
@@ -85,21 +82,17 @@ function makeRequest(type, persistence, content, done) {
 
                 var JSONRes = JSON.parse(data);
 
-                JSONRes.resultOk.should.be.equal('true');   //Should be true without quotes (consistency)
-
                 if (persistence === 'BODY') {
 
                     JSONRes.body.should.be.equal(content);
-                    var headers = JSON.parse(JSONRes.headers);
-                    testHeraders(headers);
+                    testHeraders(JSONRes.headers);
                     JSONRes.should.have.property('statusCode', '200');
 
                 } else if (persistence === 'HEADER') {
 
 
                     JSONRes.should.not.have.property('body');
-                    var headers = JSON.parse(JSONRes.headers);
-                    testHeraders(headers);
+                    testHeraders(JSONRes.headers);
                     JSONRes.should.have.property('statusCode', '200');
 
                 } else if (persistence === 'STATUS') {
@@ -215,8 +208,7 @@ describe('Persistence_HTTPCallback', function () {
                                 var JSONRes = JSON.parse(data);
 
                                 JSONRes.body.should.be.equal(content);
-                                var headers = JSON.parse(JSONRes.headers);
-                                testHeraders(headers);
+                                testHeraders(JSONRes.headers);
 
                                 JSONRes.should.have.property('statusCode', '200');
                                 JSONRes.should.have.property('callback_err', 'ENOTFOUND(getaddrinfo)');
@@ -259,32 +251,23 @@ describe('Persistence_HTTPCallback', function () {
                         should.not.exist(parsedJSON.result);
 
                         //Test content
-                        parsedJSON.should.have.property('err');
-                        var err = parsedJSON.err;
-                        err.resultOk.should.be.equal(false);
-                        err.error.should.be.equal('ENOTFOUND(getaddrinfo)');
-
-                        //Test headers
-                        var headers = parsedJSON.task.headers;
-                        testHeraders(headers);
+                        parsedJSON.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
 
                         res.writeHead(200);
                         res.end();
                         server_callback.close();
 
                         var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                        utils.makeRequest(options, '', function (err, data) {
+                        setTimeout(function () {
+                            utils.makeRequest(options, '', function (err, data) {
+                                var JSONparsed = JSON.parse(data);
+                                JSONparsed.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
+                                JSONparsed.should.have.property('callback_status', '200');
+                                done();
+                            });
+                        }, 30)
 
-                            var JSONparsed = JSON.parse(data);
-
-                            JSONparsed.should.have.property('resultOk', 'false');       //Should be false without quotes (consistency)
-                            JSONparsed.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
-                            JSONparsed.should.have.property('callback_status', '200');
-
-                            done();
-                        });
                     });
-
             }).listen(portCallBack,
                 function () {
                     //Petition method
