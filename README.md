@@ -86,7 +86,7 @@ Tests files are located in Rush/tests/test. If you want to run a single test the
 
 ## Rush and OAuth
 
-That is an example request to API twitter with OAuth authentication:
+This in an example of a request to Twitter API with with OAuth authentication:
 ```
 var util = require('util');
 var http = require('http');
