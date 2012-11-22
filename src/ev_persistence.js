@@ -1,3 +1,15 @@
+//Copyright 2012 Telefonica Investigación y Desarrollo, S.A.U
+//
+//This file is part of RUSH.
+//
+//  RUSH is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//  RUSH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+//
+//  You should have received a copy of the GNU Affero General Public License along with RUSH
+//  . If not, seehttp://www.gnu.org/licenses/.
+//
+//For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
+
 var MG = require('./my_globals').C;
 var db = require('./dbrelayer');
 var config_global = require('./config_base.js');
@@ -16,7 +28,7 @@ function init(emitter) {
 
             if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
                 var type = data.state === MG.STATE_ERROR ? 'ERROR' : data.task.headers[MG.HEAD_RELAYER_PERSISTENCE];
-                do_persistence(data.task, data.result || data.err, type, function (error, result) {
+                doPersistence(data.task, data.result || data.err, type, function (error, result) {
                     if (error || result) {
                         var st = {
                             id:data.task.id,
@@ -35,55 +47,55 @@ function init(emitter) {
         callback(null, "ev_persistence OK");
     };
 }
-function do_persistence(task, resp_obj, type, callback) {
+function doPersistence(task, respObj, type, callback) {
     'use strict';
-    logger.debug('do_persistence(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
+    logger.debug('doPersistence(task, respObj, type, callback)', [task, respObj, type, callback]);
     if (type === 'BODY' || type === 'STATUS' || type === 'HEADER' || type === 'ERROR') {
         task.topic = task.headers[MG.HEAD_RELAYER_TOPIC];
-        set_object(task, resp_obj, type, callback);
+        setObject(task, respObj, type, callback);
     } else {
         if (!type && callback) {
             callback(null, null);
         } else {
             if (callback) {
                 //Error
-                var err_msg =
+                var errMsg =
                     type + " is not a valid value for " + MG.HEAD_RELAYER_PERSISTENCE;
-                logger.warning('do_persistence', err_msg);
-                callback(err_msg);
+                logger.warning('doPersistence', errMsg);
+                callback(errMsg);
             }
         }
     }
 }
 
 
-function set_object(task, resp_obj, type, callback) {
+function setObject(task, respObj, type, callback) {
     'use strict';
-    logger.debug('set_object(task, resp_obj, type, callback)', [task, resp_obj, type, callback]);
+    logger.debug('setObject(task, respObj, type, callback)', [task, respObj, type, callback]);
 
     //remove from response what is not needed
-    var err_msg,
-        set_obj = {};
+    var errMsg,
+        setObj = {};
     type = type.toUpperCase();
 
-    set_obj = resp_obj;
+    setObj = respObj;
     switch (type) {
         case 'STATUS':
-            delete set_obj.headers;
+            delete setObj.headers;
         /* fall-through */
         case  'HEADER':
-            delete set_obj.body;
+            delete setObj.body;
             break;
     }
 
-    db.update(task.id, set_obj, function onUpdated(err) {
+    db.update(task.id, setObj, function onUpdated(err) {
 
         if (err) {
             logger.warning('onUpdated', err);
         }
 
         if (callback) {
-            callback(err, set_obj);
+            callback(err, setObj);
         }
     });
 }

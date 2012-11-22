@@ -1,12 +1,19 @@
+//Copyright 2012 Telefonica Investigación y Desarrollo, S.A.U
 //
-// Copyright (c) Telefonica I+D. All rights reserved.
+//This file is part of RUSH.
 //
+//  RUSH is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//  RUSH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 //
+//  You should have received a copy of the GNU Affero General Public License along with RUSH
+//  . If not, seehttp://www.gnu.org/licenses/.
+//
+//For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
+
 var config = require('./config_base.js');
 var path = require('path');
 var log = require('PDITCLogger');
-config.logger.File.filename = 'listener.log';
-log.setConfig(config.logger);
+log.setConfig(config.listener.logger);
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
@@ -22,22 +29,27 @@ var G = require('./my_globals').C;
 
 var dbrelayer = require('./dbrelayer');
 
-var ev_lsnr = require('./ev_lsnr');
-ev_lsnr.init(emitter);
+var evLsnr = require('./ev_lsnr');
+evLsnr.init(emitter);
 
 var async = require("async");
 var evModules = config.listener.evModules;
 var evInitArray = evModules.map(function (x) {
     'use strict';
-    return require(x).init(emitter);
+    return require(x.module).init(emitter, x.config);
 });
+
+logger.info('Node version:', process.versions.node);
+logger.info('V8 version:', process.versions.v8);
+logger.info('Current directory: ' , process.cwd());
+logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
 
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
-            console.log('error subscribing event listener', err);
+            logger.error('error subscribing event listener', err);
             throw new Error(['error subscribing event listener', err]);
         }
         else {
@@ -45,12 +57,23 @@ async.parallel(evInitArray,
         }
     });
 
+
+
+process.on('uncaughtException', function onUncaughtException (err) {
+    'use strict';
+    logger.error('onUncaughtException', err);
+
+});
+
+
+
+
 function startListener() {
     'use strict';
 
     http.createServer(function serveReq(req, res) {
 
-    var data = '', parsedUrl, retrievePath = 'response', pathComponents, response_id, response_json, reqLog = {};
+    var data = '', parsedUrl, retrievePath = 'response', pathComponents, responseId, responseJson, reqLog = {};
 
     reqLog.start = Date.now();
     reqLog.url = req.url;
@@ -74,7 +97,7 @@ function startListener() {
 
     req.on('end', function onReqEnd() {
         if (parsedUrl.pathname === '/') {
-            assign_request(req, data, function write_res(result) {
+            assignRequest(req, data, function writeRes(result) {
                 res.writeHead(result.statusCode);
                 res.end(result.data);
                 reqLog.responseTime = Date.now() - reqLog.start;
@@ -87,17 +110,26 @@ function startListener() {
         } else {
             pathComponents = parsedUrl.pathname.split('/');
             logger.debug('pathComponents', pathComponents);
-
+            var flatted = ['headers'];
+            
             if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
-                response_id = pathComponents[2];
+                responseId = pathComponents[2];
 
-                dbrelayer.get_data(response_id, function (err, data) {
+                dbrelayer.getData(responseId, function (err, data) {
+
                     if (err) {
-                        response_json = JSON.stringify(err);
+                        responseJson = JSON.stringify(err);
                     } else {
-                        response_json = JSON.stringify(data);
+                        for (var i = 0; i < flatted.length; i++) {
+                            try {
+                                data[flatted[i]] = JSON.parse(data[flatted[i]]);
+                            }
+                            catch (e) {
+                            }
+                        }
+                        responseJson = JSON.stringify(data);
                     }
-                    res.end(response_json);
+                    res.end(responseJson);
                 });
 
             } else {
@@ -114,14 +146,14 @@ function startListener() {
 }
 
 
-function assign_request(request, data, callback) {
+function assignRequest(request, data, callback) {
     'use strict';
-    logger.debug('assign_request(request, data, callback)',
+    logger.debug('assignRequest(request, data, callback)',
         [request, data, callback]);
 
     var id = uuid.v1();
 
-    var simple_req = {
+    var simpleReq = {
         id:id,
         method:request.method,
         httpVersion:request.httpVersion,
@@ -132,7 +164,7 @@ function assign_request(request, data, callback) {
     var response = {};
 
 
-    router.route(simple_req, processTask);
+    router.route(simpleReq, processTask);
 
     function processTask(err, routeObj) {
         if (!err) {
@@ -143,7 +175,7 @@ function assign_request(request, data, callback) {
                 var st;
                 if (error) {
                     logger.warning('onWrittenReq', error);
-                    response.statusCode(500);
+                    response.statusCode=500;
                     response.data = error.toString();
                     //EMIT ERROR
                     var errev = {
@@ -180,7 +212,7 @@ function assign_request(request, data, callback) {
                 callback(response);
             });
         } else {
-            response.statusCode = 404;
+            response.statusCode = 400;
             response.data = JSON.stringify({ok: false, errors: err.message});
             logger.info('response', response);
             callback(response);

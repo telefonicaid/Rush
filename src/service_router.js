@@ -1,12 +1,19 @@
+//Copyright 2012 Telefonica Investigación y Desarrollo, S.A.U
 //
-// Copyright (c) Telefonica I+D. All rights reserved.
+//This file is part of RUSH.
 //
+//  RUSH is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//  RUSH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 //
+//  You should have received a copy of the GNU Affero General Public License along with RUSH
+//  . If not, seehttp://www.gnu.org/licenses/.
+//
+//For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 //var worker_relay = require('./worker_relay');
-var event_worker = require('./event_worker');
+var eventWorker = require('./event_worker');
 var MG = require('./my_globals').C;
-var config_global = require('./config_base.js');
+var configGlobal = require('./config_base.js');
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -45,14 +52,14 @@ function getWorker(resp) {
     "use strict";
     logger.debug("getWorker(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
-    return event_worker.doJob;
+    return eventWorker.doJob;
 }
 
 function getTask(resp, callback){
     "use strict";
     logger.debug("getTask(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
-    return event_worker.createTask(resp, callback);
+    return eventWorker.createTask(resp, callback);
 }
 
 exports.route = route;
