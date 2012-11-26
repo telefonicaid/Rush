@@ -71,8 +71,242 @@ This information may be retrieved at http://[rush-host]/response/[id]
 * EXAMPLE: curl -v --header --header "X-Relayer-topic: BUSSINESLOGIC-ID" --header "X-Relayer-Host:http://[target-host]:[port]" http://[rush-host]:[port]/
 [More examples](TEST-CURLS)
 
-[Retrieving Data: GET / Callback / Events](Data-Interfaces)
+##Retrieving Data: GET / Callback / Events
+Rush provides several mechanisms to obtain information about the relayed transactions. Each of those mechanism will expose **JSON** data structures that may vary depending on policies or channel used.
+It is important to remark that no all the available channels may have sense in all the usage scenarios, so it is necessary to differentiate them and choose the best suited to your necessities.
 
+### GET response
+This is the basic channel and the easiest way to obtain information related to the destination host response. It is associated to the persistence policy, that is it will return data _iff_ there is a valid PERSISTENCE POLICY assigned to the request.
+The retrieved information will be obtained from the Rush **transient** repository. So it will EXPIRE at some moment (EXPIRE interval is not decided yet, but it is mandatory to purge Rush repository).
+If there is a HTTPCALLBACK policy set, information about the callback status will be returned from this channel also.
+
+Some examples:
+
+``
+http://[RUSHHOST]/response/[id]
+`` 
+
+OK
+```Javascript
+    {
+    "topic":"undefined",
+    "statusCode":"200",
+    "headers":{
+        "connection":"keep-alive",
+        "transfer-encoding":"chunked"},
+    "id":"f2de35b0-2742-11e2-8b17-ab24de2ec49c",
+    "body":"<>...<>"}
+```
+
+ERROR
+```Javascript
+    {
+    "id":"a2de5cb0-2743-11e2-8b17-ab24de2ec49c",
+    "topic":"undefined",
+    "error":"ENOTFOUND(getaddrinfo)"
+    }
+```
+WITH CALLBACK OK
+```Javascript
+    {
+    "headers":{
+       "content-type":"application/json",
+       "connection":"keep-alive",
+       "transfer-encoding":"chunked"},
+    "id":"01bd8340-2745-11e2-8b17-ab24de2ec49c",
+    "body":"<>...<>",
+    "topic":"undefined",
+    "statusCode":"200",
+    "callback_status":"200"
+    }
+```
+WITH CALLBACK ERROR
+```Javascript
+    {
+    "headers":{
+       "content-type":"application/json",
+       "connection":"keep-alive",
+       "transfer-encoding":"chunked"},
+    "id":"01bd8340-2745-11e2-8b17-ab24de2ec49c",
+    "callback_err":"ENOTFOUND(getaddrinfo)",
+    "body":"<>...<>",
+    "topic":"undefined",
+    "statusCode":"200"
+    }
+```
+
+###HTTP-CALLBACK
+This mechanism PUSH relevant data via HTTP-POST to a previously stablished HTTP SERVER endpoint (HTTP-CALLBACK POLICY). The information sent is the same than in the GET/retrieve option (except callback information).
+
+OK
+```Javascript
+    {
+    "id":"a2e29b10-2746-11e2-8b17-ab24de2ec49c",
+    "statusCode":200,
+    "headers":{
+        "content-type":"application/json",
+        "connection":"keep-alive",
+        "transfer-encoding":"chunked"},
+    "body":"<>...<>"}
+```
+
+ERROR
+```Javascript
+    {
+    "id":"78c69e20-2747-11e2-8b17-ab24de2ec49c",
+    "error":"ENOTFOUND(getaddrinfo)"
+    }
+```
+
+###System Events
+Rush will emit detailed information as events. Events are intended to be a communication mechanism with external systems, typically an historic DB (but any kind of system could be subscribed and react to those events: Queues, External APIS...). To do so an _ad-hoc_ Event Handler must be provided (a .js file with the necessary logic) to be executed on events arrival (decoupled subscription mechanism will be provided if necessary in further versions).
+
+As an example a MongoDB handler, keeping historic data, is provided. It is important to remark that this historic support does not "belongs" to Rush platform.
+
+####MongoDB Historic State (Optional)
+Here we will keep the most detailed information. Here we will find all the reached states ("Pending", "Processing", "Completed", "Error"), times and results of every transaction.
+
+PENDING
+
+```Javascript
+    { 
+     "id" : "59ec70b0-a3f8-11e1-9a40-717f5f83ff09",
+     "topic" : "undefined",
+     "state" : "pending", 
+     "date" : { "$date" : 1337682285379 }, 
+     "task" : { 
+              "id" : "59ec70b0-a3f8-11e1-9a40-717f5f83ff09", 
+              "method" : "POST", 
+              "httpVersion" : "1.1", 
+              "url" : "/", 
+              "headers" : {...}, 
+              "body" : "" 
+              }, 
+      "_id" : { "$oid" : "4fbb696d836b4b781d000003" } 
+     }
+```
+
+PROCESSING
+
+```Javascript
+
+     { 
+       "id" : "c1882ed0-a3f8-11e1-9a40-717f5f83ff09", 
+       "topic" : "undefined"
+       "state" : "processing", 
+       "date" : { "$date" : 1337682459251 }, 
+       "task" : { 
+                 "id" : "c1882ed0-a3f8-11e1-9a40-717f5f83ff09", 
+                 "method" : "POST", 
+                 "httpVersion" : "1.1", 
+                 "url" : "/", 
+                 "headers" : {...}, 
+                 "body" : "" 
+                 }, 
+       "idConsumer" : "consumerA:2", 
+       "_id" : { "$oid" : "4fbb6a1babb625b81500000a" }
+```
+
+COMPLETED
+
+```Javascript
+ {
+        "id":"7cdc9ae0-95e4-11e1-bc10-551d65f43cb1",
+        "topic":"undefined"
+        "state":"completed",
+        "date":{"$date":1336134438145},
+        "task":{
+            "id":"7cdc9ae0-95e4-11e1-bc10-551d65f43cb1",
+            "method":"GET",
+            "httpVersion":"1.1",
+            "url":"/",
+            "headers":{
+                "host":"www.tid.es",
+                "connection":"keep-alive",
+                "x-relayer-persistence":"BODY",
+                "x-relayer-host":"http://www.tid.es"
+             },
+            "body":"<>...</>"
+         },
+        "result":{
+                "id":"7cdc9ae0-95e4-11e1-bc10-551d65f43cb1",
+                "topic":"undefined"
+                "statusCode":200,
+                "headers":{
+                          "content-length":"167",
+                          "content-type":"text/html",
+                          },
+                "body":"<>...</>"
+                },
+        },
+        "_id":{
+            "$oid":"4fa3cb26b09314cb98000020"
+        }
+    }
+```
+
+ERROR
+
+```Javascript
+    { "id" : "59ec70b0-a3f8-11e1-9a40-717f5f83ff09", 
+      "topic": "undefined",
+      "state" : "error", 
+      "date" : { "$date" : 1337682287652 }, 
+      "task" : {...}, 
+      "idConsumer" : "consumerA:0", 
+      "result" : { 
+            "id": "78c69e20-2747-11e2-8b17-ab24de2ec49c",
+            "topic": "undefined",
+            "error": "ENOTFOUND(getaddrinfo)" }, 
+      "_id" : { "$oid" : "4fbb696fabb625b815000003" } 
+    }
+```
+
+CALLBACK_STATE
+
+```Javascript
+    { "id" : "c1882ed0-a3f8-11e1-9a40-717f5f83ff09", 
+      "topic" : "undefined"
+      "state" : "callback_state", 
+      "date" : { "$date" : 1337682461311 }, 
+      "task" : {...}, 
+      "err" : null, 
+      "result" : { "callback_status" : 200 }, 
+      "_id" : { "$oid" : "4fbb6a1dabb625b81500000d" } 
+     }
+```
+
+PERSISTENCE_STATE
+
+```Javascript
+    { "id" : "c1882ed0-a3f8-11e1-9a40-717f5f83ff09", 
+      "topic" : "undefined",
+      "state" : "persistence_state", 
+      "date" : { "$date" : 1337682459295 }, 
+      "task" : {...}, 
+      "err" : null, 
+      "result" : { 
+               "id" : "c1882ed0-a3f8-11e1-9a40-717f5f83ff09", 
+               "topic" : "undefined"
+               "statusCode" : 302, 
+               "headers" : {...}, 
+               "body" : "<head>...</body>" }, 
+      "_id" : { "$oid" : "4fbb6a1babb625b81500000c"} 
+    }
+```
+
+####MongoDB Error Log (Optional)
+All the system errors will be emitted also as a way to maintain an error log or to communicate with Operation systems.
+
+REQUEST ERROR
+```Javascript
+    { 
+    "id" :   "59ec70b0-a3f8-11e1-9a40-717f5f83ff09", 
+    "date" : { "$date" : 1337682287650 }, 
+    "err" :  { "resultOk" : false, "error" : "ENOTFOUND(getaddrinfo)" }, 
+    "_id" : { "$oid" : "4fbb696fabb625b815000002" } 
+    }
+```
 ##Running test
 ### Dependencies
 
