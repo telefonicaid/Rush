@@ -15,6 +15,8 @@ var https = require('https');
 
 // Create an HTTP server
 var srv = http.createServer(function (req, res) {
+    'use strict';
+    
     req.on('data', function (data) {
         console.log("(CB):"+data);
     });
@@ -30,6 +32,8 @@ var srv = http.createServer(function (req, res) {
 srv.listen(8124);
 
 var srv2 = http.createServer(function (req, res) {
+    'use strict';
+    
     req.on('data', function (data) {
         console.log("(ERROR CB):"+data);
     });
@@ -45,6 +49,8 @@ var srv2 = http.createServer(function (req, res) {
 srv2.listen(8125);
 
 var srv3 = http.createServer(function (req, res) {
+    'use strict';
+    
     req.on('data', function (data) {
         console.log("(ERROR CB):"+data);
     });

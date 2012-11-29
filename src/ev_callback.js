@@ -59,12 +59,12 @@ function init(emitter) {
 
             logger.debug('onNewEvent(data)', [data]);
             if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
-                do_http_callback(data.task, data.result,
+                doHttpCallback(data.task, data.result,
                     data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK], 'callback',
                     getHttpCallback(MG.STATE_CALLBACK, 'callback_err'));
             }
             if (data.state === MG.STATE_ERROR) {
-                do_http_callback(data.task, data.result,
+                doHttpCallback(data.task, data.result,
                     data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK_ERROR],
                     'on_err_callback',
                     getHttpCallback(MG.STATE_ONERR_CALLBACK, 'on_err_callback_err'));
@@ -74,61 +74,61 @@ function init(emitter) {
     };
 }
 
-function do_http_callback(task, resp_obj, callback_host, cb_field, callback) {
+function doHttpCallback(task, respObj, callbackHost, cbField, callback) {
     'use strict';
-    logger.debug('do_http_callback(task, resp_obj, callback_host, cb_status_field, callback)',
-        [task, resp_obj, callback_host, cb_field, callback]);
-    var cb_res = {};
-    if (callback_host) {
-        var callback_options = url.parse(callback_host);
-        callback_options.method = 'POST';
-        var callback_req = http.request(callback_options, function (callback_res) {
-            //check callback_res status (modify state) Not interested in body
-            cb_res[cb_field + '_status'] = callback_res.statusCode;
+    logger.debug('doHttpCallback(task, respObj, callbackHost, cb_status_field, callback)',
+        [task, respObj, callbackHost, cbField, callback]);
+    var cbRes = {};
+    if (callbackHost) {
+        var callbackOptions = url.parse(callbackHost);
+        callbackOptions.method = 'POST';
+        var callbackReq = http.request(callbackOptions, function (callbackRes) {
+            //check callbackRes status (modify state) Not interested in body
+            cbRes[cbField + '_status'] = callbackRes.statusCode;
             if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
-                db.update(task.id, cb_res, function onUpdated(err) {
+                db.update(task.id, cbRes, function onUpdated(err) {
                     if (err) {
                         logger.warning('onUpdated', err);
                     }
                     if (callback) {
-                        callback(err, cb_res);
+                        callback(err, cbRes);
                     }
                 });
             } else {
                 if (callback) {
-                    callback(null, cb_res);
+                    callback(null, cbRes);
                 }
             }
         });
 
 
-        callback_req.on('error', function onReqError(err) {
+        callbackReq.on('error', function onReqError(err) {
             //error in request
             if (err) {
                 logger.warning('onReqError', err);
             }
-            var cb_st = {};
-            cb_st[cb_field + '_err'] = err.code + '(' + err.syscall + ')';
+            var cbSt = {};
+            cbSt[cbField + '_err'] = err.code + '(' + err.syscall + ')';
 
             //store iff persistence policy
             if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
-                db.update(task.id, cb_st, function onUpdated(err) {
+                db.update(task.id, cbSt, function onUpdated(err) {
                     if (err) {
                         logger.warning('onUpdated', err);
                     }
                     if (callback) {
-                        callback(cb_st, null);
+                        callback(cbSt, null);
                     }
                 });
             } else {
                 if (callback) {
-                    callback(cb_st, null);
+                    callback(cbSt, null);
                 }
             }
         });
-        var str_resp_obj = JSON.stringify(resp_obj);
-        callback_req.write(str_resp_obj);
-        callback_req.end();
+        var strRespObj = JSON.stringify(respObj);
+        callbackReq.write(strRespObj);
+        callbackReq.end();
     } else {
         if (callback) {
             callback(null);

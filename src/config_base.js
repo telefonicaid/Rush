@@ -35,10 +35,8 @@ exports.ev_lsnr.collectionError= 'RushError';
 
 exports.listener = {};
 exports.listener.port = 3001;
-exports.listener.evModules = [];
 
 exports.consumer = {};
-exports.consumer.evModules = ['./ev_callback', './ev_persistence','./gevlsnr'];
 
 exports.consumer.max_poppers = 1;
 // agent: undefined -> globalAgent | false -> no agent
@@ -86,10 +84,17 @@ if(process.env.RUSH_GEN_MONGO) {
     gevlsnr_mongo =process.env.RUSH_GEN_MONGO;
 }
 
-exports.gevlsnr = {};
-exports.gevlsnr.mongo_host = gevlsnr_mongo;
-exports.gevlsnr.mongo_port = 27017;
-exports.gevlsnr.mongo_db =  'rush';
-exports.gevlsnr.collection= 'RushGeneric';
-exports.gevlsnr.filter = { state :"error"};
-exports.gevlsnr.take= {id: 'id', topic: 'topic', body:  'task.body', statusCode:'result.statusCode'}
+var gevlsnr = {};
+gevlsnr.name = "gevlsnr";
+gevlsnr.mongo_host = gevlsnr_mongo;
+gevlsnr.mongo_port = 27017;
+gevlsnr.mongo_db =  'rush';
+gevlsnr.collection= 'RushGeneric';
+gevlsnr.filter = { state :"error"};
+gevlsnr.take= {id: 'id', topic: 'topic', body:  'task.body', statusCode:'result.statusCode'};
+
+exports.consumer.evModules = [{module: './ev_callback'},
+                              {module: './ev_persistence'},
+                              {module: './gevlsnr', config: gevlsnr}];
+
+exports.listener.evModules = [];

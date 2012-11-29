@@ -10,10 +10,10 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var config_global = require('./config_base.js');
+var configGlobal = require('./config_base.js');
 var path = require('path');
 var log = require('PDITCLogger');
-log.setConfig(config_global.consumer.logger);
+log.setConfig(configGlobal.consumer.logger);
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
                                                             
@@ -26,13 +26,13 @@ var emitter = require('./emitter_module.js').get();
 
 var obsQueues = service_router.getQueues();
 
-var max_poppers = config_global.consumer.max_poppers;
+var max_poppers = configGlobal.consumer.max_poppers;
 
 var async = require("async");
-var evModules = config_global.consumer.evModules;
+var evModules = configGlobal.consumer.evModules;
 var evInitArray = evModules.map(function (x) {
     'use strict';
-    return require(x).init(emitter);
+    return require(x.module).init(emitter, x.config);
 });
 
 logger.info('Node version:', process.versions.node);
@@ -52,7 +52,7 @@ async.parallel(evInitArray,
         }
         else {
             for (var i = 0; i < max_poppers; i++) {
-                consume(config_global.consumer_id + i, true);
+                consume(configGlobal.consumer_id + i, true);
             }    
         }      
     });
@@ -68,17 +68,17 @@ function consume(idconsumer, start) {
   logger.debug('consume(idconsumer, start)', [idconsumer, start]);
 
   if (start) {
-    store.get_pending(idconsumer, processing_consumed_task);
+    store.getPending(idconsumer, processingConsumedTask);
   } else {
-    store.get(obsQueues, idconsumer, processing_consumed_task);
+    store.get(obsQueues, idconsumer, processingConsumedTask);
   }
 
-  function processing_consumed_task(err, job) {
-    logger.debug('processing_consumed_task(err, resp)', [err, job]);
+  function processingConsumedTask(err, job) {
+    logger.debug('processingConsumedTask(err, resp)', [err, job]);
 
     var st;
     if (err) {
-      logger.warning("processing_consumed_task", err);
+      logger.warning("processingConsumedTask", err);
       var errev = {
         idConsumer: idconsumer,
         //no topic avaliable
@@ -88,7 +88,7 @@ function consume(idconsumer, start) {
       emitter.emit(G.EVENT_ERR, errev);
     } else {
       if (job && job.task) {
-        logger.debug("processing_consumed_task - resp", job);
+        logger.debug("processingConsumedTask - resp", job);
         //EMIT PROCESSING
         st = {
           id: job.task.id,
@@ -141,7 +141,7 @@ function consume(idconsumer, start) {
                 };
                 emitter.emit(G.EVENT_NEWSTATE, st);
               }
-              store.rem_processing_queue(idconsumer, function onRemoval(err) {
+              store.remProcessingQueue(idconsumer, function onRemoval(err) {
                 logger.debug('onRemoval(err)', [err]);
                 if (err) {
                   logger.warning('onRemoval', err);

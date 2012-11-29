@@ -14,21 +14,18 @@
 var mongodb = require('mongodb');
 
 var G = require('./my_globals').C;
-var config_global = require('./config_base');
-var config = config_global.gevlsnr;
-
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
 
-function init(emitter) {
+function init(emitter, config) {
     'use strict';
-    return function (cb_async) {
+    return function (cbAsync) {
         var callback = function (error, result) {
-            cb_async(error ? "gevlsnr " + String(error) : null,
-                !error ? "gevlsnr OK" : null);
+            cbAsync(error ? config.name+" " + String(error) : null,
+                !error ? config.name + " OK" : null);
         };
         var client = new mongodb.Db(config.mongo_db,
             new mongodb.Server(config.mongo_host, config.mongo_port, {}));
@@ -42,9 +39,9 @@ function init(emitter) {
                     }
                 } else {
                     var collection = c;
-                    emitter.on(G.EVENT_NEWSTATE, function new_event(data) {
+                    emitter.on(G.EVENT_NEWSTATE, function newEvent(data) {
                         try {
-                            logger.debug('new_event', data);
+                            logger.debug('newEvent', data);
                             if (filterObj(data, config.filter)) {
                                 var trimmed = trim(data, config.take);
                                 collection.insert(trimmed, function (err, docs) {
@@ -56,7 +53,7 @@ function init(emitter) {
                                 });
                             }
                         } catch (e) {
-                            logger.warning('new_event', e);
+                            logger.warning('newEvent', e);
                         }
                     });
                     if (callback) {
@@ -85,6 +82,10 @@ exports.init = init;
 
 function filterObj(obj, filter) {
     'use strict';
+
+    if(filter === undefined || filter === null) {
+        return true;
+    }
     
     for (var p in filter) {
         if (filter.hasOwnProperty(p)) {
@@ -103,7 +104,7 @@ function trim(object, propertiesHash) {
 
     for (var p in propertiesHash) {
         if (propertiesHash.hasOwnProperty(p)) {
-            resObj[p] = extractField(object, propertiesHash[p]); ;
+            resObj[p] = extractField(object, propertiesHash[p]);
         }
     }
     return resObj;
