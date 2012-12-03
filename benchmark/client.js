@@ -1,28 +1,30 @@
-var http=require ('http');
-var request='test';
+var http = require('http');
+var request = 'test';
 
-var client =function (RushHost,RushPort,HostAndPort,timeout,resSize){
-var options={};
-options.host = RushHost;
-options.port = Rushport;
-options.headers = {};
-options.headers['X-Relayer-Host'] = HostAndPort;
-//options.headers['X-relayer-persistence'] = 'BODY';
-options.method='POST';
+var client = function (rushHost, rushPort, hostAndPort, timeout, resSize) {
+    'use strict';
 
-var req = http.request(options, function (res) {
+    var options = {};
+    options.host = rushHost;
+    options.port = rushPort;
+    options.headers = {};
+    options.headers['X-Relayer-Host'] = hostAndPort;
+    //options.headers['X-relayer-persistence'] = 'BODY';
+    options.method = 'POST';
 
-         res.on('data',function(chunk){
-             var data='';
-             data+=chunk;
-             console.log(data);
-         });
-});
+    var req = http.request(options, function (res) {
 
-var body={ timeout :timeout, resSize :resSize};
-body=JSON.stringify(body);
-req.write(body);
-req.end();
+        res.on('data', function (chunk) {
+            var data = '';
+            data += chunk;
+            console.log(data);
+        });
+    });
+
+    var body = { timeout : timeout, resSize : resSize};
+    body = JSON.stringify(body);
+    req.write(body);
+    req.end();
 }
 
 exports.client = client;
