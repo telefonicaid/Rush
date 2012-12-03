@@ -44,16 +44,19 @@ function init(emitter, config) {
                             logger.debug('newEvent', data);
                             if (filterObj(data, config.filter)) {
                                 var trimmed = trim(data, config.take);
-                                collection.insert(trimmed, function (err, docs) {
-                                    if (err) {
-                                        logger.warning('insert', err);
-                                    } else {
-                                        logger.debug('insert', docs);
-                                    }
-                                });
+                                    collection.insert(trimmed, function (err, docs) {
+                                        if (err) {
+                                            logger.warning('insert', err);
+                                        } else {
+                                            logger.debug('insert', docs);
+                                        }
+                                    });                            
                             }
                         } catch (e) {
-                            logger.warning('newEvent', e);
+                            logger.error('newEvent', e);
+                            var errx = new Error(['error inserting collection', err]);
+                            errx.fatal = true;
+                            throw errx;
                         }
                     });
                     if (callback) {
@@ -120,4 +123,5 @@ function extractField(object, field) {
             return fieldValue;
         }
     }
+    return fieldValue;
 }

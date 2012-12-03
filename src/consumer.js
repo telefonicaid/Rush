@@ -41,14 +41,15 @@ logger.info('Current directory: ' + process.cwd());
 logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
 logger.info('RUSH_GEN_MONGO: ' , process.env.RUSH_GEN_MONGO);
 
-
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
         logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
             logger.error('error subscribing event listener', err);
-            throw new Error(['error subscribing event listener', err]);
+            var errx = new Error(['error subscribing event listener', err]);
+            errx.fatal = true;
+            throw errx;
         }
         else {
             for (var i = 0; i < max_poppers; i++) {
@@ -57,10 +58,6 @@ async.parallel(evInitArray,
         }      
     });
 
-process.on('uncaughtException', function onUncaughtException (err) {
-    'use strict';
-    logger.error('onUncaughtException', err);
-});
 
 
 function consume(idconsumer, start) {
@@ -172,5 +169,17 @@ function consume(idconsumer, start) {
   }
 }
 
+
+
+
+process.on('uncaughtException', function onUncaughtException(err) {
+    'use strict';
+    logger.error('onUncaughtException', err);
+    
+    if (err && err.fatal) {
+        setTimeout(function() {process.exit();}, 1000);
+        process.stdout.end();
+    }
+});
 
 
