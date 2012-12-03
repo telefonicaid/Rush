@@ -43,7 +43,7 @@ describe('Topic', function () {
 
                         var JSONres = JSON.parse(res);
                         JSONres.body.should.be.equal('');
-                        JSON.parse(JSONres.headers).should.have.property('test-header', 'test header');
+                        JSONres.headers.should.have.property('test-header', 'test header');
                         JSONres.should.have.property('topic','Topic test');
                         done();
                     });

@@ -74,9 +74,8 @@ function makeRequest(type, content, done) {
         req.on('end',
             function () {
                 var parsedJSON = JSON.parse(response);
-                parsedJSON.result.should.have.property('body', content);
-                parsedJSON.result.should.have.property('resultOk', true);
-                parsedJSON.result.should.have.property('statusCode', 200);
+                parsedJSON.should.have.property('body', content);
+                parsedJSON.should.have.property('statusCode', 200);
 
                 res.writeHead(200);
                 res.end();
@@ -154,17 +153,7 @@ describe('HTTP_Callback', function () {
                         var parsedJSON = JSON.parse(response);
                         should.not.exist(parsedJSON.result);
 
-                        //Test content
-                        parsedJSON.should.have.property('err');
-                        var err = parsedJSON.err;
-                        err.should.have.property('resultOk', false);
-                        err.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
-
-                        //Test headers
-                        var headers = parsedJSON.task.headers;
-                        headers.should.have.property('content-type', applicationContent);
-                        headers.should.have.property(personalHeader1name, personalHeader1value);
-                        headers.should.have.property(personalHeader2name, personalHeader2value);
+                        parsedJSON.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
 
                         res.writeHead(200);
                         res.end();

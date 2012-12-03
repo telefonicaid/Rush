@@ -1,15 +1,22 @@
+//Copyright 2012 Telefonica Investigación y Desarrollo, S.A.U
 //
-// Copyright (c) Telefonica I+D. All rights reserved.
+//This file is part of RUSH.
 //
+//  RUSH is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//  RUSH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 //
+//  You should have received a copy of the GNU Affero General Public License along with RUSH
+//  . If not, seehttp://www.gnu.org/licenses/.
+//
+//For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 var http = require('http');
 var https = require('https');
 
 var MG = require('./my_globals').C;
 var url = require('url');
-var config_global = require('./config_base.js');
-var config = config_global.consumer;
+var configGlobal = require('./config_base.js');
+var config = configGlobal.consumer;
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -83,11 +90,11 @@ function doJob(task, callback) {
 
   var httpModule;
 
-  var target_host = task.headers[MG.HEAD_RELAYER_HOST], req;
-  if (!target_host) {
+  var targetHost = task.headers[MG.HEAD_RELAYER_HOST], req;
+  if (!targetHost) {
     logger.warning('doJob', 'No target host');
   } else {
-    var options = url.parse(target_host);
+    var options = url.parse(targetHost);
     task.headers.host = options.host;
 
     if (options.protocol === 'https:') {
@@ -102,41 +109,41 @@ function doJob(task, callback) {
       options.agent = config.agent;
     }
 
-    req = httpModule.request(options, function(rly_res) {
-      if (Math.floor(rly_res.statusCode / 100) === 2) {
+    req = httpModule.request(options, function(rlyRes) {
+      if (Math.floor(rlyRes.statusCode / 100) === 2) {
         //if no 5XX ERROR
-        get_response(rly_res, task, function(task, resp_obj) {
+        getResponse(rlyRes, task, function(task, respObj) {
           //PERSISTENCE
           if (callback) {
-            callback(null, resp_obj);
+            callback(null, respObj);
           }
         });
       } else {
-        get_response(rly_res, task, function(task, resp_obj) {
+        getResponse(rlyRes, task, function(task, respObj) {
           var e = {
             id: task.id,
             topic: task.headers[MG.HEAD_RELAYER_TOPIC],
-            error: 'Not relayed request '+rly_res.statusCode,
-            statusCode: rly_res.statusCode,
-            headers: rly_res.headers,
-            body: resp_obj.body
+            error: 'Not relayed request '+rlyRes.statusCode,
+            statusCode: rlyRes.statusCode,
+            headers: rlyRes.headers,
+            body: respObj.body
           };
-          handle_request_error(task, e, callback);
+          handleRequestError(task, e, callback);
         });
 
       }
     });
     req.on('error', function(e) {
       e.resultOk = false;
-      var err_obj = {
+      var errObj = {
         id: task.id,
         topic: task.headers[MG.HEAD_RELAYER_TOPIC],
         error: e.code + '(' + e.syscall + ')'
       };
 
       logger.warning('doJob', e);
-      handle_request_error(task,
-        err_obj,
+      handleRequestError(task,
+        errObj,
         callback);
     });
 
@@ -148,16 +155,16 @@ function doJob(task, callback) {
   }
 }
 
-function handle_request_error(task, e, callback) {
+function handleRequestError(task, e, callback) {
   "use strict";
-  logger.debug('handle_request_error(task, e, callback)', [task, e, callback]);
-  logger.warning('handle_request_error', e);
-  do_retry(task, e, callback);
+  logger.debug('handleRequestError(task, e, callback)', [task, e, callback]);
+  logger.warning('handleRequestError', e);
+  doRetry(task, e, callback);
 
 }
-function get_response(resp, task, callback) {
+function getResponse(resp, task, callback) {
   "use strict";
-  logger.debug('get_response(resp, task, callback)', [resp, task, callback]);
+  logger.debug('getResponse(resp, task, callback)', [resp, task, callback]);
 
   var data = "";
   resp.on('data', function(chunk) {
@@ -169,7 +176,7 @@ function get_response(resp, task, callback) {
         data += chunk;
       } //avoid tail undefined
     }
-    var resp_obj = {
+    var respObj = {
       id: task.id,
       topic: task.headers[MG.HEAD_RELAYER_TOPIC],
       statusCode: resp.statusCode,
@@ -178,25 +185,25 @@ function get_response(resp, task, callback) {
     };
 
     if (callback) {
-      callback(task, resp_obj);
+      callback(task, respObj);
     }
   });
 }
 
 
-function do_retry(task, error, callback) {
+function doRetry(task, error, callback) {
   "use strict";
-  logger.debug('do_retry(task, error, callback)', [task, error, callback]);
+  logger.debug('doRetry(task, error, callback)', [task, error, callback]);
 
-  var retry_list = task.headers[MG.HEAD_RELAYER_RETRY];
+  var retryList = task.headers[MG.HEAD_RELAYER_RETRY];
   var time = -1;
-  if (retry_list) {
-    var retry_a = retry_list.split(",");
-    if (retry_a.length > 0) {
-      time = parseInt(retry_a.shift(), 10);
-      if (retry_a.length > 0) {
+  if (retryList) {
+    var retryA = retryList.split(",");
+    if (retryA.length > 0) {
+      time = parseInt(retryA.shift(), 10);
+      if (retryA.length > 0) {
         // there is retry times still
-        task.headers[MG.HEAD_RELAYER_RETRY] = retry_a.join(",");
+        task.headers[MG.HEAD_RELAYER_RETRY] = retryA.join(",");
       } else {
         //Retry End with no success
         delete task.headers[MG.HEAD_RELAYER_RETRY];
