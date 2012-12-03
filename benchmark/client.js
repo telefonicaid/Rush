@@ -1,7 +1,7 @@
 var http = require('http');
-var request = 'test';
+var server = require('./server.js');
 
-var client = function (rushHost, rushPort, hostAndPort, timeout, resSize) {
+var client = function (rushHost, rushPort, hostAndPort) {
     'use strict';
 
     var options = {};
@@ -21,10 +21,10 @@ var client = function (rushHost, rushPort, hostAndPort, timeout, resSize) {
         });
     });
 
-    var body = { timeout : timeout, resSize : resSize};
+    /*var body = { timeout:timeout, resSize:resSize};
     body = JSON.stringify(body);
-    req.write(body);
+    req.write(body);*/
     req.end();
-}
+};
 
 exports.client = client;
