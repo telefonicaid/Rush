@@ -8,6 +8,7 @@ branches:
   only:
     - Unstable
     - master
+    - testing
 
 services:
  - mongodb

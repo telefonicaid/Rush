@@ -62,6 +62,8 @@ function makeRequest(type, persistence, content, done) {
 
                     var JSONRes = JSON.parse(data);
 
+                    console.log('RESPONSE :::: ' + data);
+
                     if (persistence === 'BODY') {
 
                         JSONRes.should.have.property('body');
