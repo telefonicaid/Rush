@@ -78,33 +78,37 @@ function makeRequest(type, persistence, content, done) {
 
             // Check persistence
             var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
-            utils.makeRequest(options, '', function (err, data) {
+            setTimeout(function() {
+                utils.makeRequest(options, '', function (err, data) {
 
-                var JSONRes = JSON.parse(data);
+                    var JSONRes = JSON.parse(data);
 
-                if (persistence === 'BODY') {
+                    if (persistence === 'BODY') {
 
-                    JSONRes.body.should.be.equal(content);
-                    testHeraders(JSONRes.headers);
-                    JSONRes.should.have.property('statusCode', '200');
+                        JSONRes.should.have.property('body');
+                        JSONRes.body.should.be.equal(content);
+                        testHeraders(JSONRes.headers);
+                        JSONRes.should.have.property('statusCode', '200');
 
-                } else if (persistence === 'HEADER') {
+                    } else if (persistence === 'HEADER') {
 
 
-                    JSONRes.should.not.have.property('body');
-                    testHeraders(JSONRes.headers);
-                    JSONRes.should.have.property('statusCode', '200');
+                        JSONRes.should.not.have.property('body');
+                        JSONRes.should.have.property('headers');
+                        testHeraders(JSONRes.headers);
+                        JSONRes.should.have.property('statusCode', '200');
 
-                } else if (persistence === 'STATUS') {
+                    } else if (persistence === 'STATUS') {
 
-                    JSONRes.should.not.have.property('body');
-                    JSONRes.should.not.have.property('headers');
-                    JSONRes.should.have.property('statusCode', '200');
+                        JSONRes.should.not.have.property('body');
+                        JSONRes.should.not.have.property('headers');
+                        JSONRes.should.have.property('statusCode', '200');
 
-                }
+                    }
 
-                done();
-            });
+                    done();
+                });
+            }, 1000);
 
         });
     }).listen(config.callBackPort);
@@ -118,60 +122,60 @@ describe('Persistence_HTTPCallback', function () {
 
         it('Persistence: BODY', function (done) {
             makeRequest('POST', 'BODY', content, done);
-        })
+        });
 
         it('Persistence: HEADER', function (done) {
             makeRequest('POST', 'HEADER', content, done);
-        })
+        });
 
         it('Persistence: STATUS', function (done) {
             makeRequest('POST', 'STATUS', content, done);
-        })
+        });
     });
 
     describe('#PUT', function () {
 
         it('Persistence: BODY', function (done) {
             makeRequest('PUT', 'BODY', content, done);
-        })
+        });
 
         it('Persistence: HEADER', function (done) {
             makeRequest('PUT', 'HEADER', content, done);
-        })
+        });
 
         it('Persistence: STATUS', function (done) {
             makeRequest('PUT', 'STATUS', content, done);
-        })
+        });
     });
 
     describe('#GET', function () {
 
         it('Persistence: BODY', function (done) {
             makeRequest('GET', 'BODY', '', done);
-        })
+        });
 
         it('Persistence: HEADER', function (done) {
             makeRequest('GET', 'HEADER', '', done);
-        })
+        });
 
         it('Persistence: STATUS', function (done) {
             makeRequest('GET', 'STATUS', '', done);
-        })
+        });
     });
 
     describe('#DELETE', function () {
 
         it('Persistence: BODY', function (done) {
             makeRequest('DELETE', 'BODY', '', done);
-        })
+        });
 
         it('Persistence: HEADER', function (done) {
             makeRequest('DELETE', 'HEADER', '', done);
-        })
+        });
 
         it('Persistence: STATUS', function (done) {
             makeRequest('DELETE', 'STATUS', '', done);
-        })
+        });
     })
 
     describe('Second petition should be completed even if the first callback is incorrect', function () {
@@ -219,11 +223,11 @@ describe('Persistence_HTTPCallback', function () {
                     , 1000); //Wait for callback to be completed
                 }
             );
-        })
+        });
 
         it('CallBack Correct', function (done) {
             makeRequest('POST', 'BODY', content, done);
-        })
+        });
     })
 
     describe('Callback has to be called even if the Host is incorrect', function() {
@@ -265,7 +269,7 @@ describe('Persistence_HTTPCallback', function () {
                                 JSONparsed.should.have.property('callback_status', '200');
                                 done();
                             });
-                        }, 30)
+                        }, 30);
 
                     });
             }).listen(portCallBack,
@@ -283,6 +287,6 @@ describe('Persistence_HTTPCallback', function () {
                     );
                 }
             );
-        })
+        });
     });
 });
