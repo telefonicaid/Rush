@@ -145,7 +145,7 @@ describe('errors Test', function () {
         options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
         options.headers['X-Relayer-Retry'] = '5-7,4,8';
 
-        utils.makeRequest(_options, 'body request', function (err, res) {
+        utils.makeRequest(options, 'body request', function (err, res) {
             should.not.exist(err);
             var jsonRes = JSON.parse(res);
             jsonRes.should.have.property('ok', false);
