@@ -32,29 +32,6 @@ function makeRequest(type, persistence, content, done) {
     var httpcallback = 'http://localhost:' + config.callBackPort,
         server_callback, id;
 
-    //Start up the server
-    server.serverListener(
-
-        function () {
-
-            //Petition method
-            options.method = type;
-            options.headers['x-relayer-persistence'] = persistence;
-            options.headers['x-relayer-host'] = relayerHost;
-            options.headers['x-relayer-httpcallback'] = httpcallback;
-
-            utils.makeRequest(options, content, function (e, data) {
-                id = JSON.parse(data).id;
-            });
-        },
-
-        function (method, headers, contentReceived) {
-            method.should.be.equal(type);
-            testHeraders(headers);
-            contentReceived.should.be.equal(content);
-        }
-    );
-
     //Callback Server
     server_callback = http.createServer(function (req, res) {
 
@@ -72,8 +49,10 @@ function makeRequest(type, persistence, content, done) {
 
             //Check content and headers
             var JSONRes = JSON.parse(response);
+            JSONRes.should.have.property('body');
             JSONRes.body.should.be.equal(content);
 
+            JSONRes.should.have.property('headers');
             testHeraders(JSONRes.headers);
 
             // Check persistence
@@ -108,10 +87,38 @@ function makeRequest(type, persistence, content, done) {
 
                     done();
                 });
-            }, 1000);
+            }, 1000);   //Wait prudential time until the persistence is completed
 
         });
-    }).listen(config.callBackPort);
+    }).listen(config.callBackPort,
+
+        //The petition will executed once the callback server and the target server are up
+        function() {
+
+            //Start up the server
+            server.serverListener(
+
+                function () {
+
+                    //Make request
+                    options.method = type;
+                    options.headers['x-relayer-persistence'] = persistence;
+                    options.headers['x-relayer-host'] = relayerHost;
+                    options.headers['x-relayer-httpcallback'] = httpcallback;
+
+                    utils.makeRequest(options, content, function (e, data) {
+                        id = JSON.parse(data).id;
+                    });
+                },
+
+                function (method, headers, contentReceived) {
+                    method.should.be.equal(type);
+                    testHeraders(headers);
+                    contentReceived.should.be.equal(content);
+                }
+            );
+
+    });
 }
 
 describe('Persistence_HTTPCallback', function () {

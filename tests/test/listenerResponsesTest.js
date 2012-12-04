@@ -125,6 +125,7 @@ describe('errors Test', function () {
 
     it('invalid persistence type should throw error', function (done) {
         var id;
+
         var options2 = options;
         options2.headers['X-Relayer-Host'] = 'http://notAServer:8014';
         options2.headers['X-Relayer-Persistence'] = 'INVALID';
