@@ -3,7 +3,8 @@ var qm = require('./queueMonitor.js');
 var client = require('./client.js');
 var server = require('./server.js');
 
-var pf = require('performanceFramework');
+
+
 var scenario1 = pf.describe('dsf', 'This is an example...', 'wijmo', ['Xaxis', 'Yaxis'], [], './log'); //monitor on localhost
 scenario1.test('test1', function (log, point) {
     'use strict';
@@ -16,19 +17,27 @@ scenario1.test('test1', function (log, point) {
         i++;
     }, 1000);
 
-    server.createServer(5000, 1000, function () {
+    var server1 =server.createServer(5000, 1000, function () {
+        var completed = 0;
         function doReq(i){
             client.client('localhost', 3001, "http://localhost:8091");
             i++;
-            if(i < 1000){
+            if(i < 300){
+                setTimeout(function(){
                 doReq(i);
+                },10);
             }
+
         }
         doReq(0);
     });
 
-    setTimeout(function () {
+    function freeAll(){
         clearInterval(monitorInterval);
         scenario1.done();
-    }, 60000);
+        server.closeServer(server1);
+    }
+
+    setTimeout(freeAll, 60000);
+
 });

@@ -1,16 +1,32 @@
 var http = require('http');
 
-var createServer = function(timeout, resSize, connectionCb){
-    http.createServer(function(req, res){
 
-        req.on('end',function(data){
-            setTimeout(function(){
+var createServer = function (timeout, resSize, connectionCb) {
+    'use strict';
+    var server = http.createServer(function (req, res) {
+
+        req.on('end', function (data) {
+            setTimeout(function () {
                 res.write(genResponseData(resSize), 'utf8');
                 res.end();
-             },timeout);
+            }, timeout);
         });
 
     }).listen(8091, connectionCb);
+
+    server.isClosed = false;
+
+    return server;
+};
+
+var closeServer = function (srv) {
+    'use strict';
+    if (!srv.isClosed) {
+        srv.close(function () {
+            console.log('server closed');
+            srv.isClosed = true;
+        });
+    }
 };
 
 var genResponseData = function (size) {
@@ -28,3 +44,4 @@ var genResponseData = function (size) {
 };
 
 exports.createServer = createServer;
+exports.closeServer = closeServer;
