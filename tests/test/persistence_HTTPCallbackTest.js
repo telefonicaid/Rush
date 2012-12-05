@@ -90,7 +90,7 @@ function makeRequest(type, persistence, content, done) {
 
                     done();
                 });
-            }, 5000);   //Wait prudential time until the persistence is completed
+            }, 3000);   //Wait prudential time until the persistence is completed
 
         });
     }).listen(config.callBackPort,
