@@ -18,5 +18,5 @@ install:
  - npm install
 
 before_script:
- - node src/listener.js > /dev/null 2>&1 &
- - node src/consumer.js > /dev/null 2>&1 &
+ - node src/listener.js 2> /dev/null
+ - node src/consumer.js 2> /dev/null

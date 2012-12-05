@@ -130,6 +130,7 @@ function startListener() {
                             }
                         }
                         responseJson = JSON.stringify(data);
+                        console.log(responseJson);
                     }
                     res.end(responseJson);
                 });
