@@ -3,9 +3,9 @@ var qm = require('./queueMonitor.js');
 var client = require('./client.js');
 var server = require('./server.js');
 
-var scenario1 = pf.describe('Second scenario', 'In this scenario we will test Rush behaviour with a server wit no lag'
+var scenario2 = pf.describe('Second scenario', 'In this scenario we will test Rush behaviour with a server wit no lag'
     , 'wijmo', ['Xaxis', 'Yaxis'], [], './log'); //monitor on localhost
-scenario1.test('test1', function (log, point) {
+scenario2.test('test2', function (log, point) {
     'use strict';
     var i = 0;
     var monitorInterval = setInterval(function () {
