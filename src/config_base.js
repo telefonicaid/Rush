@@ -41,7 +41,7 @@ exports.consumer = {};
 exports.consumer.max_poppers = 1;
 // agent: undefined -> globalAgent | false -> no agent
 exports.consumer.agent = undefined;
-exports.consumer.max_sockets = 10;
+exports.consumer.maxSockets = 10;
 
 /**
  * Level for logger

@@ -29,9 +29,6 @@ var G = require('./my_globals').C;
 
 var dbrelayer = require('./dbrelayer');
 
-var evLsnr = require('./ev_lsnr');
-evLsnr.init(emitter);
-
 var async = require("async");
 var evModules = config.listener.evModules;
 var evInitArray = evModules.map(function (x) {
@@ -50,7 +47,8 @@ async.parallel(evInitArray,
         logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
             logger.error('error subscribing event listener', err);
-            throw new Error(['error subscribing event listener', err]);
+            var errx = new Error(['error subscribing event listener', err]);
+            errx.fatal = true;
         }
         else {
             startListener();
@@ -59,11 +57,15 @@ async.parallel(evInitArray,
 
 
 
-process.on('uncaughtException', function onUncaughtException (err) {
+process.on('uncaughtException', function onUncaughtException(err) {
     'use strict';
     logger.error('onUncaughtException', err);
-
+    if (err && err.fatal) {
+        setTimeout(function() {process.exit();}, 1000);
+        process.stdout.end();
+    }
 });
+
 
 
 

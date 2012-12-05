@@ -23,8 +23,8 @@ var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
-http.globalAgent.max_sockets = config.max_sockets;
-https.globalAgent.max_sockets = config.max_sockets;
+http.globalAgent.maxSockets = config.maxSockets;
+https.globalAgent.maxSockets = config.maxSockets;
 
 function urlErrors(pUrl) {
   "use strict";
