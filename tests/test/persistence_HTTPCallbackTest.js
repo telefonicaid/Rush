@@ -64,9 +64,6 @@ function makeRequest(type, persistence, content, done) {
                     should.exist(data);
                     var JSONRes = JSON.parse(data);
 
-                    console.log('RESPONSE :::: ' + data);
-                    console.log('ERROR :::: ' + err);
-
                     if (persistence === 'BODY') {
 
                         JSONRes.should.have.property('body');
@@ -92,7 +89,7 @@ function makeRequest(type, persistence, content, done) {
 
                     done();
                 });
-            }, 1000);   //Wait prudential time until the persistence is completed
+            }, 5000);   //Wait prudential time until the persistence is completed
 
         });
     }).listen(config.callBackPort,
