@@ -16,7 +16,7 @@ scenario2.test('test2', function (log, point) {
         i++;
     }, 1000);
 
-    var server1 = server.createServer(0, 1000, function () {
+    var server1 = server.createServer(0, 10000000, function () {
         var completed = 0;
         function doReq(i){
             client.client('localhost', 3001, "http://localhost:5001");
@@ -33,10 +33,10 @@ scenario2.test('test2', function (log, point) {
 
     function freeAll(){
         clearInterval(monitorInterval);
-        scenario1.done();
+        scenario2.done();
         server.closeServer(server1);
     }
 
-    setTimeout(freeAll, 60000);
+    setTimeout(freeAll, 120000);
 
 });
