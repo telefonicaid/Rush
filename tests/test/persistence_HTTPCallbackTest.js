@@ -60,9 +60,12 @@ function makeRequest(type, persistence, content, done) {
             setTimeout(function() {
                 utils.makeRequest(options, '', function (err, data) {
 
+                    should.not.exist(err);
+                    should.exist(data);
                     var JSONRes = JSON.parse(data);
 
                     console.log('RESPONSE :::: ' + data);
+                    console.log('ERROR :::: ' + err);
 
                     if (persistence === 'BODY') {
 
