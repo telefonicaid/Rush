@@ -90,7 +90,7 @@ function makeRequest(type, persistence, content, done) {
 
                     done();
                 });
-            }, 5000);   //Wait prudential time until the persistence is completed
+            }, 1000);   //Wait prudential time until the persistence is completed
 
         });
     }).listen(config.callBackPort,
@@ -131,17 +131,14 @@ describe('Persistence_HTTPCallback', function () {
     describe('#POST', function () {
 
         it('Persistence: BODY', function (done) {
-            this.timeout(6000);
             makeRequest('POST', 'BODY', content, done);
         });
 
         it('Persistence: HEADER', function (done) {
-            this.timeout(6000);
             makeRequest('POST', 'HEADER', content, done);
         });
 
         it('Persistence: STATUS', function (done) {
-            this.timeout(6000);
             makeRequest('POST', 'STATUS', content, done);
         });
     });
@@ -149,17 +146,14 @@ describe('Persistence_HTTPCallback', function () {
     describe('#PUT', function () {
 
         it('Persistence: BODY', function (done) {
-            this.timeout(6000);
             makeRequest('PUT', 'BODY', content, done);
         });
 
         it('Persistence: HEADER', function (done) {
-            this.timeout(6000);
             makeRequest('PUT', 'HEADER', content, done);
         });
 
         it('Persistence: STATUS', function (done) {
-            this.timeout(6000);
             makeRequest('PUT', 'STATUS', content, done);
         });
     });
@@ -167,17 +161,14 @@ describe('Persistence_HTTPCallback', function () {
     describe('#GET', function () {
 
         it('Persistence: BODY', function (done) {
-            this.timeout(6000);
             makeRequest('GET', 'BODY', '', done);
         });
 
         it('Persistence: HEADER', function (done) {
-            this.timeout(6000);
             makeRequest('GET', 'HEADER', '', done);
         });
 
         it('Persistence: STATUS', function (done) {
-            this.timeout(6000);
             makeRequest('GET', 'STATUS', '', done);
         });
     });
@@ -185,17 +176,14 @@ describe('Persistence_HTTPCallback', function () {
     describe('#DELETE', function () {
 
         it('Persistence: BODY', function (done) {
-            this.timeout(6000);
             makeRequest('DELETE', 'BODY', '', done);
         });
 
         it('Persistence: HEADER', function (done) {
-            this.timeout(6000);
             makeRequest('DELETE', 'HEADER', '', done);
         });
 
         it('Persistence: STATUS', function (done) {
-            this.timeout(6000);
             makeRequest('DELETE', 'STATUS', '', done);
         });
     })
@@ -248,7 +236,6 @@ describe('Persistence_HTTPCallback', function () {
         });
 
         it('CallBack Correct', function (done) {
-            this.timeout(6000);
             makeRequest('POST', 'BODY', content, done);
         });
     })
