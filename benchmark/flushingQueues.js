@@ -9,7 +9,7 @@ var scenario4 = pf.describe('dsf', 'This is an example...', 'wijmo', ['Xaxis', '
 scenario4.test('test1', function (log, point) {
     'use strict';
     var count=0;
-    var server1 = server.createServer(0, 500000, function () {
+    var server1 = server.createServer(0, 100000, function () {
         for (var i =0;i < 1000;i++) {
             client.client('localhost', 3001, "http://localhost:8091",function(){
                     count++;
