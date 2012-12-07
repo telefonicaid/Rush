@@ -72,7 +72,7 @@ exports.listener.logger.Console = {
   level: 'debug', timestamp:true
 };
 exports.listener.logger.File ={
-  level:'debug', filename:dir_prefix + '/listener.log', timestamp:true, json:false,
+  level:'error', filename:dir_prefix + '/listener.log', timestamp:true, json:false,
   maxsize: 1024*1024,
   maxFiles: 3
 };
