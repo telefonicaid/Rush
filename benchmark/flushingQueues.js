@@ -37,7 +37,7 @@ var newTest = function(size, callback) {
                                 point(timePoint, value);
 
                                 if (value === 0) {
-                                    log(numRequest + ' requests with ' + size +  ' KB' + ' has been processed in ' + timePoint + ' s');
+                                    log(numRequest + ' requests of ' + size +  ' KB have been processed in ' + timePoint + ' s');
                                     process.kill(child.pid);
                                     //scenario4.done();
                                     server.closeServer(server1);
