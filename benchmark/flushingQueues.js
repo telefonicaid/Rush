@@ -4,14 +4,14 @@ var client = require('./client.js');
 var server = require('./server.js');
 var childProcess = require('child_process');
 var numRequest = 1000;
-
+var numConsumer = 2;
 
 var scenario4 = pf.describe('Rush benchmark - Flushing Queue', 'This test make ' + numRequest + ' requests to the ' +
     'listener without running the consumer. After that, the consumer is running to process requests and time is ' +
     'measured', 'wijmo', ['Time', 'Queued requests'], [], './log'); //monitor on localhost
 
 
-var newTest = function(size, callback) {
+var newTest = function (size, callback) {
 
     scenario4.test('test with ' + size + ' KB of response server', function (log, point) {
         'use strict';
@@ -28,7 +28,10 @@ var newTest = function(size, callback) {
                         var time = new Date().valueOf();
                         point(0, numRequest);
 
-                        var child = childProcess.fork('../src/consumer.js');
+                        var child = [];
+                        for (var i = 0; i < numConsumer; i++) {
+                            child[i] = childProcess.fork('../src/consumer.js');
+                        }
 
                         var monitorInterval = setInterval(function () {
 
@@ -37,8 +40,10 @@ var newTest = function(size, callback) {
                                 point(timePoint, value);
 
                                 if (value === 0) {
-                                    log(numRequest + ' requests of ' + size +  ' KB have been processed in ' + timePoint + ' s');
-                                    process.kill(child.pid);
+                                    log(numRequest + ' requests of ' + size + ' KB have been processed in ' + timePoint + ' s');
+                                    for (var i = 0; i < numConsumer; i++) {
+                                        process.kill(child[i].pid);
+                                    }
                                     //scenario4.done();
                                     server.closeServer(server1);
                                     clearInterval(monitorInterval);
