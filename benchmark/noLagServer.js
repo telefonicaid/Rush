@@ -8,7 +8,7 @@ var scenario2 = pf.describe(
     'In this scenario we will test Rush behaviour with a server wit no lag',    //Description
     'wijmo',                                //Template
     ['Time','Queued requests'],             //Axis
-    [],                                     //No monitors
+    ['localhost'],                          //No monitors
     './log');                               //The generated HTML file will be save in the 'log' folder.
 
 scenario2.test('Payload of 10 MB', function (log, point) {

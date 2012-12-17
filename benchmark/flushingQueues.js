@@ -1,17 +1,19 @@
 var pf = require('performanceFramework');
 var redisUtils = require('./redisUtils.js');
 var client = require('./client.js');
-var server = require('./server.js');
+var serverFactory = require('./server.js');
 var childProcess = require('child_process');
-var numRequest = 10000;
-var numConsumer = 2;
+var numServices = 5000;
+var numConsumers = 1;
+var timeOut = 0;
+var port = 5001;
 
 var scenario = pf.describe(
     'Rush benchmark - Flushing Queue',  //Benchmak name
-    'This test make ' + numRequest + ' requests to the listener without running any consumer. After that, '
-        + numConsumer + '  consumer(s) are run to process requests and time is measured', //Description
+    'This test make ' + numServices + ' requests to the listener without running any consumer. After that, '
+        + numConsumers + '  consumer(s) are run to process requests and time is measured', //Description
     'wijmo',                            //Template
-    ['Time', 'Queued requests'],        //X: Time, Y: Pending Queues to process
+    ['Time (s)', 'Services Completed'], //X: Time, Y: Pending Queues to process
     [],                                 //No processes can be monitored because of performanceFramework behaviour
     './log');                           //The generated HTML file will be save in the 'log' folder.
 
@@ -24,63 +26,69 @@ var newTest = function (size, callback) {
 
         scenario.test('Payload of ' + size + ' KB', function (log, point) {
 
-            var count = 0;
-            var server1 = server.createServer(0, size * 1024, function () {
-                for (var i = 0; i < numRequest; i++) {
+            var children = [];
+            var servicesQueued = 0;
+            var servicesCompleted = 0;
+            var initialTime;
 
-                    client.client('localhost', 3001, "http://localhost:5001", function () {
+            var processPetitions = function() {
 
-                        count++;
+                servicesQueued++;
 
-                        //Launch the consumers to process the petitions
-                        if (count === numRequest) {
+                if (servicesQueued === numServices) {
+                    var server = serverFactory.createServer(timeOut, size * 1024,
 
-                            var done = false;
-                            var initialTime = new Date().valueOf();
-                            point(0, numRequest);
+                        //Launch consumers when the server is up
+                        function () {
+
+                            initialTime = new Date().valueOf();
 
                             //Launch consumers
-                            var childs = [];
-                            for (var i = 0; i < numConsumer; i++) {
-                                childs.push(childProcess.fork('../src/consumer.js'));
+                            for (var i = 0; i < numConsumers; i++) {
+                                children.push(childProcess.fork('../src/consumer.js'));
+                            }
+                        },
+
+                        //Control the number of processed services
+                        function() {
+
+                            servicesCompleted++;
+                            var timePoint = (new Date().valueOf() - initialTime) / 1000;
+
+                            if ((servicesCompleted % 100) === 0) {
+                                point(timePoint, servicesCompleted);
+                                log(servicesCompleted + ' services completed ' + timePoint + ' seconds later');
                             }
 
-                            var monitorInterval = setInterval(function () {
+                            if (servicesCompleted === numServices) {
 
-                                redisUtils.monitorQueue('wrL:hpri', function (remainingPetitions) {
-                                    var timePoint = (new Date().valueOf() - initialTime) / 1000;
-                                    point(timePoint, remainingPetitions);
-                                    log(remainingPetitions + ' pending requests ' + timePoint + ' seconds later');
+                                log(numServices + ' requests of ' + size + ' KB have been processed in ' +
+                                    timePoint + ' s (' + (numServices/timePoint) + ' requests/s)');
 
-                                    if (remainingPetitions === 0 && !done) {
+                                //Kill consumers
+                                for (var i = 0; i < children.length; i++) {
+                                    process.kill(children[i].pid);
+                                }
 
-                                        done = true;
-                                        clearInterval(monitorInterval);
-
-                                        log(numRequest + ' requests of ' + size + ' KB have been processed in ' +
-                                            timePoint + ' s (' + (numRequest/timePoint) + ' requests/s)');
-
-                                        for (var i = 0; i < childs.length; i++) {
-                                            process.kill(childs[i].pid);
-                                        }
-
-                                        server.closeServer(server1);
-
-                                        callback();
-                                    }
-                                });
-                            }, 1000);
+                                serverFactory.closeServer(server, callback);
+                            }
                         }
-                    });
+                    );
                 }
-            });
+            };
+
+            //Queue the petitions
+            for (var i = 0; i < numServices; i++) {
+                client.client('localhost', 3001, 'http://localhost:5001', processPetitions);
+            }
         });
     });
-}
+};
 
 var nTimes = 0;
 
 function executeTest() {
+    'use strict';
 
     if (nTimes >= 5) {
         scenario.done();

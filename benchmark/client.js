@@ -14,18 +14,17 @@ var client = function (rushHost, rushPort, hostAndPort, ended) {
 
     var req = http.request(options, function (res) {
 
+        /*var data = '';
+
         res.on('data', function (chunk) {
-            var data = '';
             data += chunk;
-            console.log(data);
-        });
+        });*/
+
         if(ended && typeof(ended)==='function'){
             res.on('end', ended);
         }
     });
-    /*var body = { timeout:timeout, resSize:resSize};
-    body = JSON.stringify(body);
-    req.write(body);*/
+
     req.end();
 };
 
