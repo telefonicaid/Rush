@@ -1,30 +1,26 @@
-var pf = require('performanceFramework');
-var redisUtils = require('./redisUtils.js');
-var client = require('./client.js');
-var serverFactory = require('./server.js');
 var childProcess = require('child_process');
-var numServices = 5000;
-var numConsumers = 1;
-var timeOut = 0;
-var port = 5001;
+var pf = require('performanceFramework');
+var client = require('./client.js');
+var config = require('./config.js');
+var serverFactory = require('./server.js');
+var redisUtils = require('./redisUtils.js');
 
-var scenario = pf.describe(
-    'Rush benchmark - Flushing Queue',  //Benchmak name
-    'This test make ' + numServices + ' requests to the listener without running any consumer. After that, '
-        + numConsumers + '  consumer(s) are run to process requests and time is measured', //Description
-    'wijmo',                            //Template
-    ['Time (s)', 'Services Completed'], //X: Time, Y: Pending Queues to process
-    [],                                 //No processes can be monitored because of performanceFramework behaviour
-    './log');                           //The generated HTML file will be save in the 'log' folder.
+var NUM_SERVICES = config.flushingQueues.numServices;
+var NUM_CONSUMERS = config.flushingQueues.numConsumers;
+var TIME_OUT = 0;
+
+var scenario = pf.describe(config.flushingQueues.pf.name, config.flushingQueues.pf.description,
+    config.flushingQueues.pf.template, config.flushingQueues.pf.axis, config.flushingQueues.pf.monitors,
+    config.flushingQueues.pf.folder);
 
 
-var newTest = function (size, callback) {
+var doOneTest = function (size, callback) {
     'use strict';
 
     //First of all, we must flush redis
     redisUtils.flushBBDD(function() {
 
-        scenario.test('Payload of ' + size + ' KB', function (log, point) {
+        scenario.test('Payload of ' + size + ' B', function (log, point) {
 
             var children = [];
             var servicesQueued = 0;
@@ -35,8 +31,8 @@ var newTest = function (size, callback) {
 
                 servicesQueued++;
 
-                if (servicesQueued === numServices) {
-                    var server = serverFactory.createServer(timeOut, size * 1024,
+                if (servicesQueued === NUM_SERVICES) {
+                    var server = serverFactory.createServer(TIME_OUT, size,
 
                         //Launch consumers when the server is up
                         function () {
@@ -44,7 +40,7 @@ var newTest = function (size, callback) {
                             initialTime = new Date().valueOf();
 
                             //Launch consumers
-                            for (var i = 0; i < numConsumers; i++) {
+                            for (var i = 0; i < NUM_CONSUMERS; i++) {
                                 children.push(childProcess.fork('../src/consumer.js'));
                             }
                         },
@@ -60,10 +56,10 @@ var newTest = function (size, callback) {
                                 log(servicesCompleted + ' services completed ' + timePoint + ' seconds later');
                             }
 
-                            if (servicesCompleted === numServices) {
+                            if (servicesCompleted === NUM_SERVICES) {
 
-                                log(numServices + ' requests of ' + size + ' KB have been processed in ' +
-                                    timePoint + ' s (' + (numServices/timePoint) + ' requests/s)');
+                                log(NUM_SERVICES + ' requests of ' + size + ' B have been processed in ' +
+                                    timePoint + ' s (' + (NUM_SERVICES/timePoint) + ' requests/s)');
 
                                 //Kill consumers
                                 for (var i = 0; i < children.length; i++) {
@@ -78,27 +74,33 @@ var newTest = function (size, callback) {
             };
 
             //Queue the petitions
-            for (var i = 0; i < numServices; i++) {
+            for (var i = 0; i < NUM_SERVICES; i++) {
                 client.client('localhost', 3001, 'http://localhost:5001', processPetitions);
             }
         });
     });
 };
 
-var nTimes = 0;
+var testsSeries = function (startNumBytes, maxBytes, interval) {
 
-function executeTest() {
-    'use strict';
+    var bytes = startNumBytes;
 
-    if (nTimes >= 5) {
-        scenario.done();
-        redisUtils.closeConnection();
-    } else {
-        //newTest((nTimes + 1) * 100, executeTest);
-        newTest((nTimes + 1) * 4, executeTest);
-    }
+    var doNTimes = function (){
 
-    nTimes++;
-}
+        doOneTest(bytes, function(){
+            bytes += interval;
 
-executeTest();
+            if(bytes <= maxBytes){
+                doNTimes();
+            } else{
+                scenario.done();
+                redisUtils.closeConnection();
+            }
+        });
+    };
+
+    doNTimes();
+};
+
+testsSeries(config.flushingQueues.startNumBytes, config.flushingQueues.maxNumBytes,
+    config.flushingQueues.bytesInterval);

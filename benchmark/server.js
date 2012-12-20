@@ -10,7 +10,7 @@ var createServer = function (timeout, resSize, launchedCB, connectionCB) {
             setTimeout(function () {
                 res.write(genResponseData(resSize), 'utf8');
                 res.end();
-                req.connection.destroy();
+                //req.connection.destroy();
 
                 if (connectionCB && typeof(connectionCB) === 'function') {
                     connectionCB();

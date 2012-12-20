@@ -1,17 +1,14 @@
 var pf = require('performanceFramework');
-var redisUtils = require('./redisUtils.js');
 var client = require('./client.js');
+var config = require('./config.js');
+var redisUtils = require('./redisUtils.js');
 var server = require('./server.js');
 
-var scenario2 = pf.describe(
-    'Rush benchmark - Server without lags',  //Name
-    'In this scenario we will test Rush behaviour with a server wit no lag',    //Description
-    'wijmo',                                //Template
-    ['Time','Queued requests'],             //Axis
-    ['localhost'],                          //No monitors
-    './log');                               //The generated HTML file will be save in the 'log' folder.
+var scenario = pf.describe(config.noLagServer.pf.name, config.noLagServer.pf.description,
+    config.noLagServer.pf.template, config.noLagServer.pf.axis, config.noLagServer.pf.monitors,
+    config.noLagServer.pf.folder);
 
-scenario2.test('Payload of 10 MB', function (log, point) {
+scenario.test('Payload of ' + (config.noLagServer.size / (1024 * 1024)) + '  MB', function (log, point) {
     'use strict';
     var i = 0;
 
@@ -23,7 +20,7 @@ scenario2.test('Payload of 10 MB', function (log, point) {
         i++;
     }, 1000);
 
-    var server1 = server.createServer(0, 1000000, function () {
+    var server1 = server.createServer(0, config.noLagServer.size, function () {
 
         var completed = 0;
 
@@ -31,10 +28,10 @@ scenario2.test('Payload of 10 MB', function (log, point) {
             client.client('localhost', 3001, "http://localhost:5001");
             i++;
 
-            if(i < 300){
+            if(i < config.noLagServer.numPetitions){
                 setTimeout(function(){
                     doReq(i);
-                },10);
+                }, 10);
             }
         }
 
@@ -43,10 +40,10 @@ scenario2.test('Payload of 10 MB', function (log, point) {
 
     function freeAll(){
         clearInterval(monitorInterval);
-        scenario2.done();
+        scenario.done();
         redisUtils.closeConnection();
         server.closeServer(server1);
     }
 
-    setTimeout(freeAll, 120000);
+    setTimeout(freeAll, config.blockingServer.time);
 });
