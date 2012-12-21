@@ -327,13 +327,13 @@ Rush uses Performance Framework as its benchmark suite. To install this dependen
 
 ### Running benchmarks
 
-There are different benchmark depending on the conditions of the server. 
+There are different benchmark depending on the server conditions. 
 
 **Blockin Server:** This benchmark controls the number of queued services when the server takes some time to answer the petitions. This time can be configured in the `config.js` file. Different tests will be executed with different delays: from the start time to the max delay increasing at the set interval.
 
 **Flusing Queues:** This benchmark controls the time that takes the completion of a service. The number of services to be completed can be set in the `config.js` file. In addition you can set the payload of the services. Different tests will be executed with differents payloads: from the start payload to the max payload increasing at the set interval.
 
-**No Lag Server:** This benchmark controls the number of queued services when the server answers without any delays. You can set the number of bytes that the server will emit, the time of the server and the number of services to be completed.
+**No Lag Server:** This benchmark controls the number of queued services when the server answers without any delays. You can set the number of bytes that the server will emit, the test time and the number of services to be completed.
 
 ## Rush and OAuth
 
