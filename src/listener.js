@@ -131,7 +131,11 @@ function startListener() {
                         }
                         responseJson = JSON.stringify(data);
                     }
-                    res.end(responseJson);
+                    res.setHeader('content-type','application/json; charset=utf-8');
+
+                    var buf = new Buffer(responseJson,'utf-8')
+                    res.setHeader('content-length',buf.length);
+                    res.end(buf);
                 });
 
             } else {
