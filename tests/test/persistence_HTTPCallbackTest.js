@@ -57,8 +57,10 @@ function makeRequest(type, persistence, content, done) {
             testHeraders(JSONRes.headers);
 
             // Check persistence
-            var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
             setTimeout(function() {
+
+                var options = { port: config.rushServer.port, host: 'localhost', path: '/response/' + id, method: 'GET'};
+
                 utils.makeRequest(options, '', function (err, data) {
 
                     should.not.exist(err);
