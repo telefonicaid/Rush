@@ -28,7 +28,8 @@ exports.C = {
     'HEAD_RELAYER_HTTPCALLBACK_ERROR':'x-relayer-httpcallback-error',
     'HEAD_RELAYER_PERSISTENCE' : 'x-relayer-persistence', //STATUS, HEAD, CONTENT
     'HEAD_RELAYER_TOPIC': 'x-relayer-topic',
-    'PARAM_DBHOST':'dbhost',
+    'HEAD_RELAYER_ENCODING' : 'x-relayer-encoding',
+    'ACEPTS_ENCODINGS' : ['ascii', 'utf8', 'utf16le', 'ucs2', 'base64', 'hex'],
     'PARAM_DBPORT':'dbport',
     'PARAM_SPAWN':'spawn',
     'PARAM_DEBUG':'debug',
