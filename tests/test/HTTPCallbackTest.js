@@ -189,6 +189,8 @@ describe('HTTP_Callback', function () {
                     utils.makeRequest(options, content, function (err, data) { });
                 }
             );
+
+            serversToShutDown.push(server_callback);
         })
     });
 });
