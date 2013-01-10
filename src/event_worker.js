@@ -173,19 +173,19 @@ function getResponse(resp, task, callback) {
     data.push(chunk);
     length += chunk.length;
   });
+
   resp.on('end', function (chunk) {
     if (chunk) {
-      if (chunk) {
-        data.push(chunk);
-        length += chunk.length;
-      } //avoid tail undefined
-    }
+      data.push(chunk);
+      length += chunk.length;
+    } //avoid tail undefined
 
     var body_encoding = task.headers[MG.HEAD_RELAYER_ENCODING];
 
     if (!body_encoding || MG.ACEPTS_ENCODINGS.indexOf(body_encoding) === -1){
       body_encoding = 'utf8';
     }
+
     var buf = new Buffer(length);
     for(var i = 0, pos=0; i<data.length; i++){
       data[i].copy(buf,pos);
@@ -195,11 +195,12 @@ function getResponse(resp, task, callback) {
     var encodedBody = buf.toString(body_encoding);
 
     var respObj = {
-      id:task.id,
-      topic:task.headers[MG.HEAD_RELAYER_TOPIC],
-      statusCode:resp.statusCode,
-      headers:resp.headers,
-      body:encodedBody
+      id: task.id,
+      topic: task.headers[MG.HEAD_RELAYER_TOPIC],
+      statusCode: resp.statusCode,
+      encoding: body_encoding,
+      headers: resp.headers,
+      body: encodedBody
     };
 
     if (callback) {
