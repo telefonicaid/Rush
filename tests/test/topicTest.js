@@ -16,6 +16,9 @@ options.host = 'localhost';
 options.port = 3001;
 options.headers = {};
 
+var serversToShutDown = [];
+
+
 describe('Topic', function () {
     var options = this.options;
     options.method = 'GET';
@@ -26,10 +29,22 @@ describe('Topic', function () {
     options.headers['X-Relayer-topic'] ='Topic test';
 
 
+    afterEach(function() {
+        for (var i = 0; i < serversToShutDown.length; i++) {
+            try {
+                serversToShutDown[i].close();
+            } catch (e) {
+
+            }
+        }
+
+        serversToShutDown = [];
+    });
+
 
     it('should return  the correct topic id (GET)', function (done) {
         var id;
-        server.serverListener(
+        var simpleServer = server.serverListener(
             function () {
                 utils.makeRequest(options, '', function (err, res) {
                     id = JSON.parse(res).id;
@@ -50,6 +65,8 @@ describe('Topic', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
+
+        serversToShutDown.push(simpleServer);
     });
 
 
@@ -57,7 +74,8 @@ describe('Topic', function () {
     it('should return  the correct topic id (POST)', function (done) {
         options.method = 'POST';
         var id;
-        server.serverListener(
+
+        var simpleServer = server.serverListener(
             function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
                     id = JSON.parse(res).id;
@@ -76,6 +94,8 @@ describe('Topic', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
+
+        serversToShutDown.push(simpleServer);
     });
 
 
@@ -83,7 +103,8 @@ describe('Topic', function () {
         options.method = 'PUT';
         options.headers['X-relayer-persistence'] = 'STATUS';
         var id;
-        server.serverListener(
+
+        var simpleServer = server.serverListener(
             function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
                     id = JSON.parse(res).id;
@@ -103,5 +124,7 @@ describe('Topic', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
+
+        serversToShutDown.push(simpleServer);
     });
 });

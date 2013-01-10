@@ -29,6 +29,8 @@ var serverListener = function (connectedCallback, dataCallback) {
         //});
     }).listen(config.simpleServerPort, connectedCallback);
 
+    return srv;
+
 };
 
 exports.serverListener = serverListener;

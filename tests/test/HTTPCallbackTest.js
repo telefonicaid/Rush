@@ -18,13 +18,15 @@ options.headers['content-type'] = applicationContent;
 options.headers[personalHeader1name] = personalHeader1value;
 options.headers[personalHeader2name] = personalHeader2value;
 
+var serversToShutDown = [];
+
 function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
     'use strict';
     //Variables
     var relayerhost = 'http://localhost:' + config.simpleServerPort;
 
     //Start up the server
-    server.serverListener(
+    var simpleServer = server.serverListener(
 
         function () {
 
@@ -54,6 +56,9 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
             }
         }
     );
+
+    serversToShutDown.push(simpleServer);
+
 }
 
 function makeRequest(type, content, done) {
@@ -84,11 +89,25 @@ function makeRequest(type, content, done) {
             });
 
     }).listen(portCallBack, prepareServerAndSendPetition.bind({}, type, content, 'http://localhost:' + portCallBack));
+
+    serversToShutDown.push(server_callback);
 }
 
 describe('HTTP_Callback', function () {
     'use strict';
     var content = 'HTTP_Callback Test';
+
+    afterEach(function() {
+        for (var i = 0; i < serversToShutDown.length; i++) {
+            try {
+                serversToShutDown[i].close();
+            } catch (e) {
+
+            }
+       }
+
+        serversToShutDown = [];
+    });
 
     describe('#POST', function () {
 

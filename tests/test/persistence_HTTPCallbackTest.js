@@ -19,6 +19,8 @@ options.headers['content-type'] = applicationContent;
 options.headers[personalHeader1name] = personalHeader1value;
 options.headers[personalHeader2name] = personalHeader2value;
 
+var serversToShutDown = [];
+
 function testHeraders (headers) {
     headers.should.have.property('content-type', applicationContent);
     headers.should.have.property(personalHeader1name, personalHeader1value);
@@ -96,7 +98,7 @@ function makeRequest(type, persistence, content, done) {
         function() {
 
             //Start up the server
-            server.serverListener(
+            var simpleServer = server.serverListener(
 
                 function () {
 
@@ -118,12 +120,27 @@ function makeRequest(type, persistence, content, done) {
                 }
             );
 
+            serversToShutDown.push(server_callback);
     });
+
+    serversToShutDown.push(server_callback);
 }
 
 describe('Persistence_HTTPCallback', function () {
     'use strict';
     var content = 'Persistence&HTTPCallBack Test';
+
+    afterEach(function() {
+        for (var i = 0; i < serversToShutDown.length; i++) {
+            try {
+                serversToShutDown[i].close();
+            } catch (e) {
+
+            }
+        }
+
+        serversToShutDown = [];
+    });
 
     describe('#POST', function () {
 
@@ -191,7 +208,7 @@ describe('Persistence_HTTPCallback', function () {
 
             var id, type = 'POST', httpCallBack = 'http://noexiste:2222';
 
-            server.serverListener(
+            var simpleServer = server.serverListener(
 
                 function () {
 
@@ -230,7 +247,11 @@ describe('Persistence_HTTPCallback', function () {
                     , 1000); //Wait for callback to be completed
                 }
             );
+
+            serversToShutDown.push(simpleServer);
+
         });
+
 
         it('CallBack Correct', function (done) {
             makeRequest('POST', 'BODY', content, done);
@@ -246,7 +267,7 @@ describe('Persistence_HTTPCallback', function () {
                 httpCallBack = 'http://localhost:' + portCallBack, id;
 
             //Callback Server
-            server_callback = http.createServer(function (req, res) {
+            var server_callback = http.createServer(function (req, res) {
 
                 var response = '';
 
@@ -294,6 +315,8 @@ describe('Persistence_HTTPCallback', function () {
                     );
                 }
             );
+
+            serversToShutDown.push(server_callback);
         });
     });
 });
