@@ -44,7 +44,7 @@ function update(key, obj, cllbk) {
     logger.debug('onHmset(err, res) ', [err, res]);
     rcli.expire(config.key_prefix + key, configGlobal.expire_time, function(err){
       if (err) {
-        logger.error('expire(err, res) ', [config.key_prefix + key, configGlobal.persistenceTTL]);
+        logger.error('expire(err, res) ', [config.key_prefix + key, configGlobal.expire_time]);
       }
 
     });

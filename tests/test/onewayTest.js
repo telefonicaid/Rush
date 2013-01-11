@@ -15,7 +15,21 @@ var utils = require('./utils.js');
 var host = config.rushServer.hostname;
 var port = config.rushServer.port;
 
+var serversToShutDown = [];
+
 describe('Oneway', function () {
+
+    afterEach(function() {
+        for (var i = 0; i < serversToShutDown.length; i++) {
+            try {
+                serversToShutDown[i].close();
+            } catch (e) {
+
+            }
+        }
+
+        serversToShutDown = [];
+    });
 
     describe('#GET', function () {
         it('Should return the same headers and the same method', function (done) {
@@ -30,13 +44,15 @@ describe('Oneway', function () {
                 headers:headers
             }
 
-            server.serverListener(function () {
+            var simpleServer = server.serverListener(function () {
                 utils.makeRequest(options, undefined, function () {
                 });
             }, function (method, headers, body) {
                 method.should.equal('GET');
                 done();
-            })
+            });
+
+            serversToShutDown.push(simpleServer);
         });
     });
 
@@ -58,7 +74,7 @@ describe('Oneway', function () {
                 headers:headers
             }
 
-            server.serverListener(function () {
+            var simpleServer = server.serverListener(function () {
                 utils.makeRequest(options, JSON.stringify(content), function () {
 
                 });
@@ -68,6 +84,8 @@ describe('Oneway', function () {
                 JSON.parse(body).content.should.include(content['content']);
                 done();
             });
+
+            serversToShutDown.push(simpleServer);
         });
     });
 
@@ -89,7 +107,7 @@ describe('Oneway', function () {
                 headers:headers
             }
 
-            server.serverListener(function () {
+            var simpleServer = server.serverListener(function () {
                 utils.makeRequest(options, JSON.stringify(content), function () {
                 });
             }, function (method, headers, body) {
@@ -98,6 +116,8 @@ describe('Oneway', function () {
                 JSON.parse(body).content.should.include(content['content']);
                 done();
             });
+
+            serversToShutDown.push(simpleServer);
         });
     });
 
@@ -114,13 +134,15 @@ describe('Oneway', function () {
                 headers:headers
             }
 
-            server.serverListener(function () {
+            var simpleServer = server.serverListener(function () {
                 utils.makeRequest(options, undefined, function () {
                 });
             }, function (method, headers, body) {
                 method.should.equal('DELETE');
                 done();
-            })
+            });
+
+            serversToShutDown.push(simpleServer);
         });
     });
 });
