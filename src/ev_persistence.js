@@ -85,6 +85,7 @@ function setObject(task, respObj, type, callback) {
         /* fall-through */
         case  'HEADER':
             delete setObj.body;
+            delete setObj.encoding;
             break;
     }
 
