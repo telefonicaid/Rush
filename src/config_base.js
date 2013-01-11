@@ -95,6 +95,6 @@ gevlsnr.take= {id: 'id', topic: 'topic', body:  'task.body', statusCode:'result.
 
 exports.consumer.evModules = [{module: './ev_callback'},
                               {module: './ev_persistence'},
-                              /*{module: './gevlsnr', config: gevlsnr}*/];
+                              {module: './gevlsnr', config: gevlsnr}];
 
 exports.listener.evModules = [];
