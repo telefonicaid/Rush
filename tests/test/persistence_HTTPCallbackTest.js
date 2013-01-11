@@ -125,7 +125,7 @@ function makeRequest(type, persistence, content, done) {
                 }
             );
 
-            serversToShutDown.push(server_callback);
+            serversToShutDown.push(simpleServer);
     });
 
     serversToShutDown.push(server_callback);
@@ -136,6 +136,8 @@ describe('Persistence_HTTPCallback', function () {
     var content = 'Persistence&HTTPCallBack Test';
 
     afterEach(function() {
+
+
         for (var i = 0; i < serversToShutDown.length; i++) {
             try {
                 serversToShutDown[i].close();
