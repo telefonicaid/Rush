@@ -1,11 +1,3 @@
-/**
- * Created with JetBrains WebStorm.
- * User: fernando
- * Date: 15/10/12
- * Time: 11:02
- * To change this template use File | Settings | File Templates.
- */
-
 var should = require('should');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
@@ -16,7 +8,22 @@ options.host = 'localhost';
 options.port = 3001;
 options.headers = {};
 
+var serversToShutDown = [];
+
 describe('Persistence', function () {
+
+    afterEach(function() {
+        for (var i = 0; i < serversToShutDown.length; i++) {
+            try {
+                serversToShutDown[i].close();
+            } catch (e) {
+
+            }
+        }
+
+        serversToShutDown = [];
+    });
+
     var options = this.options;
     options.method = 'GET';
     options.headers['content-type'] = 'application/json';
@@ -26,7 +33,7 @@ describe('Persistence', function () {
 
     it('should return empty body and test-header', function (done) {
         var id;
-        server.serverListener(
+        var simpleServer = server.serverListener(
             function () {
                 utils.makeRequest(options, '', function (err, res) {
                     id = JSON.parse(res).id;
@@ -45,11 +52,14 @@ describe('Persistence', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
+
+        serversToShutDown.push(simpleServer);
     });
+
     it('should return the same body', function (done) {
         options.method = 'POST';
         var id;
-        server.serverListener(
+        var simpleServer = server.serverListener(
             function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
                     id = JSON.parse(res).id;
@@ -66,12 +76,15 @@ describe('Persistence', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
+
+        serversToShutDown.push(simpleServer);
+
     });
 
     it('should not return body neither headers', function (done) {
         options.headers['X-relayer-persistence'] = 'STATUS';
         var id;
-        server.serverListener(
+        var simpleServer = server.serverListener(
             function () {
                 utils.makeRequest(options, 'body request', function (err, res) {
                     id = JSON.parse(res).id;
@@ -89,6 +102,8 @@ describe('Persistence', function () {
                 }, 100); //Waiting for Rush to create the persistence
             }
         );
+
+        serversToShutDown.push(simpleServer);
     });
     it('should return error headers (ENOTFOUND)', function (done) {
         var id;
