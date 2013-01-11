@@ -3,6 +3,8 @@ var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
 
+var serversToShutDown = [];
+
 function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 
     var CONTENT = 'Retry Test',
@@ -32,7 +34,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
         utils.makeRequest(options, CONTENT, function (e, data) { });
     }
 
-    srv = http.createServer(function (req, res) {
+    var srv = http.createServer(function (req, res) {
 
         var headers = req.headers,
             method = req.method,
@@ -66,9 +68,24 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
             }
         });
     }).listen(config.simpleServerPort, makeRequest.bind({}, retryTimes));
+
+    serversToShutDown.push(srv);
 }
 
 describe('Retry', function () {
+
+
+    afterEach(function() {
+        for (var i = 0; i < serversToShutDown.length; i++) {
+            try {
+                serversToShutDown[i].close();
+            } catch (e) {
+
+            }
+        }
+
+        serversToShutDown = [];
+    });
 
     it('The last retry will work', function (done) {
 

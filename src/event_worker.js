@@ -52,9 +52,9 @@ function createTask(simpleRequest, callback) {
     var errorsHeaders = [];
     //check URLS
     errorsHeaders = [simpleRequest.headers[MG.HEAD_RELAYER_HTTPCALLBACK],
-                     simpleRequest.headers[MG.HEAD_RELAYER_HTTPCALLBACK_ERROR],
-                     simpleRequest.headers[MG.HEAD_RELAYER_HOST]
-    ].map(urlErrors).filter(function(e) {
+      simpleRequest.headers[MG.HEAD_RELAYER_HTTPCALLBACK_ERROR],
+      simpleRequest.headers[MG.HEAD_RELAYER_HOST]
+    ].map(urlErrors).filter(function (e) {
         return e !== null;
       });
 
@@ -62,7 +62,7 @@ function createTask(simpleRequest, callback) {
     var retryStr = simpleRequest.headers[MG.HEAD_RELAYER_RETRY];
     if (retryStr) {
       var retrySplit = retryStr.split(',');
-      if (!retrySplit.every(function(num) {
+      if (!retrySplit.every(function (num) {
         return isFinite(Number(num));
       })) {
         errorsHeaders.push('invalid retry value: ' + retryStr);
@@ -109,36 +109,36 @@ function doJob(task, callback) {
       options.agent = config.agent;
     }
 
-    req = httpModule.request(options, function(rlyRes) {
+    req = httpModule.request(options, function (rlyRes) {
       if (Math.floor(rlyRes.statusCode / 100) === 2) {
         //if no 5XX ERROR
-        getResponse(rlyRes, task, function(task, respObj) {
+        getResponse(rlyRes, task, function (task, respObj) {
           //PERSISTENCE
           if (callback) {
             callback(null, respObj);
           }
         });
       } else {
-        getResponse(rlyRes, task, function(task, respObj) {
+        getResponse(rlyRes, task, function (task, respObj) {
           var e = {
-            id: task.id,
-            topic: task.headers[MG.HEAD_RELAYER_TOPIC],
-            error: 'Not relayed request '+rlyRes.statusCode,
-            statusCode: rlyRes.statusCode,
-            headers: rlyRes.headers,
-            body: respObj.body
+            id:task.id,
+            topic:task.headers[MG.HEAD_RELAYER_TOPIC],
+            error:'Not relayed request ' + rlyRes.statusCode,
+            statusCode:rlyRes.statusCode,
+            headers:rlyRes.headers,
+            body:respObj.body
           };
           handleRequestError(task, e, callback);
         });
 
       }
     });
-    req.on('error', function(e) {
+    req.on('error', function (e) {
       e.resultOk = false;
       var errObj = {
-        id: task.id,
-        topic: task.headers[MG.HEAD_RELAYER_TOPIC],
-        error: e.code + '(' + e.syscall + ')'
+        id:task.id,
+        topic:task.headers[MG.HEAD_RELAYER_TOPIC],
+        error:e.code + '(' + e.syscall + ')'
       };
 
       logger.warning('doJob', e);
@@ -166,22 +166,41 @@ function getResponse(resp, task, callback) {
   "use strict";
   logger.debug('getResponse(resp, task, callback)', [resp, task, callback]);
 
-  var data = "";
-  resp.on('data', function(chunk) {
-    data += chunk;
+  var data = [];
+  var length = 0;
+
+  resp.on('data', function (chunk) {
+    data.push(chunk);
+    length += chunk.length;
   });
-  resp.on('end', function(chunk) {
+
+  resp.on('end', function (chunk) {
     if (chunk) {
-      if (chunk) {
-        data += chunk;
-      } //avoid tail undefined
+      data.push(chunk);
+      length += chunk.length;
+    } //avoid tail undefined
+
+    var body_encoding = task.headers[MG.HEAD_RELAYER_ENCODING];
+
+    if (!body_encoding || MG.ACEPTS_ENCODINGS.indexOf(body_encoding) === -1){
+      body_encoding = 'utf8';
     }
+
+    var buf = new Buffer(length);
+    for(var i = 0, pos=0; i<data.length; i++){
+      data[i].copy(buf,pos);
+      pos += data[i].length;
+    }
+
+    var encodedBody = buf.toString(body_encoding);
+
     var respObj = {
       id: task.id,
       topic: task.headers[MG.HEAD_RELAYER_TOPIC],
       statusCode: resp.statusCode,
+      encoding: body_encoding,
       headers: resp.headers,
-      body: data
+      body: encodedBody
     };
 
     if (callback) {
@@ -209,7 +228,7 @@ function doRetry(task, error, callback) {
         delete task.headers[MG.HEAD_RELAYER_RETRY];
       }
       if (time > 0) {
-        setTimeout(function() {
+        setTimeout(function () {
           doJob(task, callback);
         }, time);
       }
