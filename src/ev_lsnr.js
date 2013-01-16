@@ -20,101 +20,101 @@ var config = configGlobal.ev_lsnr;
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
-logger.prefix = path.basename(module.filename,'.js');
+logger.prefix = path.basename(module.filename, '.js');
 
 
 function init(emitter) {
-    "use strict";
-    return function (cbAsync) {
-        var callback = function(error,result) {
-             cbAsync(error?"evLsnr "+String(error): null,
-                      !error?"ev_lsnr OK": null);
-        };
-        var client = new mongodb.Db(config.mongo_db,
-            new mongodb.Server(config.mongo_host, config.mongo_port, {}));
-
-        function subscribeStateCol(callback) {
-            client.collection(config.collectionState, function (err, c) {
-                if (err) {
-                    logger.warning('collection', err);
-                    if (callback) {
-                        callback(err);
-                    }
-                } else {
-                    var collection = c;
-                    emitter.on(G.EVENT_NEWSTATE, function newEvent(data) {
-                        try {
-                            logger.debug('newEvent', data);
-                            collection.insert(data, function (err, docs) {
-                                if (err) {
-                                    logger.warning('insert', err);
-                                } else {
-                                    logger.debug('insert', docs);
-                                }
-                            });
-                        } catch (e) {
-                            logger.warning('newEvent', e);
-                        }
-                    });
-                    if (callback) {
-                        callback(null);
-                    }
-                }
-            });
-        }
-
-        function subscribeErrorCol(callback) {
-            client.collection(config.collectionError, function (err, c) {
-
-                if (err) {
-                    logger.warning('collectionError', err);
-                    if (callback) {
-                        callback(err);
-                    }
-                } else {
-                    var collection = c;
-                    emitter.on(G.EVENT_ERR, function newError(data) {
-                        try {
-                            logger.debug('newError', data);
-
-                            collection.insert(data, function (err, docs) {
-                                if (err) {
-                                    logger.warning('insert', err);
-                                } else {
-                                    logger.debug('insert', docs);
-                                }
-                            });
-                        } catch (e) {
-                            logger.warning('newError', e);
-                        }
-                    });
-                    if (callback) {
-                        callback(null);
-                    }
-                }
-
-            });
-        }
-
-        client.open(function (err, p_client) {
-            if (err) {
-                logger.warning('open', err);
-                if (callback) {
-                    callback(err);
-                }
-            } else {
-                subscribeStateCol(function (err) {
-                    if (err) {
-                        callback(err);
-                    }
-                    else {
-                        subscribeErrorCol(callback);
-                    }
-                });
-
-            }
-        });
+  'use strict';
+  return function(cbAsync) {
+    var callback = function(error, result) {
+      cbAsync(error ? 'evLsnr ' + String(error) : null,
+          ! error ? 'ev_lsnr OK' : null);
     };
+    var client = new mongodb.Db(config.mongo_db,
+        new mongodb.Server(config.mongo_host, config.mongo_port, {}));
+
+    function subscribeStateCol(callback) {
+      client.collection(config.collectionState, function(err, c) {
+        if (err) {
+          logger.warning('collection', err);
+          if (callback) {
+            callback(err);
+          }
+        } else {
+          var collection = c;
+          emitter.on(G.EVENT_NEWSTATE, function newEvent(data) {
+            try {
+              logger.debug('newEvent', data);
+              collection.insert(data, function(err, docs) {
+                if (err) {
+                  logger.warning('insert', err);
+                } else {
+                  logger.debug('insert', docs);
+                }
+              });
+            } catch (e) {
+              logger.warning('newEvent', e);
+            }
+          });
+          if (callback) {
+            callback(null);
+          }
+        }
+      });
+    }
+
+    function subscribeErrorCol(callback) {
+      client.collection(config.collectionError, function(err, c) {
+
+        if (err) {
+          logger.warning('collectionError', err);
+          if (callback) {
+            callback(err);
+          }
+        } else {
+          var collection = c;
+          emitter.on(G.EVENT_ERR, function newError(data) {
+            try {
+              logger.debug('newError', data);
+
+              collection.insert(data, function(err, docs) {
+                if (err) {
+                  logger.warning('insert', err);
+                } else {
+                  logger.debug('insert', docs);
+                }
+              });
+            } catch (e) {
+              logger.warning('newError', e);
+            }
+          });
+          if (callback) {
+            callback(null);
+          }
+        }
+
+      });
+    }
+
+    client.open(function(err, p_client) {
+      if (err) {
+        logger.warning('open', err);
+        if (callback) {
+          callback(err);
+        }
+      } else {
+        subscribeStateCol(function(err) {
+          if (err) {
+            callback(err);
+          }
+          else {
+            subscribeErrorCol(callback);
+          }
+        });
+
+      }
+    });
+  };
 }
 
 exports.init = init;

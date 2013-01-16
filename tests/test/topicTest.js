@@ -19,112 +19,115 @@ options.headers = {};
 var serversToShutDown = [];
 
 
-describe('Topic', function () {
-    var options = this.options;
-    options.method = 'GET';
-    options.headers['content-type'] = 'application/json';
-    options.headers['X-Relayer-Host'] = 'http://localhost:8014';
-    options.headers['X-relayer-persistence'] = 'BODY';
-    options.headers['test-header'] = 'test header';
-    options.headers['X-Relayer-topic'] ='Topic test';
+describe('Topic', function() {
+  var options = this.options;
+  options.method = 'GET';
+  options.headers['content-type'] = 'application/json';
+  options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+  options.headers['X-relayer-persistence'] = 'BODY';
+  options.headers['test-header'] = 'test header';
+  options.headers['X-Relayer-topic'] = 'Topic test';
 
 
-    afterEach(function() {
-        for (var i = 0; i < serversToShutDown.length; i++) {
-            try {
-                serversToShutDown[i].close();
-            } catch (e) {
+  afterEach(function() {
+    for (var i = 0; i < serversToShutDown.length; i++) {
+      try {
+        serversToShutDown[i].close();
+      } catch (e) {
 
-            }
+      }
+    }
+
+    serversToShutDown = [];
+  });
+
+
+  it('should return  the correct topic id (GET)', function(done) {
+    var id;
+    var simpleServer = server.serverListener(
+        function() {
+          utils.makeRequest(options, '', function(err, res) {
+            id = JSON.parse(res).id;
+            //console.log(id);
+          });
+        },
+        function(method, headers, body) {
+          setTimeout(function() {
+            var options = { port: 3001, host: 'localhost',
+              path: '/response/' + id, method: 'GET'};
+            utils.makeRequest(options, '', function(err, res) {
+
+              var JSONres = JSON.parse(res);
+              JSONres.body.should.be.equal('');
+              JSONres.headers.should.have.property('test-header',
+                  'test header');
+              JSONres.should.have.property('topic', 'Topic test');
+              done();
+            });
+          }, 100); //Waiting for Rush to create the persistence
         }
+    );
 
-        serversToShutDown = [];
-    });
-
-
-    it('should return  the correct topic id (GET)', function (done) {
-        var id;
-        var simpleServer = server.serverListener(
-            function () {
-                utils.makeRequest(options, '', function (err, res) {
-                    id = JSON.parse(res).id;
-                    //console.log(id);
-                });
-            },
-            function (method, headers, body) {
-                setTimeout(function () {
-                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    utils.makeRequest(options, '', function (err, res) {
-
-                        var JSONres = JSON.parse(res);
-                        JSONres.body.should.be.equal('');
-                        JSONres.headers.should.have.property('test-header', 'test header');
-                        JSONres.should.have.property('topic','Topic test');
-                        done();
-                    });
-                }, 100); //Waiting for Rush to create the persistence
-            }
-        );
-
-        serversToShutDown.push(simpleServer);
-    });
+    serversToShutDown.push(simpleServer);
+  });
 
 
+  it('should return  the correct topic id (POST)', function(done) {
+    options.method = 'POST';
+    var id;
 
-    it('should return  the correct topic id (POST)', function (done) {
-        options.method = 'POST';
-        var id;
+    var simpleServer = server.serverListener(
+        function() {
+          utils.makeRequest(options, 'body request', function(err, res) {
+            id = JSON.parse(res).id;
+            //console.log(id);
+          });
+        },
+        function(method, headers, body) {
+          setTimeout(function() {
+            var options = { port: 3001, host: 'localhost',
+              path: '/response/' + id, method: 'GET'};
+            utils.makeRequest(options, '', function(err, res) {
+              var JSONres = JSON.parse(res);
+              JSONres.body.should.be.equal('body request');
+              JSONres.should.have.property('topic', 'Topic test');
+              done();
+            });
+          }, 100); //Waiting for Rush to create the persistence
+        }
+    );
 
-        var simpleServer = server.serverListener(
-            function () {
-                utils.makeRequest(options, 'body request', function (err, res) {
-                    id = JSON.parse(res).id;
-                    //console.log(id);
-                });
-            },
-            function (method, headers, body) {
-                setTimeout(function () {
-                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    utils.makeRequest(options, '', function (err, res) {
-                        var JSONres = JSON.parse(res);
-                        JSONres.body.should.be.equal('body request');
-                        JSONres.should.have.property('topic', 'Topic test');
-                        done();
-                    });
-                }, 100); //Waiting for Rush to create the persistence
-            }
-        );
-
-        serversToShutDown.push(simpleServer);
-    });
+    serversToShutDown.push(simpleServer);
+  });
 
 
-    it('should return  the correct topic id (PUT)', function (done) {
-        options.method = 'PUT';
-        options.headers['X-relayer-persistence'] = 'STATUS';
-        var id;
+  it('should return  the correct topic id (PUT)', function(done) {
+    options.method = 'PUT';
+    options.headers['X-relayer-persistence'] = 'STATUS';
+    var id;
 
-        var simpleServer = server.serverListener(
-            function () {
-                utils.makeRequest(options, 'body request', function (err, res) {
-                    id = JSON.parse(res).id;
-                   // console.log(id);
-                });
-            },
-            function (method, headers, body) {
-                setTimeout(function () {
-                    var options = { port: 3001, host: 'localhost', path: '/response/' + id, method: 'GET'};
-                    utils.makeRequest(options, '', function (err, res) {
-                        var JSONres = JSON.parse(res);
-                        JSONres.should.not.have.property('body');
-                        JSONres.should.not.have.property('headers');
-                        JSONres.should.have.property('topic', 'Topic test');
-                        done();
-                    });
-                }, 100); //Waiting for Rush to create the persistence
-            }
-        );
+    var simpleServer = server.serverListener(
+        function() {
+          utils.makeRequest(options, 'body request', function(err, res) {
+            id = JSON.parse(res).id;
+            // console.log(id);
+          });
+        },
+        function(method, headers, body) {
+          setTimeout(function() {
+            var options = { port: 3001, host: 'localhost',
+              path: '/response/' + id, method: 'GET'};
+            utils.makeRequest(options, '', function(err, res) {
+              var JSONres = JSON.parse(res);
+              JSONres.should.not.have.property('body');
+              JSONres.should.not.have.property('headers');
+              JSONres.should.have.property('topic', 'Topic test');
+              done();
+            });
+          }, 100); //Waiting for Rush to create the persistence
+        }
+    );
 
-        serversToShutDown.push(simpleServer);
-    });
+    serversToShutDown.push(simpleServer);
+  });
 });

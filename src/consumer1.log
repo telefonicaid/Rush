@@ -1,0 +1,18 @@
+2012-12-20T12:27:47.735Z - debug: [service_router] getQueues()
+2012-12-20T12:27:47.922Z - info: [consumer] Node version: '0.6.12'
+2012-12-20T12:27:47.923Z - info: [consumer] V8 version: '3.7.12.22'
+2012-12-20T12:27:47.923Z - info: [consumer] Current directory: /home/david/proyectos/Rush/src
+2012-12-20T12:27:47.923Z - info: [consumer] RUSH_DIR_PREFIX: 
+2012-12-20T12:27:47.923Z - info: [consumer] RUSH_GEN_MONGO: 
+2012-12-20T12:28:04.116Z - debug: [service_router] getQueues()
+2012-12-20T12:28:04.233Z - info: [consumer] Node version: '0.6.12'
+2012-12-20T12:28:04.234Z - info: [consumer] V8 version: '3.7.12.22'
+2012-12-20T12:28:04.234Z - info: [consumer] Current directory: /home/david/proyectos/Rush/src
+2012-12-20T12:28:04.234Z - info: [consumer] RUSH_DIR_PREFIX: 
+2012-12-20T12:28:04.234Z - info: [consumer] RUSH_GEN_MONGO: 
+2012-12-20T12:28:04.245Z - debug: [consumer] onSubscribed(err, results) null [ 'ev_callback OK', 'ev_persistence OK', 'gevlsnr OK' ]
+2012-12-20T12:28:04.245Z - debug: [consumer] consume(idconsumer, start) 'consumerA:0' true
+2012-12-20T12:28:04.245Z - debug: [task_queue] getPending(idconsumer, callback) 'consumerA:0' [Function: processingConsumedTask]
+2012-12-20T12:28:04.245Z - debug: [consumer] processingConsumedTask(err, resp) null { queueId: 'PendingRecovery', task: null }
+2012-12-20T12:28:04.246Z - debug: [consumer] consume(idconsumer, start) 'consumerA:0' false
+2012-12-20T12:28:04.246Z - debug: [task_queue] get(keys, auxQueueId, callback) { control: 'wrL:control', hpri: 'wrL:hpri', lpri: 'wrL:lpri' } 'consumerA:0' [Function: processingConsumedTask]

@@ -29,53 +29,52 @@ var G = require('./my_globals').C;
 
 var dbrelayer = require('./dbrelayer');
 
-var async = require("async");
+var async = require('async');
 var evModules = config.listener.evModules;
-var evInitArray = evModules.map(function (x) {
-    'use strict';
-    return require(x.module).init(emitter, x.config);
+var evInitArray = evModules.map(function(x) {
+  'use strict';
+  return require(x.module).init(emitter, x.config);
 });
 
 logger.info('Node version:', process.versions.node);
 logger.info('V8 version:', process.versions.v8);
-logger.info('Current directory: ' , process.cwd());
-logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
+logger.info('Current directory: ', process.cwd());
+logger.info('RUSH_DIR_PREFIX: ', process.env.RUSH_DIR_PREFIX);
 
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
-        'use strict';
-        logger.debug('onSubscribed(err, results)', [err, results]);
-        if(err){
-            logger.error('error subscribing event listener', err);
-            var errx = new Error(['error subscribing event listener', err]);
-            errx.fatal = true;
-        }
-        else {
-            startListener();
-        }
+      'use strict';
+      logger.debug('onSubscribed(err, results)', [err, results]);
+      if (err) {
+        logger.error('error subscribing event listener', err);
+        var errx = new Error(['error subscribing event listener', err]);
+        errx.fatal = true;
+      }
+      else {
+        startListener();
+      }
     });
 
 
-
 process.on('uncaughtException', function onUncaughtException(err) {
-    'use strict';
-    logger.error('onUncaughtException', err);
-    if (err && err.fatal) {
-        setTimeout(function() {process.exit();}, 1000);
-        process.stdout.end();
-    }
+  'use strict';
+  logger.error('onUncaughtException', err);
+  if (err && err.fatal) {
+    setTimeout(function() {
+      process.exit();
+    }, 1000);
+    process.stdout.end();
+  }
 });
 
 
-
-
-
 function startListener() {
-    'use strict';
+  'use strict';
 
-    http.createServer(function serveReq(req, res) {
+  http.createServer(function serveReq(req, res) {
 
-    var data = '', parsedUrl, retrievePath = 'response', pathComponents, responseId, responseJson, reqLog = {};
+    var data = '', parsedUrl, retrievePath = 'response',
+        pathComponents, responseId, responseJson, reqLog = {};
 
     reqLog.start = Date.now();
     reqLog.url = req.url;
@@ -94,136 +93,136 @@ function startListener() {
     parsedUrl = url.parse(req.url);
 
     req.on('data', function onReqData(chunk) {
-        data += chunk;
+      data += chunk;
     });
 
     req.on('end', function onReqEnd() {
-        if (parsedUrl.pathname === '/') {
-            assignRequest(req, data, function writeRes(result) {
-                res.writeHead(result.statusCode);
-                res.end(result.data);
-                reqLog.responseTime = Date.now() - reqLog.start;
-                reqLog.statusCode = result.statusCode;
-                reqLog.bodyLength = data.length;
-                reqLog.id = result.data;
-                delete reqLog.start;
-                logger.info('request', reqLog);
-            });
-        } else {
-            pathComponents = parsedUrl.pathname.split('/');
-            logger.debug('pathComponents', pathComponents);
-            var flatted = ['headers'];
-            
-            if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
-                responseId = pathComponents[2];
+      if (parsedUrl.pathname === '/') {
+        assignRequest(req, data, function writeRes(result) {
+          res.writeHead(result.statusCode);
+          res.end(result.data);
+          reqLog.responseTime = Date.now() - reqLog.start;
+          reqLog.statusCode = result.statusCode;
+          reqLog.bodyLength = data.length;
+          reqLog.id = result.data;
+          delete reqLog.start;
+          logger.info('request', reqLog);
+        });
+      } else {
+        pathComponents = parsedUrl.pathname.split('/');
+        logger.debug('pathComponents', pathComponents);
+        var flatted = ['headers'];
 
-                dbrelayer.getData(responseId, function (err, data) {
+        if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
+          responseId = pathComponents[2];
 
-                    if (err) {
-                        responseJson = JSON.stringify(err);
-                    } else {
-                        for (var i = 0; i < flatted.length; i++) {
-                            try {
-                                data[flatted[i]] = JSON.parse(data[flatted[i]]);
-                            }
-                            catch (e) {
-                            }
-                        }
-                        responseJson = JSON.stringify(data);
-                    }
-                    res.setHeader('content-type','application/json; charset=utf-8');
+          dbrelayer.getData(responseId, function(err, data) {
 
-                    var buf = new Buffer(responseJson,'utf-8')
-                    res.setHeader('content-length',buf.length);
-                    res.end(buf);
-                });
-
+            if (err) {
+              responseJson = JSON.stringify(err);
             } else {
-                res.writeHead(400);
-                res.end('bad format: ' + parsedUrl.pathname);
-                reqLog.responseTime = reqLog.responseTime = Date.now() - reqLog.start;
-                reqLog.statusCode = 400;
-                reqLog.bodyLength = data.length;
-                logger.warning('bad format', reqLog);
+              for (var i = 0; i < flatted.length; i++) {
+                try {
+                  data[flatted[i]] = JSON.parse(data[flatted[i]]);
+                }
+                catch (e) {
+                }
+              }
+              responseJson = JSON.stringify(data);
             }
+            res.setHeader('content-type', 'application/json; charset=utf-8');
+
+            var buf = new Buffer(responseJson, 'utf-8');
+            res.setHeader('content-length', buf.length);
+            res.end(buf);
+          });
+
+        } else {
+          res.writeHead(400);
+          res.end('bad format: ' + parsedUrl.pathname);
+          reqLog.responseTime = reqLog.responseTime = Date.now() - reqLog.start;
+          reqLog.statusCode = 400;
+          reqLog.bodyLength = data.length;
+          logger.warning('bad format', reqLog);
         }
+      }
     });
-}).listen(config.listener.port);
+  }).listen(config.listener.port);
 }
 
 
 function assignRequest(request, data, callback) {
-    'use strict';
-    logger.debug('assignRequest(request, data, callback)',
-        [request, data, callback]);
+  'use strict';
+  logger.debug('assignRequest(request, data, callback)',
+      [request, data, callback]);
 
-    var id = uuid.v1();
+  var id = uuid.v1();
 
-    var simpleReq = {
-        id:id,
-        method:request.method,
-        httpVersion:request.httpVersion,
-        url:request.url,
-        headers:request.headers,
-        body:data };
+  var simpleReq = {
+    id: id,
+    method: request.method,
+    httpVersion: request.httpVersion,
+    url: request.url,
+    headers: request.headers,
+    body: data };
 
-    var response = {};
+  var response = {};
 
 
-    router.route(simpleReq, processTask);
+  router.route(simpleReq, processTask);
 
-    function processTask(err, routeObj) {
-        if (!err) {
+  function processTask(err, routeObj) {
+    if (! err) {
 
-            logger.debug('assign_request - target - task', routeObj);
+      logger.debug('assign_request - target - task', routeObj);
 
-            store.put(routeObj.service, routeObj.task, function onWrittenReq(error) {
-                var st;
-                if (error) {
-                    logger.warning('onWrittenReq', error);
-                    response.statusCode=500;
-                    response.data = error.toString();
-                    //EMIT ERROR
-                    var errev = {
-                        id:routeObj.task.id,
-                        topic:routeObj.task.headers[G.HEAD_RELAYER_TOPIC],
-                        queueId:routeObj.service,
-                        err:error,
-                        date:new Date()
-                    };
-                    emitter.emit(G.EVENT_ERR, errev);
-                    //EMIT STATE ERROR
-                    st = {
-                        id:routeObj.task.id,
-                        topic:routeObj.task.headers[G.HEAD_RELAYER_TOPIC],
-                        state:G.STATE_ERROR,
-                        date:new Date(),
-                        task:routeObj.task
-                    };
-                    emitter.emit(G.EVENT_NEWSTATE, st);
-                } else {
-                    response.statusCode = 200;
-                    response.data = JSON.stringify({id: id, ok:true});
-
-                    //EMIT STATE PENDING
-                    st = {
-                        id:routeObj.task.id,
-                        topic:routeObj.task.headers[G.HEAD_RELAYER_TOPIC],
-                        state:G.STATE_PENDING,
-                        date:new Date(),
-                        task:routeObj.task
-                    };
-                    emitter.emit(G.EVENT_NEWSTATE, st);
-                }
-                callback(response);
-            });
+      store.put(routeObj.service, routeObj.task, function onWrittenReq(error) {
+        var st;
+        if (error) {
+          logger.warning('onWrittenReq', error);
+          response.statusCode = 500;
+          response.data = error.toString();
+          //EMIT ERROR
+          var errev = {
+            id: routeObj.task.id,
+            topic: routeObj.task.headers[G.HEAD_RELAYER_TOPIC],
+            queueId: routeObj.service,
+            err: error,
+            date: new Date()
+          };
+          emitter.emit(G.EVENT_ERR, errev);
+          //EMIT STATE ERROR
+          st = {
+            id: routeObj.task.id,
+            topic: routeObj.task.headers[G.HEAD_RELAYER_TOPIC],
+            state: G.STATE_ERROR,
+            date: new Date(),
+            task: routeObj.task
+          };
+          emitter.emit(G.EVENT_NEWSTATE, st);
         } else {
-            response.statusCode = 400;
-            response.data = JSON.stringify({ok: false, errors: err.message});
-            logger.info('response', response);
-            callback(response);
+          response.statusCode = 200;
+          response.data = JSON.stringify({id: id, ok: true});
+
+          //EMIT STATE PENDING
+          st = {
+            id: routeObj.task.id,
+            topic: routeObj.task.headers[G.HEAD_RELAYER_TOPIC],
+            state: G.STATE_PENDING,
+            date: new Date(),
+            task: routeObj.task
+          };
+          emitter.emit(G.EVENT_NEWSTATE, st);
         }
+        callback(response);
+      });
+    } else {
+      response.statusCode = 400;
+      response.data = JSON.stringify({ok: false, errors: err.message});
+      logger.info('response', response);
+      callback(response);
     }
+  }
 }
 
 

@@ -18,14 +18,14 @@ var redis = require('redis');
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
-logger.prefix = path.basename(module.filename,'.js');
+logger.prefix = path.basename(module.filename, '.js');
 
 
 var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
 
 function update(key, obj, cllbk) {
   'use strict';
-   logger.debug('update(key, obj, cllbk)',[key, obj, cllbk]);
+  logger.debug('update(key, obj, cllbk)', [key, obj, cllbk]);
 
   var str; // aux var for stringify object properties
   var o_aux = {}; // auxiliar object to adapt to redis
@@ -42,12 +42,14 @@ function update(key, obj, cllbk) {
 
   rcli.hmset(config.key_prefix + key, o_aux, function onHmset(err, res) {
     logger.debug('onHmset(err, res) ', [err, res]);
-    rcli.expire(config.key_prefix + key, configGlobal.expire_time, function(err){
-      if (err) {
-        logger.error('expire(err, res) ', [config.key_prefix + key, configGlobal.expire_time]);
-      }
+    rcli.expire(config.key_prefix + key,
+        configGlobal.expire_time, function(err) {
+          if (err) {
+            logger.error('expire(err, res) ', [config.key_prefix + key,
+              configGlobal.expire_time]);
+          }
 
-    });
+        });
     if (cllbk) {
       cllbk(err, res);
     }
@@ -56,14 +58,14 @@ function update(key, obj, cllbk) {
 
 function getData(key, callback) {
   'use strict';
-   logger.debug('getData(key, callback)',[key, callback]);
-  rcli.hgetall(config.key_prefix + key, function onHgetall(err, data){
+  logger.debug('getData(key, callback)', [key, callback]);
+  rcli.hgetall(config.key_prefix + key, function onHgetall(err, data) {
     logger.debug('onHgetall(err, data)', [err, data]);
-    if(err){
+    if (err) {
       logger.warning('onHgetall', err);
       callback(err);
     }
-    else{
+    else {
       callback(null, data);
     }
   });
