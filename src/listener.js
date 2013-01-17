@@ -44,7 +44,6 @@ logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
-        logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
             logger.error('error subscribing event listener', err);
             var errx = new Error(['error subscribing event listener', err]);
@@ -111,7 +110,6 @@ function startListener() {
             });
         } else {
             pathComponents = parsedUrl.pathname.split('/');
-            logger.debug('pathComponents', pathComponents);
             var flatted = ['headers'];
             
             if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
@@ -154,8 +152,6 @@ function startListener() {
 
 function assignRequest(request, data, callback) {
     'use strict';
-    logger.debug('assignRequest(request, data, callback)',
-        [request, data, callback]);
 
     var id = uuid.v1();
 
@@ -174,8 +170,6 @@ function assignRequest(request, data, callback) {
 
     function processTask(err, routeObj) {
         if (!err) {
-
-            logger.debug('assign_request - target - task', routeObj);
 
             store.put(routeObj.service, routeObj.task, function onWrittenReq(error) {
                 var st;

@@ -86,8 +86,6 @@ function createTask(simpleRequest, callback) {
 
 function doJob(task, callback) {
   'use strict';
-  logger.debug('doJob(task, callback)', [task, callback]);
-
   var httpModule;
 
   var targetHost = task.headers[MG.HEAD_RELAYER_HOST], req;
@@ -157,14 +155,12 @@ function doJob(task, callback) {
 
 function handleRequestError(task, e, callback) {
   "use strict";
-  logger.debug('handleRequestError(task, e, callback)', [task, e, callback]);
   logger.warning('handleRequestError', e);
   doRetry(task, e, callback);
 
 }
 function getResponse(resp, task, callback) {
   "use strict";
-  logger.debug('getResponse(resp, task, callback)', [resp, task, callback]);
 
   var data = [];
   var length = 0;
@@ -212,8 +208,7 @@ function getResponse(resp, task, callback) {
 
 function doRetry(task, error, callback) {
   "use strict";
-  logger.debug('doRetry(task, error, callback)', [task, error, callback]);
-
+  
   var retryList = task.headers[MG.HEAD_RELAYER_RETRY];
   var time = -1;
   if (retryList) {
@@ -256,3 +251,5 @@ function delXrelayerHeaders(headers) {
 }
 exports.doJob = doJob;
 exports.createTask = createTask;
+
+require('./hookLogger.js').init(exports, logger);

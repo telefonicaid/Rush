@@ -17,7 +17,7 @@ log.setConfig(configGlobal.consumer.logger);
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename,'.js');
                                                             
-var http = require('http');
+
 var store = require('./task_queue.js');
 var service_router = require('./service_router');
 
@@ -44,7 +44,6 @@ logger.info('RUSH_GEN_MONGO: ' , process.env.RUSH_GEN_MONGO);
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
-        logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
             logger.error('error subscribing event listener', err);
             var errx = new Error(['error subscribing event listener', err]);
@@ -62,7 +61,6 @@ async.parallel(evInitArray,
 
 function consume(idconsumer, start) {
   'use strict';
-  logger.debug('consume(idconsumer, start)', [idconsumer, start]);
 
   if (start) {
     store.getPending(idconsumer, processingConsumedTask);
@@ -71,8 +69,6 @@ function consume(idconsumer, start) {
   }
 
   function processingConsumedTask(err, job) {
-    logger.debug('processingConsumedTask(err, resp)', [err, job]);
-
     var st;
     if (err) {
       logger.warning("processingConsumedTask", err);
@@ -85,7 +81,6 @@ function consume(idconsumer, start) {
       emitter.emit(G.EVENT_ERR, errev);
     } else {
       if (job && job.task) {
-        logger.debug("processingConsumedTask - resp", job);
         //EMIT PROCESSING
         st = {
           id: job.task.id,
@@ -101,8 +96,6 @@ function consume(idconsumer, start) {
           var do_job = service_router.getWorker(job);
           do_job(job.task,
             function onJobEnd(dojoberr, jobresult) { //job results add
-              logger.debug('onJobEnd(dojoberr, jobresult)',
-                [dojoberr, jobresult]);
               if (dojoberr) {
                 logger.warning('onJobEnd', dojoberr);
                 //EMIT ERROR
@@ -139,7 +132,6 @@ function consume(idconsumer, start) {
                 emitter.emit(G.EVENT_NEWSTATE, st);
               }
               store.remProcessingQueue(idconsumer, function onRemoval(err) {
-                logger.debug('onRemoval(err)', [err]);
                 if (err) {
                   logger.warning('onRemoval', err);
                   //EMIT ERROR
@@ -169,9 +161,6 @@ function consume(idconsumer, start) {
   }
 }
 
-
-
-
 process.on('uncaughtException', function onUncaughtException(err) {
     'use strict';
     logger.error('onUncaughtException', err);
@@ -181,5 +170,4 @@ process.on('uncaughtException', function onUncaughtException(err) {
         process.stdout.end();
     }
 });
-
 

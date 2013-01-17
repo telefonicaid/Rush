@@ -44,12 +44,9 @@ function init(emitter) {
                     var collection = c;
                     emitter.on(G.EVENT_NEWSTATE, function newEvent(data) {
                         try {
-                            logger.debug('newEvent', data);
                             collection.insert(data, function (err, docs) {
                                 if (err) {
                                     logger.warning('insert', err);
-                                } else {
-                                    logger.debug('insert', docs);
                                 }
                             });
                         } catch (e) {
@@ -75,13 +72,9 @@ function init(emitter) {
                     var collection = c;
                     emitter.on(G.EVENT_ERR, function newError(data) {
                         try {
-                            logger.debug('newError', data);
-
                             collection.insert(data, function (err, docs) {
                                 if (err) {
                                     logger.warning('insert', err);
-                                } else {
-                                    logger.debug('insert', docs);
                                 }
                             });
                         } catch (e) {
@@ -118,3 +111,5 @@ function init(emitter) {
 }
 
 exports.init = init;
+
+require('./hookLogger.js').init(exports, logger);

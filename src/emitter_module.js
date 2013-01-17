@@ -20,4 +20,3 @@ function get() {
 }
 
 exports.get = get;
-
