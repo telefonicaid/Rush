@@ -170,4 +170,3 @@ process.on('uncaughtException', function onUncaughtException(err) {
         process.stdout.end();
     }
 });
-
