@@ -186,12 +186,8 @@ function getResponse(resp, task, callback) {
       body_encoding = 'utf8';
     }
 
-    var buf = new Buffer(length);
-    for (var i = 0, pos = 0; i < data.length; i++) {
-      data[i].copy(buf, pos);
-      pos += data[i].length;
-    }
-
+    var buf = Buffer.concat(data,length);
+    
     var encodedBody = buf.toString(body_encoding);
 
     var respObj = {
