@@ -53,7 +53,6 @@ describe('Image Test', function() {
       req.on('end', function() {
         res.writeHead(200);
         res.end(contentBinary);
-        req.destroy();
 
         //Once the image has been written, polling is done until the image has been saved in redis or timeout.
         var checked = false;
