@@ -18,7 +18,7 @@ var redis = require('redis');
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
-logger.prefix = path.basename(module.filename,'.js');
+logger.prefix = path.basename(module.filename, '.js');
 
 
 var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
@@ -40,9 +40,11 @@ function update(key, obj, cllbk) {
   }
 
   rcli.hmset(config.key_prefix + key, o_aux, function onHmset(err, res) {
-    rcli.expire(config.key_prefix + key, configGlobal.expire_time, function(err){
+    rcli.expire(config.key_prefix + key,
+        configGlobal.expire_time, function(err) {
       if (err) {
-        logger.error('expire(err, res) ', [config.key_prefix + key, configGlobal.expire_time]);
+        logger.error('expire(err, res) ', [config.key_prefix +
+            key, configGlobal.expire_time]);
       }
 
     });
@@ -54,12 +56,12 @@ function update(key, obj, cllbk) {
 
 function getData(key, callback) {
   'use strict';
-  rcli.hgetall(config.key_prefix + key, function onHgetall(err, data){
-    if(err){
+  rcli.hgetall(config.key_prefix + key, function onHgetall(err, data) {
+    if (err) {
       logger.warning('onHgetall', err);
       callback(err);
     }
-    else{
+    else {
       callback(null, data);
     }
   });
