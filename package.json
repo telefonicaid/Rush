@@ -23,6 +23,7 @@
         "node-uuid":"*",
         "async":"*",
         "mongodb":"*",
+        "hooker":"*",
         "logger" : "https://github.com/telefonicaid/pditclogger/tarball/master"
     },
     "devDependencies":{
