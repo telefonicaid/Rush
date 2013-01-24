@@ -58,45 +58,54 @@ function makeRequest(type, persistence, content, done) {
       JSONRes.should.have.property('headers');
       testHeraders(JSONRes.headers);
 
-      // Check persistence
-      setTimeout(function() {
+      var options = { port: config.rushServer.port, host: 'localhost',
+        path: '/response/' + id, method: 'GET'};
 
-        var options = { port: config.rushServer.port, host: 'localhost',
-          path: '/response/' + id, method: 'GET'};
+      //Once the answer has been written, polling is done until the answer has been saved on redis or timeout.
+      var checked = false;
+      var interval = setInterval(function() {
 
-        utils.makeRequest(options, '', function(err, data) {
+        function checkResponse(err, data) {
 
-          should.not.exist(err);
-          should.exist(data);
-          var JSONRes = JSON.parse(data);
+          if (data !== '{}' && ! checked) {
 
-          if (persistence === 'BODY') {
+            clearInterval(interval);
 
-            JSONRes.should.have.property('body');
-            JSONRes.body.should.be.equal(content);
-            testHeraders(JSONRes.headers);
-            JSONRes.should.have.property('statusCode', '200');
+            should.not.exist(err);
+            should.exist(data);
+            var JSONRes = JSON.parse(data);
 
-          } else if (persistence === 'HEADER') {
+            if (persistence === 'BODY') {
+
+              JSONRes.should.have.property('body');
+              JSONRes.body.should.be.equal(content);
+              testHeraders(JSONRes.headers);
+              JSONRes.should.have.property('statusCode', '200');
+
+            } else if (persistence === 'HEADER') {
 
 
-            JSONRes.should.not.have.property('body');
-            JSONRes.should.have.property('headers');
-            testHeraders(JSONRes.headers);
-            JSONRes.should.have.property('statusCode', '200');
+              JSONRes.should.not.have.property('body');
+              JSONRes.should.have.property('headers');
+              testHeraders(JSONRes.headers);
+              JSONRes.should.have.property('statusCode', '200');
 
-          } else if (persistence === 'STATUS') {
+            } else if (persistence === 'STATUS') {
 
-            JSONRes.should.not.have.property('body');
-            JSONRes.should.not.have.property('headers');
-            JSONRes.should.have.property('statusCode', '200');
+              JSONRes.should.not.have.property('body');
+              JSONRes.should.not.have.property('headers');
+              JSONRes.should.have.property('statusCode', '200');
 
+            }
+
+            checked = true;
+            done();
           }
+        }
 
-          done();
-        });
-      }, 2000);   //Wait prudential time until the persistence is completed
+        utils.makeRequest(options, '', checkResponse);
 
+      }, 10);
     });
   }).listen(config.callBackPort,
 
@@ -249,25 +258,36 @@ describe('Persistence_HTTPCallback', function() {
             testHeraders(headers);
             contentReceived.should.be.equal(content);
 
-            setTimeout(
-                function() {
-                  var options = { port: 3001, host: 'localhost',
-                    path: '/response/' + id, method: 'GET'};
-                  utils.makeRequest(options, '', function(err, data) {
+            var checked = false;
+            var interval = setInterval(function() {
 
-                    var JSONRes = JSON.parse(data);
+              var options = { port: 3001, host: 'localhost',
+                path: '/response/' + id, method: 'GET'};
 
-                    JSONRes.body.should.be.equal(content);
-                    testHeraders(JSONRes.headers);
+              function checkResponse(err, data) {
 
-                    JSONRes.should.have.property('statusCode', '200');
-                    JSONRes.should.have.property('callback_err',
-                        'ENOTFOUND(getaddrinfo)');
+                if (data !== '{}' && data.indexOf('callback_err') !== -1 && ! checked) {
 
-                    done();
-                  });
+                  clearInterval(interval);
+
+                  var JSONRes = JSON.parse(data);
+
+                  JSONRes.body.should.be.equal(content);
+                  testHeraders(JSONRes.headers);
+
+                  JSONRes.should.have.property('statusCode', '200');
+                  JSONRes.should.have.property('callback_err',
+                      'ENOTFOUND(getaddrinfo)');
+
+                  checked = true;
+                  done();
+
                 }
-                , 1000); //Wait for callback to be completed
+              }
+
+              utils.makeRequest(options, '', checkResponse);
+
+            }, 10);
           }
       );
 
