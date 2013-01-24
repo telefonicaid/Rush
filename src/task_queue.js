@@ -23,28 +23,22 @@ logger.prefix = path.basename(module.filename,'.js');
 // ?????? Pool grande de conexiones a redis? Tiene sentido???
 
 var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
+require('./hookLogger.js').initRedisHook(rcli, logger);
 var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
+require('./hookLogger.js').initRedisHook(rcliBlocking, logger);
 
 
 //redis.debug_mode = true;
 
 function put(key, obj, errFun) {
     "use strict";
-    logger.debug('put(key, obj, errFun)', [key, obj, errFun]);
-
     var simpleReqStr = JSON.stringify(obj);
-
-    logger.debug('put - simpleReqStr ', simpleReqStr);
-
     rcli.lpush(key, simpleReqStr,errFun);
 }
 
 function get(keys, auxQueueId, callback) {
     "use strict";
-    logger.debug('get(keys, auxQueueId, callback)',[keys, auxQueueId, callback]);
-
     rcliBlocking.brpop(keys.control, keys.hpri, keys.lpri , 0, function onPop(err, data) {
-            logger.debug('onPop(err, data)',[err, data]);
             //technical DEBT dou to REDIS unsupported functionality
             //BRPOPLPUSH from multiple sources OR LUA Scripting
             rcli.lpush(auxQueueId, data[1], function onPush(err){
@@ -56,8 +50,6 @@ function get(keys, auxQueueId, callback) {
 
 function getPending(idconsumer, callback){
     "use strict";
-    logger.debug('getPending(idconsumer, callback)',[idconsumer, callback]);
-
     rcli.rpop(idconsumer, function onPendingData(err, data){
         var obj = JSON.parse(data);
         if(callback){callback(err, { queueId: 'PendingRecovery', task: obj });}
@@ -66,7 +58,6 @@ function getPending(idconsumer, callback){
 
 function remProcessingQueue(idconsumer, callback) {
     "use strict";
-    logger.debug('remProcessingQueue(idconsumer, callback)', [idconsumer, callback]);
     rcli.del(idconsumer, callback);
 }
 
@@ -74,3 +65,5 @@ exports.put = put;
 exports.get = get;
 exports.remProcessingQueue = remProcessingQueue;
 exports.getPending = getPending;
+
+require('./hookLogger.js').init(exports, logger);

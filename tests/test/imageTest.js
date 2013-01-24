@@ -7,79 +7,87 @@ var path = require('path');
 
 var DIR_MODULE = path.dirname(module.filename);
 
-describe('Image Test',function(){
+describe('Image Test', function() {
 
-    var server, petitionID;
-    var contentBinary = fs.readFileSync(DIR_MODULE + '/robot.png');
+  var server, petitionID;
+  var contentBinary = fs.readFileSync(DIR_MODULE + '/robot.png');
 
-    afterEach(function(done){
-        if (server) {
-            server.close();
-        }
 
-        done();
-    });
+  beforeEach(function(done){
+      var redis = require('redis').createClient(6379,'localhost');
+      redis.flushall(function(err,data){
+          redis.end();
+          done();
+      });
 
-    it ('should return the image coded in base 64', function(done){
+  });
+  afterEach(function(done) {
+    if (server) {
+      server.close();
+    }
+    done();
+  });
 
-        function makeRequest() {
-            var options = {};
+  it('should return the image coded in base 64', function(done) {
 
-            options.host = 'localhost';
-            options.port = 3001;
-            options.headers = {};
-            options.method = 'GET';
-            options.headers['content-type'] = 'application/json';
-            options.headers['X-Relayer-Host'] = 'http://localhost:8014';
-            options.headers['X-relayer-persistence'] = 'BODY';
-            options.headers['X-relayer-encoding'] = 'base64';
+    function makeRequest() {
+      var options = {};
 
-            utils.makeRequest(options, '', function(err, res){
-                petitionID = JSON.parse(res).id;
-            });
-        }
+      options.host = 'localhost';
+      options.port = 3001;
+      options.headers = {};
+      options.method = 'GET';
+      options.headers['content-type'] = 'application/json';
+      options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+      options.headers['X-relayer-persistence'] = 'BODY';
+      options.headers['X-relayer-encoding'] = 'base64';
 
-        //Launch Server
-        server = http.createServer(function (req, res) {
+      utils.makeRequest(options, '', function(err, res) {
+        petitionID = JSON.parse(res).id;
+      });
+    }
 
-            req.on('end', function () {
-                res.writeHead(200);
-                res.end(contentBinary);
-                req.destroy();
+    //Launch Server
+    server = http.createServer(function(req, res) {
 
-                //Once the image has been written, polling is done until the image has been saved in redis or timeout.
-                var checked = false;
-                var interval = setInterval(function() {
-                    var options = {};
+      req.on('end', function() {
+        res.writeHead(200);
+        res.end(contentBinary);
+        req.destroy();
 
-                    options.host = 'localhost';
-                    options.port = 3001;
-                    options.path = '/response/' + petitionID;
+        //Once the image has been written, polling is done until the image has been saved in redis or timeout.
+        var checked = false;
+        var interval = setInterval(function() {
+          var options = {};
 
-                    function checkResponse(err, res) {
-                        if (res !== '{}' && ! checked) {
-                            clearInterval(interval);
+          options.host = 'localhost';
+          options.port = 3001;
+          options.path = '/response/' + petitionID;
 
-                            should.not.exist(err);
+          function checkResponse(err, res) {
+            if (res !== '{}' && ! checked) {
+              clearInterval(interval);
 
-                            var parsedJSON = JSON.parse(res);
-                            parsedJSON.should.have.property('body');
-                            parsedJSON.should.have.property('encoding', 'base64');
+              should.not.exist(err);
 
-                            var body = parsedJSON.body;
-                            var buf = new Buffer(contentBinary);
-                            var base64 = buf.toString('base64');
-                            body.should.be.equal(base64);
+              var parsedJSON = JSON.parse(res);
+              parsedJSON.should.have.property('body');
+              parsedJSON.should.have.property('encoding', 'base64');
 
-                            done();
-                            checked = true;
-                        }
-                    }
+              var body = parsedJSON.body;
+              var buf = new Buffer(contentBinary);
+              var base64 = buf.toString('base64');
+              body.should.be.equal(base64);
 
-                    utils.makeRequest(options, '', checkResponse);
-                }, 1);
-            });
+              done();
+              checked = true;
+            }
+          }
 
-        }).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
-    });
+          utils.makeRequest(options, '', checkResponse);
+        }, 1);
+      });
+
+    }).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
+  });
 });

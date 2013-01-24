@@ -41,14 +41,11 @@ function init(emitter, config) {
                     var collection = c;
                     emitter.on(G.EVENT_NEWSTATE, function newEvent(data) {
                         try {
-                            logger.debug('newEvent', data);
                             if (filterObj(data, config.filter)) {
                                 var trimmed = trim(data, config.take);
                                     collection.insert(trimmed, function (err, docs) {
                                         if (err) {
                                             logger.warning('insert', err);
-                                        } else {
-                                            logger.debug('insert', docs);
                                         }
                                     });                            
                             }
@@ -125,3 +122,5 @@ function extractField(object, field) {
     }
     return fieldValue;
 }
+
+require('./hookLogger.js').init(exports, logger);

@@ -44,7 +44,6 @@ logger.info('RUSH_DIR_PREFIX: ' , process.env.RUSH_DIR_PREFIX);
 async.parallel(evInitArray,
     function onSubscribed(err, results) {
         'use strict';
-        logger.debug('onSubscribed(err, results)', [err, results]);
         if(err){
             logger.error('error subscribing event listener', err);
             var errx = new Error(['error subscribing event listener', err]);
@@ -75,87 +74,84 @@ function startListener() {
 
     http.createServer(function serveReq(req, res) {
 
-    var data = '', parsedUrl, retrievePath = 'response', pathComponents, responseId, responseJson, reqLog = {};
+        var data = '', parsedUrl, retrievePath = 'response', pathComponents, responseId, responseJson, reqLog = {};
 
-    reqLog.start = Date.now();
-    reqLog.url = req.url;
-    reqLog.method = req.method;
-    reqLog.remoteAddress = req.connection.remoteAddress;
-    reqLog.headers = {};
-    reqLog.headers[G.HEAD_RELAYER_HOST] = req.headers[G.HEAD_RELAYER_HOST];
-    reqLog.headers[G.HEAD_RELAYER_RETRY] = req.headers[G.HEAD_RELAYER_RETRY];
-    reqLog.headers[G.HEAD_RELAYER_HTTPCALLBACK] =
-        req.headers[G.HEAD_RELAYER_HTTPCALLBACK];
-    reqLog.headers[G.HEAD_RELAYER_PERSISTENCE] =
-        req.headers[G.HEAD_RELAYER_PERSISTENCE];
-    reqLog.headers[G.HEAD_RELAYER_TOPIC] = req.headers[G.HEAD_RELAYER_TOPIC];
-    reqLog.headers['content-type'] = req.headers['content-type'];
+        reqLog.start = Date.now();
+        reqLog.url = req.url;
+        reqLog.method = req.method;
+        reqLog.remoteAddress = req.connection.remoteAddress;
+        reqLog.headers = {};
+        reqLog.headers[G.HEAD_RELAYER_HOST] = req.headers[G.HEAD_RELAYER_HOST];
+        reqLog.headers[G.HEAD_RELAYER_RETRY] = req.headers[G.HEAD_RELAYER_RETRY];
+        reqLog.headers[G.HEAD_RELAYER_HTTPCALLBACK] =
+            req.headers[G.HEAD_RELAYER_HTTPCALLBACK];
+        reqLog.headers[G.HEAD_RELAYER_PERSISTENCE] =
+            req.headers[G.HEAD_RELAYER_PERSISTENCE];
+        reqLog.headers[G.HEAD_RELAYER_TOPIC] = req.headers[G.HEAD_RELAYER_TOPIC];
+        reqLog.headers['content-type'] = req.headers['content-type'];
 
-    parsedUrl = url.parse(req.url);
+        parsedUrl = url.parse(req.url);
 
-    req.on('data', function onReqData(chunk) {
-        data += chunk;
-    });
+        req.on('data', function onReqData(chunk) {
+            data += chunk;
+        });
 
-    req.on('end', function onReqEnd() {
-        if (parsedUrl.pathname === '/') {
-            assignRequest(req, data, function writeRes(result) {
-                res.writeHead(result.statusCode);
-                res.end(result.data);
-                reqLog.responseTime = Date.now() - reqLog.start;
-                reqLog.statusCode = result.statusCode;
-                reqLog.bodyLength = data.length;
-                reqLog.id = result.data;
-                delete reqLog.start;
-                logger.info('request', reqLog);
-            });
-        } else {
-            pathComponents = parsedUrl.pathname.split('/');
-            logger.debug('pathComponents', pathComponents);
-            var flatted = ['headers'];
-            
-            if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
-                responseId = pathComponents[2];
-
-                dbrelayer.getData(responseId, function (err, data) {
-
-                    if (err) {
-                        responseJson = JSON.stringify(err);
-                    } else {
-                        for (var i = 0; i < flatted.length; i++) {
-                            try {
-                                data[flatted[i]] = JSON.parse(data[flatted[i]]);
-                            }
-                            catch (e) {
-                            }
-                        }
-                        responseJson = JSON.stringify(data);
-                    }
-                    res.setHeader('content-type','application/json; charset=utf-8');
-
-                    var buf = new Buffer(responseJson,'utf-8')
-                    res.setHeader('content-length',buf.length);
-                    res.end(buf);
+        req.on('end', function onReqEnd() {
+            if (parsedUrl.pathname === '/') {
+                assignRequest(req, data, function writeRes(result) {
+                    res.writeHead(result.statusCode);
+                    res.end(result.data);
+                    reqLog.responseTime = Date.now() - reqLog.start;
+                    reqLog.statusCode = result.statusCode;
+                    reqLog.bodyLength = data.length;
+                    reqLog.id = result.data;
+                    delete reqLog.start;
+                    logger.info('request', reqLog);
                 });
-
             } else {
-                res.writeHead(400);
-                res.end('bad format: ' + parsedUrl.pathname);
-                reqLog.responseTime = reqLog.responseTime = Date.now() - reqLog.start;
-                reqLog.statusCode = 400;
-                reqLog.bodyLength = data.length;
-                logger.warning('bad format', reqLog);
+                pathComponents = parsedUrl.pathname.split('/');
+                var flatted = ['headers'];
+
+                if (pathComponents.length === 3 && pathComponents[1] === retrievePath) {
+                    responseId = pathComponents[2];
+
+                    dbrelayer.getData(responseId, function (err, data) {
+
+                        if (err) {
+                            responseJson = JSON.stringify(err);
+                        } else {
+                            for (var i = 0; i < flatted.length; i++) {
+                                try {
+                                    data[flatted[i]] = JSON.parse(data[flatted[i]]);
+                                }
+                                catch (e) {
+                                }
+                            }
+                            responseJson = JSON.stringify(data);
+                        }
+                        res.setHeader('content-type','application/json; charset=utf-8');
+
+                        var buf = new Buffer(responseJson,'utf-8')
+                        res.setHeader('content-length',buf.length);
+                        res.end(buf);
+                    });
+
+                } else {
+                    res.writeHead(400);
+                    res.end('bad format: ' + parsedUrl.pathname);
+                    reqLog.responseTime = reqLog.responseTime = Date.now() - reqLog.start;
+                    reqLog.statusCode = 400;
+                    reqLog.bodyLength = data.length;
+                    logger.warning('bad format', reqLog);
+                }
             }
-        }
-    });
-}).listen(config.listener.port);
+        });
+    }).listen(config.listener.port);
 }
 
 
 function assignRequest(request, data, callback) {
     'use strict';
-    logger.debug('assignRequest(request, data, callback)',
-        [request, data, callback]);
 
     var id = uuid.v1();
 
@@ -174,8 +170,6 @@ function assignRequest(request, data, callback) {
 
     function processTask(err, routeObj) {
         if (!err) {
-
-            logger.debug('assign_request - target - task', routeObj);
 
             store.put(routeObj.service, routeObj.task, function onWrittenReq(error) {
                 var st;
@@ -225,5 +219,4 @@ function assignRequest(request, data, callback) {
         }
     }
 }
-
 

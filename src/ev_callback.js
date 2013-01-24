@@ -30,7 +30,6 @@ function init(emitter) {
 
             function getHttpCallback(cb_state, cb_err_field) {
                 return function onHttpCb(error, result) {
-                    logger.debug('onHttpCb(error, result) ', [error, result ]);
                     if (error || result) {
                         var st = {
                             id:data.task.id,
@@ -57,7 +56,6 @@ function init(emitter) {
                 };
             }
 
-            logger.debug('onNewEvent(data)', [data]);
             if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
                 doHttpCallback(data.task, data.result,
                     data.task.headers[MG.HEAD_RELAYER_HTTPCALLBACK], 'callback',
@@ -76,8 +74,6 @@ function init(emitter) {
 
 function doHttpCallback(task, respObj, callbackHost, cbField, callback) {
     'use strict';
-    logger.debug('doHttpCallback(task, respObj, callbackHost, cb_status_field, callback)',
-        [task, respObj, callbackHost, cbField, callback]);
     var cbRes = {};
     if (callbackHost) {
         var callbackOptions = url.parse(callbackHost);
@@ -137,3 +133,6 @@ function doHttpCallback(task, respObj, callbackHost, cbField, callback) {
 }
 
 exports.init = init;
+
+
+require('./hookLogger.js').init(exports, logger);

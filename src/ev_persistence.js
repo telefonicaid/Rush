@@ -24,8 +24,6 @@ function init(emitter) {
     'use strict';
     return function (callback) {
         emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
-            logger.debug('onNewEvent(data)', [data]);
-
             if (data.state === MG.STATE_ERROR || data.state === MG.STATE_COMPLETED) {
                 var type = data.state === MG.STATE_ERROR ? 'ERROR' : data.task.headers[MG.HEAD_RELAYER_PERSISTENCE];
                 doPersistence(data.task, data.result || data.err, type, function (error, result) {
@@ -49,7 +47,6 @@ function init(emitter) {
 }
 function doPersistence(task, respObj, type, callback) {
     'use strict';
-    logger.debug('doPersistence(task, respObj, type, callback)', [task, respObj, type, callback]);
     if (type === 'BODY' || type === 'STATUS' || type === 'HEADER' || type === 'ERROR') {
         task.topic = task.headers[MG.HEAD_RELAYER_TOPIC];
         setObject(task, respObj, type, callback);
@@ -71,8 +68,6 @@ function doPersistence(task, respObj, type, callback) {
 
 function setObject(task, respObj, type, callback) {
     'use strict';
-    logger.debug('setObject(task, respObj, type, callback)', [task, respObj, type, callback]);
-
     //remove from response what is not needed
     var errMsg,
         setObj = {};
@@ -102,3 +97,5 @@ function setObject(task, respObj, type, callback) {
 }
 
 exports.init = init;
+
+require('./hookLogger.js').init(exports, logger);

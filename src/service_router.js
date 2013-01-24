@@ -28,7 +28,7 @@ logger.prefix = path.basename(module.filename,'.js');
  */
 function route(request, callback) {
     'use strict';
-    logger.debug("route(request)", [request]);
+
     getTask(request, function(err, task){
         if(err){
             callback({ok:false, message:err}, null);  
@@ -42,7 +42,6 @@ function route(request, callback) {
 
 function getQueues() {
     'use strict';
-    logger.debug("getQueues()");
     return {control:'wrL:control',
         hpri: 'wrL:hpri',
         lpri: 'wrL:lpri' };
@@ -50,14 +49,12 @@ function getQueues() {
 
 function getWorker(resp) {
     "use strict";
-    logger.debug("getWorker(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
     return eventWorker.doJob;
 }
 
 function getTask(resp, callback){
     "use strict";
-    logger.debug("getTask(resp)", [resp]);
     // Select a worker based on resp data ( from task queue)
     return eventWorker.createTask(resp, callback);
 }
@@ -66,3 +63,4 @@ exports.route = route;
 exports.getWorker = getWorker;
 exports.getQueues = getQueues;
 
+require('./hookLogger.js').init(exports, logger);
