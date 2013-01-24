@@ -12,15 +12,6 @@ describe('Image Test', function() {
   var server, petitionID;
   var contentBinary = fs.readFileSync(DIR_MODULE + '/robot.png');
 
-
-  beforeEach(function(done){
-      var redis = require('redis').createClient(6379,'localhost');
-      redis.flushall(function(err,data){
-          redis.end();
-          done();
-      });
-
-  });
   afterEach(function(done) {
     if (server) {
       server.close();
