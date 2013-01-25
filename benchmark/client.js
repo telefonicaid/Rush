@@ -1,27 +1,30 @@
 var http = require('http');
-var request = 'test';
+var server = require('./server.js');
 
-var client = function(RushHost, RushPort, HostAndPort, timeout, resSize) {
+var client = function (rushHost, rushPort, hostAndPort, ended) {
+  'use strict';
+
   var options = {};
-  options.host = RushHost;
-  options.port = Rushport;
+  options.host = rushHost;
+  options.port = rushPort;
   options.headers = {};
-  options.headers['X-Relayer-Host'] = HostAndPort;
-//options.headers['X-relayer-persistence'] = 'BODY';
+  options.headers['X-Relayer-Host'] = hostAndPort;
+  //options.headers['X-relayer-persistence'] = 'BODY';
   options.method = 'POST';
 
-  var req = http.request(options, function(res) {
+  var req = http.request(options, function (res) {
 
-    res.on('data', function(chunk) {
-      var data = '';
-      data += chunk;
-      console.log(data);
-    });
+    /*var data = '';
+
+     res.on('data', function (chunk) {
+     data += chunk;
+     });*/
+
+    if (ended && typeof(ended) === 'function') {
+      res.on('end', ended);
+    }
   });
 
-  var body = { timeout: timeout, resSize: resSize};
-  body = JSON.stringify(body);
-  req.write(body);
   req.end();
 };
 
