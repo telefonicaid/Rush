@@ -1,13 +1,14 @@
 language: node_js
+
 node_js:
  - 0.6
  - 0.8
 
 branches:
- only:
-  - Unstable
-  - master
-  - Issue#63
+  only:
+    - Unstable
+    - master
+    - testing
 
 services:
  - mongodb
@@ -17,5 +18,5 @@ install:
  - npm install
 
 before_script:
- - node src/listener.js 2> /dev/null &
- - node src/consumer.js 2> /dev/null &
+ - node src/listener.js &
+ - node src/consumer.js &

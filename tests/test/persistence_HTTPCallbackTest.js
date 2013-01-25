@@ -58,12 +58,12 @@ function makeRequest(type, persistence, content, done) {
       JSONRes.should.have.property('headers');
       testHeraders(JSONRes.headers);
 
-      var options = { port: config.rushServer.port, host: 'localhost',
-        path: '/response/' + id, method: 'GET'};
-
       //Once the answer has been written, polling is done until the answer has been saved on redis or timeout.
       var checked = false;
       var interval = setInterval(function() {
+
+        var options = { port: config.rushServer.port, host: 'localhost',
+          path: '/response/' + id, method: 'GET'};
 
         function checkResponse(err, data) {
 
