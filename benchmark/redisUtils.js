@@ -3,25 +3,25 @@ var config = require('./config.js');
 var dbTr = redisModule.createClient(config.redisServer.port, config.redisServer.host);
 
 var monitorQueue = function (queue, callback) {
-    'use strict';
+  'use strict';
 
-    dbTr.llen(queue, function (err, value) {
-        //Execute client callback
-        callback(value);
-    });
+  dbTr.llen(queue, function (err, value) {
+    //Execute client callback
+    callback(value);
+  });
 };
 
 var flushBBDD = function (callback) {
-    'use strict';
+  'use strict';
 
-    dbTr.flushall(callback);
+  dbTr.flushall(callback);
 
 };
 
-var closeConnection = function() {
-    'use strict';
+var closeConnection = function () {
+  'use strict';
 
-    dbTr.end();
+  dbTr.end();
 };
 
 exports.monitorQueue = monitorQueue;

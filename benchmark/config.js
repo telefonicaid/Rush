@@ -2,7 +2,7 @@
  * Redis information
  * @type {Object}
  */
-exports.redisServer = {host: 'localhost', port: 6379};
+exports.redisServer = {host:'localhost', port:6379};
 
 ///////////////////
 //BLOCKING SERVER//
@@ -77,7 +77,7 @@ exports.noLagServer.pf = {};
 exports.noLagServer.pf.name = 'Rush benchmark - Server without lags';
 exports.noLagServer.pf.description = 'In this scenario we will test Rush behaviour with a server wit no lag';
 exports.noLagServer.pf.template = 'wijmo';
-exports.noLagServer.pf.axis = ['Time','Queued requests'];
+exports.noLagServer.pf.axis = ['Time', 'Queued requests'];
 exports.noLagServer.pf.monitors = ['localhost'];
 exports.noLagServer.pf.folder = './log';
 

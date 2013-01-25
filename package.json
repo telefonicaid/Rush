@@ -24,8 +24,9 @@
         "node-uuid":"*",
         "async":"*",
         "mongodb":"*",
-        "logger" : "https://github.com/telefonicaid/pditclogger/tarball/master",
-        "performaceFramework":  "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
+        "hooker":"*",
+        "logger":"https://github.com/telefonicaid/pditclogger/tarball/master",
+        "performanceFramework":"https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
     },
     "devDependencies":{
         "mocha":"1.6.0",

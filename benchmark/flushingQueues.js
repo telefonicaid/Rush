@@ -15,91 +15,91 @@ var scenario = pf.describe(config.flushingQueues.pf.name, config.flushingQueues.
 
 
 var doOneTest = function (size, callback) {
-    'use strict';
+  'use strict';
 
-    //First of all, we must flush redis
-    redisUtils.flushBBDD(function() {
+  //First of all, we must flush redis
+  redisUtils.flushBBDD(function () {
 
-        scenario.test('Payload of ' + size + ' B', function (log, point) {
+    scenario.test('Payload of ' + size + ' B', function (log, point) {
 
-            var children = [];
-            var servicesQueued = 0;
-            var servicesCompleted = 0;
-            var initialTime;
+      var children = [];
+      var servicesQueued = 0;
+      var servicesCompleted = 0;
+      var initialTime;
 
-            var processPetitions = function() {
+      var processPetitions = function () {
 
-                servicesQueued++;
+        servicesQueued++;
 
-                if (servicesQueued === NUM_SERVICES) {
-                    var server = serverFactory.createServer(TIME_OUT, size,
+        if (servicesQueued === NUM_SERVICES) {
+          var server = serverFactory.createServer(TIME_OUT, size,
 
-                        //Launch consumers when the server is up
-                        function () {
+              //Launch consumers when the server is up
+              function () {
 
-                            initialTime = new Date().valueOf();
+                initialTime = new Date().valueOf();
 
-                            //Launch consumers
-                            for (var i = 0; i < NUM_CONSUMERS; i++) {
-                                children.push(childProcess.fork('../src/consumer.js'));
-                            }
-                        },
-
-                        //Control the number of processed services
-                        function() {
-
-                            servicesCompleted++;
-                            var timePoint = (new Date().valueOf() - initialTime) / 1000;
-
-                            if ((servicesCompleted % 100) === 0) {
-                                point(timePoint, servicesCompleted);
-                                log(servicesCompleted + ' services completed ' + timePoint + ' seconds later');
-                            }
-
-                            if (servicesCompleted === NUM_SERVICES) {
-
-                                log(NUM_SERVICES + ' requests of ' + size + ' B have been processed in ' +
-                                    timePoint + ' s (' + (NUM_SERVICES/timePoint) + ' requests/s)');
-
-                                //Kill consumers
-                                for (var i = 0; i < children.length; i++) {
-                                    process.kill(children[i].pid);
-                                }
-
-                                serverFactory.closeServer(server, callback);
-                            }
-                        }
-                    );
+                //Launch consumers
+                for (var i = 0; i < NUM_CONSUMERS; i++) {
+                  children.push(childProcess.fork('../src/consumer.js'));
                 }
-            };
+              },
 
-            //Queue the petitions
-            for (var i = 0; i < NUM_SERVICES; i++) {
-                client.client('localhost', 3001, 'http://localhost:5001', processPetitions);
-            }
-        });
+              //Control the number of processed services
+              function () {
+
+                servicesCompleted++;
+                var timePoint = (new Date().valueOf() - initialTime) / 1000;
+
+                if ((servicesCompleted % 100) === 0) {
+                  point(timePoint, servicesCompleted);
+                  log(servicesCompleted + ' services completed ' + timePoint + ' seconds later');
+                }
+
+                if (servicesCompleted === NUM_SERVICES) {
+
+                  log(NUM_SERVICES + ' requests of ' + size + ' B have been processed in ' +
+                      timePoint + ' s (' + (NUM_SERVICES / timePoint) + ' requests/s)');
+
+                  //Kill consumers
+                  for (var i = 0; i < children.length; i++) {
+                    process.kill(children[i].pid);
+                  }
+
+                  serverFactory.closeServer(server, callback);
+                }
+              }
+          );
+        }
+      };
+
+      //Queue the petitions
+      for (var i = 0; i < NUM_SERVICES; i++) {
+        client.client('localhost', 3001, 'http://localhost:5001', processPetitions);
+      }
     });
+  });
 };
 
 var testsSeries = function (startNumBytes, maxBytes, interval) {
 
-    var bytes = startNumBytes;
+  var bytes = startNumBytes;
 
-    var doNTimes = function (){
+  var doNTimes = function () {
 
-        doOneTest(bytes, function(){
-            bytes += interval;
+    doOneTest(bytes, function () {
+      bytes += interval;
 
-            if(bytes <= maxBytes){
-                doNTimes();
-            } else{
-                scenario.done();
-                redisUtils.closeConnection();
-            }
-        });
-    };
+      if (bytes <= maxBytes) {
+        doNTimes();
+      } else {
+        scenario.done();
+        redisUtils.closeConnection();
+      }
+    });
+  };
 
-    doNTimes();
+  doNTimes();
 };
 
 testsSeries(config.flushingQueues.startNumBytes, config.flushingQueues.maxNumBytes,

@@ -9,41 +9,41 @@ var scenario = pf.describe(config.noLagServer.pf.name, config.noLagServer.pf.des
     config.noLagServer.pf.folder);
 
 scenario.test('Payload of ' + (config.noLagServer.size / (1024 * 1024)) + '  MB', function (log, point) {
-    'use strict';
-    var i = 0;
+  'use strict';
+  var i = 0;
 
-    var monitorInterval = setInterval(function () {
-        redisUtils.monitorQueue('wrL:hpri', function (i, value) {
-            point(i, value);
-            console.log(value);
-        }.bind(null, i));
-        i++;
-    }, 1000);
+  var monitorInterval = setInterval(function () {
+    redisUtils.monitorQueue('wrL:hpri', function (i, value) {
+      point(i, value);
+      console.log(value);
+    }.bind(null, i));
+    i++;
+  }, 1000);
 
-    var server1 = server.createServer(0, config.noLagServer.size, function () {
+  var server1 = server.createServer(0, config.noLagServer.size, function () {
 
-        var completed = 0;
+    var completed = 0;
 
-        function doReq(i){
-            client.client('localhost', 3001, "http://localhost:5001");
-            i++;
+    function doReq(i) {
+      client.client('localhost', 3001, "http://localhost:5001");
+      i++;
 
-            if(i < config.noLagServer.numPetitions){
-                setTimeout(function(){
-                    doReq(i);
-                }, 10);
-            }
-        }
-
-        doReq(0);
-    });
-
-    function freeAll(){
-        clearInterval(monitorInterval);
-        scenario.done();
-        redisUtils.closeConnection();
-        server.closeServer(server1);
+      if (i < config.noLagServer.numPetitions) {
+        setTimeout(function () {
+          doReq(i);
+        }, 10);
+      }
     }
 
-    setTimeout(freeAll, config.blockingServer.time);
+    doReq(0);
+  });
+
+  function freeAll() {
+    clearInterval(monitorInterval);
+    scenario.done();
+    redisUtils.closeConnection();
+    server.closeServer(server1);
+  }
+
+  setTimeout(freeAll, config.blockingServer.time);
 });

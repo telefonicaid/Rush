@@ -14,70 +14,70 @@ var scenario = pf.describe(config.blockingServer.pf.name, config.blockingServer.
 
 var doOneTest = function (time, callback) {
 
-    scenario.test('Blocking server ' + time + 'ms', function (log, point) {
-        'use strict';
+  scenario.test('Blocking server ' + time + 'ms', function (log, point) {
+    'use strict';
 
-        var area = 0;
-        var i = 0;
+    var area = 0;
+    var i = 0;
 
-        var monitorInterval = setInterval(function () {
-            redisUtils.monitorQueue('wrL:hpri', function (i, value) {
-                console.log(value + ' services pending');
-                point(i, value);
-                area += value / 400;
-            }.bind(null, i));
-            i++;
-        }, MONITOR_INTERVAL);
+    var monitorInterval = setInterval(function () {
+      redisUtils.monitorQueue('wrL:hpri', function (i, value) {
+        console.log(value + ' services pending');
+        point(i, value);
+        area += value / 400;
+      }.bind(null, i));
+      i++;
+    }, MONITOR_INTERVAL);
 
-        var curr_srv = server.createServer(time, 0, function () {
-            var completed = 0;
+    var curr_srv = server.createServer(time, 0, function () {
+      var completed = 0;
 
-            function doReq(i) {
-                client.client('localhost', 3001, "http://localhost:5001");
-                i++;
+      function doReq(i) {
+        client.client('localhost', 3001, "http://localhost:5001");
+        i++;
 
-                if (i < config.blockingServer.numPetitions) {
-                    setTimeout(function () {
-                        doReq(i);
-                    }, 10);
-                }
-            }
+        if (i < config.blockingServer.numPetitions) {
+          setTimeout(function () {
+            doReq(i);
+          }, 10);
+        }
+      }
 
-            doReq(0);
-        });
-
-        setTimeout(function () {
-            //log(area);
-
-            server.closeServer(curr_srv, function(){
-                redisUtils.flushBBDD(callback);
-            });
-
-            clearInterval(monitorInterval);
-        }, TEST_TIME);
+      doReq(0);
     });
+
+    setTimeout(function () {
+      //log(area);
+
+      server.closeServer(curr_srv, function () {
+        redisUtils.flushBBDD(callback);
+      });
+
+      clearInterval(monitorInterval);
+    }, TEST_TIME);
+  });
 };
 
 var testsSeries = function (startDelay, maxDelay, interval) {
 
-    var delay = startDelay;
+  var delay = startDelay;
 
-    var doNTimes = function (){
-        console.log('test starting...');
+  var doNTimes = function () {
+    console.log('test starting...');
 
-        doOneTest(delay, function(){
-            delay += interval;
+    doOneTest(delay, function () {
+      delay += interval;
 
-            if(delay <= maxDelay){
-                doNTimes();
-            } else{
-                scenario.done();
-                redisUtils.closeConnection();
-            }
-        });
-    };
+      if (delay <= maxDelay) {
+        doNTimes();
+      } else {
+        scenario.done();
+        redisUtils.closeConnection();
+      }
+    });
+  };
 
-    doNTimes();
+  doNTimes();
 };
 
 testsSeries(config.blockingServer.startDelay, config.blockingServer.maxDelay,
