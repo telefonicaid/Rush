@@ -6,9 +6,8 @@ node_js:
 
 branches:
   only:
-    - Unstable
+    - unstable
     - master
-    - testing
 
 services:
  - mongodb
