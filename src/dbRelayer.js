@@ -10,7 +10,7 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var configGlobal = require('./config_base');
+var configGlobal = require('./configBase');
 var config = configGlobal.dbrelayer;
 
 var redis = require('redis');
@@ -21,7 +21,7 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
 
-var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
+var rcli = redis.createClient(redis.DEFAULT_PORT, config.redisHost);
 require('./hookLogger.js').initRedisHook(rcli, logger);
 
 function update(key, obj, cllbk) {
@@ -39,12 +39,12 @@ function update(key, obj, cllbk) {
     }
   }
 
-  rcli.hmset(config.key_prefix + key, o_aux, function onHmset(err, res) {
-    rcli.expire(config.key_prefix + key,
-        configGlobal.expire_time, function(err) {
+  rcli.hmset(config.keyPrefix + key, o_aux, function onHmset(err, res) {
+    rcli.expire(config.keyPrefix + key,
+        configGlobal.expireTime, function(err) {
       if (err) {
-        logger.error('expire(err, res) ', [config.key_prefix +
-            key, configGlobal.expire_time]);
+        logger.error('expire(err, res) ', [config.keyPrefix +
+            key, configGlobal.expireTime]);
       }
 
     });
@@ -56,7 +56,7 @@ function update(key, obj, cllbk) {
 
 function getData(key, callback) {
   'use strict';
-  rcli.hgetall(config.key_prefix + key, function onHgetall(err, data) {
+  rcli.hgetall(config.keyPrefix + key, function onHgetall(err, data) {
     if (err) {
       logger.warning('onHgetall', err);
       callback(err);

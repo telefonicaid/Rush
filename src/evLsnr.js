@@ -13,9 +13,9 @@
 
 var mongodb = require('mongodb');
 
-var G = require('./my_globals').C;
-var configGlobal = require('./config_base');
-var config = configGlobal.ev_lsnr;
+var G = require('./myGlobals').C;
+var configGlobal = require('./configBase');
+var config = configGlobal.evLsnr;
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -30,8 +30,8 @@ function init(emitter) {
       cbAsync(error ? 'evLsnr ' + String(error) : null,
           ! error ? 'ev_lsnr OK' : null);
     };
-    var client = new mongodb.Db(config.mongo_db,
-        new mongodb.Server(config.mongo_host, config.mongo_port, {}));
+    var client = new mongodb.Db(config.mongoDB,
+        new mongodb.Server(config.mongoHost, config.mongoPort, {}));
 
     function subscribeStateCol(callback) {
       client.collection(config.collectionState, function(err, c) {

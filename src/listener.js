@@ -10,7 +10,7 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var config = require('./config_base.js');
+var config = require('./configBase.js');
 var path = require('path');
 var log = require('PDITCLogger');
 log.setConfig(config.listener.logger);
@@ -21,13 +21,13 @@ logger.prefix = path.basename(module.filename, '.js');
 var http = require('http');
 var url = require('url');
 var uuid = require('node-uuid');
-var router = require('./service_router');
-var store = require('./task_queue');
+var router = require('./serviceRouter');
+var store = require('./taskQueue');
 
-var emitter = require('./emitter_module').get();
-var G = require('./my_globals').C;
+var emitter = require('./emitterModule').get();
+var G = require('./myGlobals').C;
 
-var dbrelayer = require('./dbrelayer');
+var dbrelayer = require('./dbRelayer');
 
 var async = require('async');
 var evModules = config.listener.evModules;

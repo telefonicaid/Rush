@@ -11,7 +11,7 @@
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 var redis = require('redis');
-var configGlobal = require('./config_base');
+var configGlobal = require('./configBase');
 var config = configGlobal.queue;
 
 var path = require('path');
@@ -22,9 +22,9 @@ logger.prefix = path.basename(module.filename, '.js');
 
 // ?????? Pool grande de conexiones a redis? Tiene sentido???
 
-var rcli = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
+var rcli = redis.createClient(redis.DEFAULT_PORT, config.redisHost);
 require('./hookLogger.js').initRedisHook(rcli, logger);
-var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redis_host);
+var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redisHost);
 require('./hookLogger.js').initRedisHook(rcliBlocking, logger);
 
 

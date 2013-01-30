@@ -13,7 +13,7 @@
 
 var mongodb = require('mongodb');
 
-var G = require('./my_globals').C;
+var G = require('./myGlobals').C;
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
@@ -27,8 +27,8 @@ function init(emitter, config) {
       cbAsync(error ? config.name + ' ' + String(error) : null,
           ! error ? config.name + ' OK' : null);
     };
-    var client = new mongodb.Db(config.mongo_db,
-        new mongodb.Server(config.mongo_host, config.mongo_port, {}));
+    var client = new mongodb.Db(config.mongoDB,
+        new mongodb.Server(config.mongoHost, config.mongoPort, {}));
 
     function subscribeStateCol(callback) {
       client.collection(config.collection, function(err, c) {

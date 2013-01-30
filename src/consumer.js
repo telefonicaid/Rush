@@ -10,7 +10,7 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var configGlobal = require('./config_base.js');
+var configGlobal = require('./configBase.js');
 var path = require('path');
 var log = require('PDITCLogger');
 log.setConfig(configGlobal.consumer.logger);
@@ -18,15 +18,15 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
 
-var store = require('./task_queue.js');
-var service_router = require('./service_router');
+var store = require('./taskQueue.js');
+var service_router = require('./serviceRouter');
 
-var G = require('./my_globals').C;
-var emitter = require('./emitter_module.js').get();
+var G = require('./myGlobals').C;
+var emitter = require('./emitterModule.js').get();
 
 var obsQueues = service_router.getQueues();
 
-var max_poppers = configGlobal.consumer.max_poppers;
+var maxPoppers = configGlobal.consumer.maxPoppers;
 
 var async = require('async');
 var evModules = configGlobal.consumer.evModules;
@@ -51,7 +51,7 @@ async.parallel(evInitArray,
         throw errx;
       }
       else {
-        for (var i = 0; i < max_poppers; i++) {
+        for (var i = 0; i < maxPoppers; i++) {
           consume(configGlobal.consumer_id + i, true);
         }
       }

@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush)
-
-#Rush 
+#Rush [![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush)
 ===
 
 * Would you like to make effortless Async HTTP request?
@@ -18,7 +16,7 @@ In order to run Rush, you have to follow the next steps:
 ```
 npm install --production
 ```
-2. Then you have to set up the databases editing the config file located in `/src/config_base.js`. Redis hostname must be set in line 8. MongoDB hostname and port must be set in lines 18 and 19 respectively.
+2. Then you have to set up the databases editing the config file located in `/src/configBase.js`. Redis hostname must be set in line 8. MongoDB hostname and port must be set in lines 18 and 19 respectively.
 3. Once, you have set Redis hostname, you have to run it. Go to the **source folder** of your own installation of Redis and execute the following command:
 ```
 ./redis-server

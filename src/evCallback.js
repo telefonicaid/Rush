@@ -11,10 +11,10 @@
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 var http = require('http');
-var MG = require('./my_globals').C;
+var MG = require('./myGlobals').C;
 var url = require('url');
-var db = require('./dbrelayer');
-var config_global = require('./config_base.js');
+var db = require('./dbRelayer');
+var config_global = require('./configBase.js');
 
 var path = require('path');
 var log = require('PDITCLogger');

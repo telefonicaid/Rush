@@ -11,9 +11,9 @@
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
 //var worker_relay = require('./worker_relay');
-var eventWorker = require('./event_worker');
-var MG = require('./my_globals').C;
-var configGlobal = require('./config_base.js');
+var eventWorker = require('./eventWorker');
+var MG = require('./myGlobals').C;
+var configGlobal = require('./configBase.js');
 
 var path = require('path');
 var log = require('PDITCLogger');

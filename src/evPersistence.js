@@ -10,9 +10,9 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var MG = require('./my_globals').C;
-var db = require('./dbrelayer');
-var config_global = require('./config_base.js');
+var MG = require('./myGlobals').C;
+var db = require('./dbRelayer');
+var config_global = require('./configBase.js');
 
 var path = require('path');
 var log = require('PDITCLogger');

@@ -3,7 +3,7 @@ var LISTENER_HOSTNAME = 'localhost', LISTENER_PORT = '8030', REDIS_HOST = 'Relay
 
 
 var http = require('http');
-var global = require('../src/my_globals').C;
+var global = require('../src/myGlobals').C;
 var async = require('async');
 var os = require('os');
 var redis_mod = require('redis');

@@ -13,9 +13,9 @@
 var http = require('http');
 var https = require('https');
 
-var MG = require('./my_globals').C;
+var MG = require('./myGlobals').C;
 var url = require('url');
-var configGlobal = require('./config_base.js');
+var configGlobal = require('./configBase.js');
 var config = configGlobal.consumer;
 
 var path = require('path');
