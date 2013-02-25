@@ -43,6 +43,7 @@ exports.consumer.maxPoppers = 1;
 exports.consumer.agent = undefined;
 exports.consumer.maxSockets = 10;
 
+//exports.consumer.proxy =  "http://10.95.197.222:8080";
 /**
  * Level for logger
  * debug
@@ -98,7 +99,7 @@ gevLsnr.take = {id: 'id', topic: 'topic', body: 'task.body',
 
 exports.consumer.evModules = [{module: './evCallback'},
                               {module: './evPersistence'},
-                              {module: './gevLsnr', config: gevLsnr}
+                           //   {module: './gevLsnr', config: gevLsnr}
 ];
 
 exports.listener.evModules = [];

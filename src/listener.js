@@ -81,6 +81,7 @@ function startListener() {
     reqLog.remoteAddress = req.connection.remoteAddress;
     reqLog.headers = {};
     reqLog.headers[G.HEAD_RELAYER_HOST] = req.headers[G.HEAD_RELAYER_HOST];
+    reqLog.headers[G.HEAD_RELAYER_PROXY] = req.headers[G.HEAD_RELAYER_PROXY];
     reqLog.headers[G.HEAD_RELAYER_RETRY] = req.headers[G.HEAD_RELAYER_RETRY];
     reqLog.headers[G.HEAD_RELAYER_HTTPCALLBACK] =
         req.headers[G.HEAD_RELAYER_HTTPCALLBACK];
