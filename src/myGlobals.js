@@ -29,7 +29,6 @@ exports.C = {
   'HEAD_RELAYER_PERSISTENCE':'x-relayer-persistence', //STATUS, HEAD, CONTENT
   'HEAD_RELAYER_TOPIC':'x-relayer-topic',
   'HEAD_RELAYER_ENCODING':'x-relayer-encoding',
-  'HEAD_RELAYER_PROXY':'x-relayer-proxy',
   'ACEPTS_ENCODINGS':['base64'],
   'PARAM_DBHOST':'dbhost',
   'PARAM_DBPORT':'dbport',
