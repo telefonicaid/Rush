@@ -97,6 +97,7 @@ function startListener() {
     });
 
     req.on('end', function onReqEnd() {
+      req.headers["X-Forwarded-For"]= req.connection.remoteAddress;
       if (parsedUrl.pathname === '/') {
         assignRequest(req, data, function writeRes(result) {
           res.writeHead(result.statusCode);
