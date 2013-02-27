@@ -45,6 +45,14 @@ function urlErrors(pUrl) {
 function createTask(simpleRequest, callback) {
   'use strict';
 
+  
+  // If there is a default proxy in config and no proxy was set in 'x-relayer-proxy'
+  // use default proxy
+    
+  if(config.proxy && !simpleRequest.headers[MG.HEAD_RELAYER_PROXY] ) {
+      simpleRequest.headers[MG.HEAD_RELAYER_PROXY] = config.proxy;        
+  }
+    
   //Check required headers
   if (! simpleRequest.headers[MG.HEAD_RELAYER_HOST]) {
     callback([MG.HEAD_RELAYER_HOST + ' is missing'], null);
@@ -88,12 +96,24 @@ function doJob(task, callback) {
   'use strict';
   var httpModule;
 
-  var targetHost = task.headers[MG.HEAD_RELAYER_HOST], req;
+  var targetHost = task.headers[MG.HEAD_RELAYER_HOST], 
+      proxyHost = task.headers[MG.HEAD_RELAYER_PROXY],
+      req;
   if (! targetHost) {
     logger.warning('doJob', 'No target host');
   } else {
     var options = url.parse(targetHost);
     task.headers.host = options.host;
+    
+    // if a proxy is specified ('X-Relayer-Proxy' or default by config)
+    // options.host is changed to go to the proxy. Hopefully, headers host
+    // remains as set from 'X-Relayer-Host'
+    if(proxyHost) {
+        var optionsProxy = url.parse(proxyHost);
+        options.host = optionsProxy.host;
+        options.port = optionsProxy.port;
+        options.hostname = optionsProxy.hostname;
+    }
 
     if (options.protocol === 'https:') {
       httpModule = https;

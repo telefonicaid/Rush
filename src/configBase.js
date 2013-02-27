@@ -43,6 +43,8 @@ exports.consumer.maxPoppers = 1;
 exports.consumer.agent = undefined;
 exports.consumer.maxSockets = 10;
 
+//exports.consumer.proxy =  "http://proxy:port";
+
 /**
  * Level for logger
  * debug
