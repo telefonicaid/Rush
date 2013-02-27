@@ -81,6 +81,7 @@ function startListener() {
     reqLog.remoteAddress = req.connection.remoteAddress;
     reqLog.headers = {};
     reqLog.headers[G.HEAD_RELAYER_HOST] = req.headers[G.HEAD_RELAYER_HOST];
+    reqLog.headers[G.HEAD_RELAYER_PROXY] = req.headers[G.HEAD_RELAYER_PROXY];
     reqLog.headers[G.HEAD_RELAYER_RETRY] = req.headers[G.HEAD_RELAYER_RETRY];
     reqLog.headers[G.HEAD_RELAYER_HTTPCALLBACK] =
         req.headers[G.HEAD_RELAYER_HTTPCALLBACK];
@@ -96,6 +97,7 @@ function startListener() {
     });
 
     req.on('end', function onReqEnd() {
+      req.headers["X-Forwarded-For"]= req.connection.remoteAddress;
       if (parsedUrl.pathname === '/') {
         assignRequest(req, data, function writeRes(result) {
           res.writeHead(result.statusCode);
