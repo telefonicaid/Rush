@@ -18,6 +18,9 @@ describe('Proxy Server', function() {
   })
 
   function makeTest(relayerHost, method, headers, content, done) {
+
+    var id;
+
     var makeRequest = function () {
 
       var options = {};
@@ -25,6 +28,7 @@ describe('Proxy Server', function() {
       options.port = config.rushServer.port;
       options.headers = {};
       options.method = method;
+      options.headers['x-relayer-persistence'] = 'BODY';
       options.headers['x-relayer-proxy'] = 'http://localhost:8014';
       options.headers['x-relayer-host'] = 'http://' + relayerHost;
 
@@ -33,12 +37,19 @@ describe('Proxy Server', function() {
         options.headers[header] = headers[header];
       }
 
-      utils.makeRequest(options, content, function(err, data) { });
+      utils.makeRequest(options, content, function(err, data) {
+        should.not.exist(err);
+
+        var parsedData = JSON.parse(data);
+        parsedData.should.have.property('id');
+        id = parsedData.id;
+      });
     }
 
     proxyServer = simpleServer.serverListener(makeRequest, function (methodReceived, headersReceived, contentReceived) {
       methodReceived.should.be.equal(method);
-      headersReceived.should.have.property('host', relayerHost);
+
+      headersReceived.should.have.property('host', relayerHost);  //target host
       headersReceived.should.have.property('x-forwarded-for', '127.0.0.1');
 
       //Check our headers
@@ -48,7 +59,42 @@ describe('Proxy Server', function() {
 
       contentReceived.should.be.equal(content);
 
-      done();
+      //Persistence is requested, so status, headers and body should be able to be retrieved.
+      //We should check that these fields are consistent with the information provided by the server
+      var checked = false;
+      var interval = setInterval(function() {
+
+        var options = { port: config.rushServer.port, host: config.rushServer.hostname,
+          path: '/response/' + id, method: 'GET'};
+
+        function checkResponse(err, data) {
+
+          if (data !== '{}' && ! checked) {
+
+            clearInterval(interval);
+            should.not.exist(err);
+
+            var parsedData = JSON.parse(data);
+
+            parsedData.should.have.property('headers');
+            var headersParsed = parsedData.headers;
+            for (var header in headers) {
+              headersParsed.should.have.property(header.toLowerCase(), headers[header]);
+            }
+
+            parsedData.should.have.property('body', content);
+            parsedData.should.have.property('statusCode', '200');
+
+            checked = true;
+
+            done();
+
+          }
+        }
+
+        utils.makeRequest(options, '', checkResponse);
+
+      }, 10);
     });
   }
 
@@ -79,6 +125,4 @@ describe('Proxy Server', function() {
     var headers = createHeaders();
     makeTest('locahost:5001', 'DELETE', headers, '', done);
   });
-
-
 });
