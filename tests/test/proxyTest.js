@@ -8,6 +8,11 @@ describe('Proxy Server', function() {
   'use strict';
 
   var proxyServer;
+  var headers = {
+    testHeader: 'a',
+    headerTest: 'b',
+    myOwnHeader: 'c'
+  }
 
   afterEach(function(done) {
     try {
@@ -46,18 +51,18 @@ describe('Proxy Server', function() {
       });
     }
 
-    proxyServer = simpleServer.serverListener(makeRequest, function (methodReceived, headersReceived, contentReceived) {
-      methodReceived.should.be.equal(method);
+    proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders, receivedContent) {
+      usedMethod.should.be.equal(method);
 
-      headersReceived.should.have.property('host', relayerHost);  //target host
-      headersReceived.should.have.property('x-forwarded-for', '127.0.0.1');
+      receivedHeaders.should.have.property('host', relayerHost);  //target host
+      receivedHeaders.should.have.property('x-forwarded-for', '127.0.0.1');
 
       //Check our headers
-      for (var header in headers) {
-        headersReceived.should.have.property(header.toLowerCase(), headers[header]);
+      for (var headerID in headers) {
+        receivedHeaders.should.have.property(headerID.toLowerCase(), headers[headerID]);
       }
 
-      contentReceived.should.be.equal(content);
+      receivedContent.should.be.equal(content);
 
       //Persistence is requested, so status, headers and body should be able to be retrieved.
       //We should check that these fields are consistent with the information provided by the server
@@ -77,9 +82,9 @@ describe('Proxy Server', function() {
             var parsedData = JSON.parse(data);
 
             parsedData.should.have.property('headers');
-            var headersParsed = parsedData.headers;
-            for (var header in headers) {
-              headersParsed.should.have.property(header.toLowerCase(), headers[header]);
+            var parsedHeaders = parsedData.headers;
+            for (var headerID in headers) {
+              parsedHeaders.should.have.property(headerID.toLowerCase(), headers[headerID]);
             }
 
             parsedData.should.have.property('body', content);
@@ -98,31 +103,19 @@ describe('Proxy Server', function() {
     });
   }
 
-  function createHeaders() {
-    return {
-      testHeader: 'a',
-      headerTest: 'b',
-      myOwnHeader: 'c'
-    }
-  }
-
   it('GET', function(done) {
-    var headers = createHeaders();
     makeTest('locahost:5001', 'GET', headers, '', done);
   });
 
   it('POST', function(done) {
-    var headers = createHeaders();
     makeTest('locahost:5001', 'POST', headers, 'this is a test', done);
   });
 
   it('PUT', function(done) {
-    var headers = createHeaders();
     makeTest('locahost:5001', 'PUT', headers, 'this is a test', done);
   });
 
   it('DELETE', function(done) {
-    var headers = createHeaders();
     makeTest('locahost:5001', 'DELETE', headers, '', done);
   });
 });
