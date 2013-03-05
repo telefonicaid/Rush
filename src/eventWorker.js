@@ -109,10 +109,10 @@ function doJob(task, callback) {
     // options.host is changed to go to the proxy. Hopefully, headers host
     // remains as set from 'X-Relayer-Host'
     if(proxyHost) {
-        var optionsProxy = url.parse(proxyHost);
-        options.host = optionsProxy.host;
-        options.port = optionsProxy.port;
-        options.hostname = optionsProxy.hostname;
+        var optionsProxy = proxyHost.split(':');
+        options.host = proxyHost;
+        options.port = optionsProxy[1];
+        options.hostname = optionsProxy[0];
     }
 
     if (options.protocol === 'https:') {
