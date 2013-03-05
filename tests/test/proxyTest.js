@@ -29,7 +29,7 @@ describe('Proxy Server', function() {
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';
-      options.headers['x-relayer-proxy'] = 'http://localhost:8014';
+      options.headers['x-relayer-proxy'] = 'localhost:8014';
       options.headers['x-relayer-host'] = 'http://' + relayerHost;
 
       //Insert our headers
