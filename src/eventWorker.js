@@ -113,6 +113,7 @@ function doJob(task, callback) {
         options.host = proxyHost;
         options.port = optionsProxy[1];
         options.hostname = optionsProxy[0];
+        options.path = targetHost;
     }
 
     if (options.protocol === 'https:') {
