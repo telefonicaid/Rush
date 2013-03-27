@@ -1,0 +1,21 @@
+language: node_js
+
+node_js:
+ - 0.6
+ - 0.8
+
+branches:
+  only:
+    - unstable
+    - master
+
+services:
+ - mongodb
+ - redis-server
+
+install:
+ - npm install
+
+before_script:
+ - node src/listener.js &
+ - node src/consumer.js &
