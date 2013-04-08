@@ -14,7 +14,6 @@ var http = require('http');
 var MG = require('./myGlobals').C;
 var url = require('url');
 var db = require('./dbRelayer');
-var config_global = require('./configBase.js');
 
 var path = require('path');
 var log = require('PDITCLogger');
@@ -28,13 +27,13 @@ function init(emitter) {
   return function(callback) {
     emitter.on(MG.EVENT_NEWSTATE, function onNewEvent(data) {
 
-      function getHttpCallback(cb_state, cb_err_field) {
+      function getHttpCallback(cbState, cbErrField) {
         return function onHttpCb(error, result) {
           if (error || result) {
             var st = {
               id: data.task.id,
               topic: data.task.headers[MG.HEAD_RELAYER_TOPIC],
-              state: cb_state, //MG.STATE_CALLBACK,
+              state: cbState, //MG.STATE_CALLBACK,
               date: new Date(),
               task: data.task,
               err: error,
@@ -50,7 +49,7 @@ function init(emitter) {
               topic: data.task.headers[MG.HEAD_RELAYER_TOPIC],
               date: new Date()
             };
-            errev[cb_err_field] = error;
+            errev[cbErrField] = error;
             emitter.emit(MG.EVENT_ERR, errev);
           }
         };
@@ -81,6 +80,7 @@ function doHttpCallback(task, respObj, callbackHost, cbField, callback) {
     var callbackReq = http.request(callbackOptions, function(callbackRes) {
       //check callbackRes status (modify state) Not interested in body
       cbRes[cbField + '_status'] = callbackRes.statusCode;
+      callbackRes.resume(); //Node 0.10 compatibility
       if (task.headers[MG.HEAD_RELAYER_PERSISTENCE]) {
         db.update(task.id, cbRes, function onUpdated(err) {
           if (err) {

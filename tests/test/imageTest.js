@@ -78,6 +78,8 @@ describe('Image Test', function() {
         }, 1);
       });
 
+      req.resume();
+
     }).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
   });
 });

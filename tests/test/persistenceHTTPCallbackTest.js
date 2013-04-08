@@ -33,10 +33,10 @@ function makeRequest(type, persistence, content, done) {
 
   //Variables
   var httpcallback = 'http://localhost:' + config.callBackPort,
-      server_callback, id;
+      callbackServer, id;
 
   //Callback Server
-  server_callback = http.createServer(function(req, res) {
+  callbackServer = http.createServer(function(req, res) {
 
     var response = '';
 
@@ -48,7 +48,7 @@ function makeRequest(type, persistence, content, done) {
     req.on('end', function() {
       res.writeHead(200);
       res.end();
-      server_callback.close();
+      callbackServer.close();
 
       //Check content and headers
       var JSONRes = JSON.parse(response);
@@ -138,10 +138,10 @@ function makeRequest(type, persistence, content, done) {
         serversToShutDown.push(simpleServer);
       });
 
-  serversToShutDown.push(server_callback);
+  serversToShutDown.push(callbackServer);
 }
 
-describe('Persistence_HTTPCallback', function() {
+describe('Persistence HTTPCallback', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
 
@@ -307,64 +307,61 @@ describe('Persistence_HTTPCallback', function() {
     it('Should receive a callback with an error', function(done) {
 
       var portCallBack = config.callBackPort,
-          server_callback,
+          callbackServer,
           relayerHost = 'http://noexiste:1234',
           httpCallBack = 'http://localhost:' + portCallBack, id;
 
       //Callback Server
-      var server_callback = http.createServer(function(req, res) {
+      var callbackServer = http.createServer(function(req, res) {
 
         var response = '';
 
-        req.on('data',
-            function(chunk) {
-              response += chunk;
+        req.on('data', function(chunk) {
+          response += chunk;
+        });
+
+        req.on('end', function() {
+
+          var parsedJSON = JSON.parse(response);
+          should.not.exist(parsedJSON.result);
+
+          //Test content
+          parsedJSON.should.have.property('error',
+              'ENOTFOUND(getaddrinfo)');
+
+          res.writeHead(200);
+          res.end();
+          callbackServer.close();
+
+          var options = { port: config.rushServer.port, host: 'localhost',
+            path: '/response/' + id, method: 'GET'};
+          setTimeout(function() {
+            utils.makeRequest(options, '', function(err, data) {
+              var JSONparsed = JSON.parse(data);
+              JSONparsed.should.have.property(
+                  'error', 'ENOTFOUND(getaddrinfo)');
+              JSONparsed.should.have.property('callback_status', '200');
+              done();
             });
+          }, 30 );
 
-        req.on('end',
-            function() {
+        });
 
-              var parsedJSON = JSON.parse(response);
-              should.not.exist(parsedJSON.result);
+      }).listen(portCallBack,  function() {
+        //Petition method
+        options.method = 'POST';
+        options.headers['x-relayer-persistence'] = 'BODY';
+        options.headers['X-Relayer-Host'] = relayerHost;
+        options.headers['x-relayer-httpcallback'] = httpCallBack;
 
-              //Test content
-              parsedJSON.should.have.property('error',
-                  'ENOTFOUND(getaddrinfo)');
+        utils.makeRequest(options, content,
+            function(err, data) {
+              id = JSON.parse(data).id;
+            }
+        );
+      });
 
-              res.writeHead(200);
-              res.end();
-              server_callback.close();
-
-              var options = { port: config.rushServer.port, host: 'localhost',
-                path: '/response/' + id, method: 'GET'};
-              setTimeout(function() {
-                utils.makeRequest(options, '', function(err, data) {
-                  var JSONparsed = JSON.parse(data);
-                  JSONparsed.should.have.property(
-                      'error', 'ENOTFOUND(getaddrinfo)');
-                  JSONparsed.should.have.property('callback_status', '200');
-                  done();
-                });
-              }, 30);
-
-            });
-      }).listen(portCallBack,
-          function() {
-            //Petition method
-            options.method = 'POST';
-            options.headers['x-relayer-host'] = 'BODY';
-            options.headers['X-Relayer-Host'] = relayerHost;
-            options.headers['x-relayer-httpcallback'] = httpCallBack;
-
-            utils.makeRequest(options, content,
-                function(err, data) {
-                  id = JSON.parse(data).id;
-                }
-            );
-          }
-      );
-
-      serversToShutDown.push(server_callback);
+      serversToShutDown.push(callbackServer);
     });
   });
 });
