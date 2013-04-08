@@ -9,6 +9,12 @@
 
 Rush implements an scalable mechanism to provide such functionality, with minor client impact (Header stamping HTTP API).
 
+
+**Rush has been developed using:**
+
+[![WebStorm](http://www.jetbrains.com/webstorm/documentation/webstorm_banners/webstorm1/webstorm210x60_white.gif)](http://www.jetbrains.com/webstorm/)
+
+Ask us for your OpenSource License
 ##Instalation Guide
 In order to run Rush, you have to follow the next steps:
 
