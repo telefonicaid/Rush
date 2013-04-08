@@ -14,10 +14,6 @@ var applicationContent = 'application/json',
 var options = {};
 options.host = config.rushServer.hostname;
 options.port = config.rushServer.port;
-options.headers = {};
-options.headers['content-type'] = applicationContent;
-options.headers[personalHeader1name] = personalHeader1value;
-options.headers[personalHeader2name] = personalHeader2value;
 
 var serversToShutDown = [];
 
@@ -144,6 +140,14 @@ function makeRequest(type, persistence, content, done) {
 describe('Persistence HTTPCallback', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
+
+  beforeEach(function() {
+    //Set initial headers
+    options.headers = {};
+    options.headers['content-type'] = applicationContent;
+    options.headers[personalHeader1name] = personalHeader1value;
+    options.headers[personalHeader2name] = personalHeader2value;
+  })
 
   afterEach(function() {
 
