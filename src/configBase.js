@@ -10,10 +10,8 @@
 //
 //For those usages not covered by the GNU Affero General Public License please contact with::dtc_support@tid.es
 
-var dir_prefix = './';
-if (process.env.RUSH_DIR_PREFIX) {
-    dir_prefix = process.env.RUSH_DIR_PREFIX;
-}
+var dir_prefix = process.env.RUSH_DIR_PREFIX || './';
+
 
 // redis host
 exports.queue = {};
@@ -26,22 +24,21 @@ exports.expireTime = 60 * 60;
 
 exports.consumer_id = 'consumerA:';
 
-exports.evLsnr = {};
-exports.evLsnr.mongoHost = 'localhost';
-exports.evLsnr.mongoPort = 27017;
-exports.evLsnr.mongoDB = 'rush';
-exports.evLsnr.collectionState = 'RushState';
-exports.evLsnr.collectionError = 'RushError';
+//exports.evLsnr = {};
+//exports.evLsnr.mongoHost = 'localhost';
+//exports.evLsnr.mongoPort = 27017;
+//exports.evLsnr.mongoDB = 'rush';
+//exports.evLsnr.collectionState = 'RushState';
+//exports.evLsnr.collectionError = 'RushError';
 
 exports.listener = {};
 exports.listener.port = 3001;
 
 exports.consumer = {};
-
-exports.consumer.maxPoppers = 1;
+exports.consumer.maxPoppers = 30;
 // agent: undefined -> globalAgent | false -> no agent
 exports.consumer.agent = undefined;
-exports.consumer.maxSockets = 10;
+exports.consumer.maxSockets = 100;
 
 //exports.consumer.proxy =  "http://proxy:port";
 
@@ -88,19 +85,20 @@ if (process.env.RUSH_GEN_MONGO) {
     gevlsnr_mongo = process.env.RUSH_GEN_MONGO;
 }
 
-var gevLsnr = {};
-gevLsnr.name = 'gevLsnr';
-gevLsnr.mongoHost = gevlsnr_mongo;
-gevLsnr.mongoPort = 27017;
-gevLsnr.mongoDB = 'rush';
-gevLsnr.collection = 'RushGeneric';
-gevLsnr.filter = { state: 'error'};
-gevLsnr.take = {id: 'id', topic: 'topic', body: 'task.body',
-  statusCode: 'result.statusCode'};
+//var gevLsnr = {};
+//gevLsnr.name = 'gevLsnr';
+//gevLsnr.mongoHost = gevlsnr_mongo;
+//gevLsnr.mongoPort = 27017;
+//gevLsnr.mongoDB = 'rush';
+//gevLsnr.collection = 'RushGeneric';
+//gevLsnr.filter = { state: 'error'};
+//gevLsnr.take = {id: 'id', topic: 'topic', body: 'task.body',
+//  statusCode: 'result.statusCode'};
 
-exports.consumer.evModules = [{module: './evCallback'},
-                              {module: './evPersistence'},
-                              {module: './gevLsnr', config: gevLsnr}
+exports.consumer.evModules = [
+    {module: './evCallback'}
+    ,{module: './evPersistence'}
+//    ,{module: './gevLsnr', config: gevLsnr}
 ];
 
 exports.listener.evModules = [];
