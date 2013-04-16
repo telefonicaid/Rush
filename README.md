@@ -35,12 +35,13 @@ mkdir /data/db
 ```
 Probably, you will need administrator privileges.
 6. When you have executed the databases, you are able to run Rush. First of all you have to run a listener which will receive all the petitions. Then you must run one or more consumer which will process all the petitions received by the listener. The listener and the consumer are located in the `src` folder:
-```
-cd src
-node listener.js //Can be executed more than once
 
-node consumer.js //Can be executed more than once
-```
+```cd src```
+
+```node listener.js //Can be executed more than once```
+
+```node consumer.js //Can be executed more than once```
+
 
 ##User Manual
 The following document will expose the implemented policies, their expected behaviour and usage examples.
