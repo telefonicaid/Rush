@@ -73,7 +73,13 @@ This information may be retrieved at http://[rush-host]/response/[id]
 * AFFECTED POLICIES: "X-Relayer-topic:TOPIC" 
 * BEHAVIOUR: The stated TOPIC will be propagated as a first level member in internal events, so it can be used as part of the listeners logic (callback, historic...). Internally it will be available as the rest of the request headers.
 * EXAMPLE: curl -v --header --header "X-Relayer-topic: BUSSINESLOGIC-ID" --header "X-Relayer-Host:http://[target-host]:[port]" http://[rush-host]:[port]/
+
+###PROXY
+* AFFECTED POLICIES: "x-Relayer-Proxy: PROXY:PORT"
+* BEHAVIOUR: The request will be made to PROXY at port PORT. 'Host' header will remain as the target host and the URI path will be made absolute in order to forward the request through the proxy PROXY. A default proxy can be set in the config file for all request that does not have a "x-relayer-proxy" header (If this value is set, all request will be send through the proxy).
+* EXAMPLE: curl -v --header --header "X-relayer-proxy: [proxy]:[port]" --header "X-Relayer-Host:http://[target-host]:[port]" http://[rush-host]:[port]/
 [More examples](TEST-CURLS)
+
 
 ##Retrieving Data: GET / Callback / Events
 Rush provides several mechanisms to obtain information about the relayed transactions. Each of those mechanism will expose **JSON** data structures that may vary depending on policies or channel used.
