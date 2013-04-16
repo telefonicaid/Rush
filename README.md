@@ -18,27 +18,30 @@ Ask us for your OpenSource License
 ##Instalation Guide
 In order to run Rush, you have to follow the next steps:
 
-1. First of all, you have to install Rush dependencies. To do this, you have to execute the following command in your project directory:
+1. Download one stable [[version](https://github.com/telefonicaid/Rush/tags)]
+2. Later you have to install Rush dependencies. To do this, you have to execute the following command in your project directory:
 ```
 npm install --production
 ```
-2. Then you have to set up the databases editing the config file located in `/src/configBase.js`. Redis hostname must be set in line 8. MongoDB hostname and port must be set in lines 18 and 19 respectively.
-3. Once, you have set Redis hostname, you have to run it. Go to the **source folder** of your own installation of Redis and execute the following command:
+3. Then you have to set up the databases editing the config file located in `/src/configBase.js`. Redis hostname must be set in line 8. MongoDB hostname and port must be set in lines 18 and 19 respectively.
+4. Once, you have set Redis hostname, you have to run it. Go to the **source folder** of your own installation of Redis and execute the following command:
 ```
 ./redis-server
 ```
-4. MongoDB must be active in the host set in the config file. If you have selected your own MongoDB server, you must go the **binary folder** of your installation and execute the following commands (according to the README file of MongoDB):
+5. MongoDB must be active in the host set in the config file. If you have selected your own MongoDB server, you must go the **binary folder** of your installation and execute the following commands (according to the README file of MongoDB):
 ```
 mkdir /data/db
 ./mongod
 ```
 Probably, you will need administrator privileges.
-5. When you have executed the databases, you are able to run Rush. First of all you have to run a listener which will receive all the petitions. Then you must run one or more consumer which will process all the petitions received by the listener. The listener and the consumer are located in the `src` folder:
-```
-cd src
-node listener.js
-node consumer.js //Can be executed more than once
-```
+6. When you have executed the databases, you are able to run Rush. First of all you have to run a listener which will receive all the petitions. Then you must run one or more consumer which will process all the petitions received by the listener. The listener and the consumer are located in the `src` folder:
+
+```cd src```
+
+```node listener.js //Can be executed more than once```
+
+```node consumer.js //Can be executed more than once```
+
 
 ##User Manual
 The following document will expose the implemented policies, their expected behaviour and usage examples.
