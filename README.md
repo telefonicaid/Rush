@@ -81,6 +81,7 @@ This information may be retrieved at http://[rush-host]/response/[id]
 * AFFECTED POLICIES: "x-Relayer-Proxy: PROXY:PORT"
 * BEHAVIOUR: The request will be made to PROXY at port PORT. 'Host' header will remain as the target host and the URI path will be made absolute in order to forward the request through the proxy PROXY. A default proxy can be set in the config file for all request that does not have a "x-relayer-proxy" header (If this value is set, all request will be send through the proxy).
 * EXAMPLE: curl -v --header --header "X-relayer-proxy: [proxy]:[port]" --header "X-Relayer-Host:http://[target-host]:[port]" http://[rush-host]:[port]/
+
 [More examples](TEST-CURLS)
 
 
