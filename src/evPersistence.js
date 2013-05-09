@@ -76,7 +76,7 @@ function setObject(task, respObj, type, callback) {
       setObj = {};
   type = type.toUpperCase();
 
-  setObj = respObj;
+  setObj = copyObj(respObj);
   switch (type) {
     case 'STATUS':
       delete setObj.headers;
@@ -97,6 +97,17 @@ function setObject(task, respObj, type, callback) {
       callback(err, setObj);
     }
   });
+}
+
+function copyObj(obj) {
+
+  var copy = {};
+
+  for (var attr in obj) {
+    copy[attr] = obj[attr];
+  }
+
+  return copy;
 }
 
 exports.init = init;
