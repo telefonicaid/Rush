@@ -88,7 +88,7 @@ function startListener() {
     reqLog.headers[G.HEAD_RELAYER_PERSISTENCE] =
         req.headers[G.HEAD_RELAYER_PERSISTENCE];
     reqLog.headers[G.HEAD_RELAYER_TOPIC] = req.headers[G.HEAD_RELAYER_TOPIC];
-    reqLog.headers['content-type'] = req.headers['content-type'];
+    reqLog.headers[G.HEAD_RELAYER_ENCODING] = req.headers[G.HEAD_RELAYER_ENCODING];
 
     parsedUrl = url.parse(req.url);
 
