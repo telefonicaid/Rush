@@ -1,4 +1,4 @@
-#Rush [![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush)
+#Rush [![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush) [![Dependency Status](https://david-dm.org/telefonicaid/Rush.png)](https://david-dm.org/telefonicaid/Rush)
 ===
 
 * Would you like to make effortless Async HTTP request?
@@ -9,30 +9,39 @@
 
 Rush implements an scalable mechanism to provide such functionality, with minor client impact (Header stamping HTTP API).
 
+
+**Rush has been developed using:**
+
+[![WebStorm](http://www.jetbrains.com/webstorm/documentation/webstorm_banners/webstorm1/webstorm210x60_white.gif)](http://www.jetbrains.com/webstorm/)
+
+Ask us for your OpenSource License
 ##Instalation Guide
 In order to run Rush, you have to follow the next steps:
 
-1. First of all, you have to install Rush dependencies. To do this, you have to execute the following command in your project directory:
+1. Download one stable [[version](https://github.com/telefonicaid/Rush/tags)]
+2. Later you have to install Rush dependencies. To do this, you have to execute the following command in your project directory:
 ```
 npm install --production
 ```
-2. Then you have to set up the databases editing the config file located in `/src/configBase.js`. Redis hostname must be set in line 8. MongoDB hostname and port must be set in lines 18 and 19 respectively.
-3. Once, you have set Redis hostname, you have to run it. Go to the **source folder** of your own installation of Redis and execute the following command:
+3. Then you have to set up the databases editing the config file located in `/src/configBase.js`. Redis hostname must be set in line 8. MongoDB hostname and port must be set in lines 18 and 19 respectively.
+4. Once, you have set Redis hostname, you have to run it. Go to the **source folder** of your own installation of Redis and execute the following command:
 ```
 ./redis-server
 ```
-4. MongoDB must be active in the host set in the config file. If you have selected your own MongoDB server, you must go the **binary folder** of your installation and execute the following commands (according to the README file of MongoDB):
+5. MongoDB must be active in the host set in the config file. If you have selected your own MongoDB server, you must go the **binary folder** of your installation and execute the following commands (according to the README file of MongoDB):
 ```
 mkdir /data/db
 ./mongod
 ```
 Probably, you will need administrator privileges.
-5. When you have executed the databases, you are able to run Rush. First of all you have to run a listener which will receive all the petitions. Then you must run one or more consumer which will process all the petitions received by the listener. The listener and the consumer are located in the `src` folder:
-```
-cd src
-node listener.js
-node consumer.js //Can be executed more than once
-```
+6. When you have executed the databases, you are able to run Rush. First of all you have to run a listener which will receive all the petitions. Then you must run one or more consumer which will process all the petitions received by the listener. The listener and the consumer are located in the `src` folder:
+
+```cd src```
+
+```node listener.js //Can be executed more than once```
+
+```node consumer.js //Can be executed more than once```
+
 
 ##User Manual
 The following document will expose the implemented policies, their expected behaviour and usage examples.
@@ -67,7 +76,14 @@ This information may be retrieved at http://[rush-host]/response/[id]
 * AFFECTED POLICIES: "X-Relayer-topic:TOPIC" 
 * BEHAVIOUR: The stated TOPIC will be propagated as a first level member in internal events, so it can be used as part of the listeners logic (callback, historic...). Internally it will be available as the rest of the request headers.
 * EXAMPLE: curl -v --header --header "X-Relayer-topic: BUSSINESLOGIC-ID" --header "X-Relayer-Host:http://[target-host]:[port]" http://[rush-host]:[port]/
+
+###PROXY
+* AFFECTED POLICIES: "x-Relayer-Proxy: PROXY:PORT"
+* BEHAVIOUR: The request will be made to PROXY at port PORT. 'Host' header will remain as the target host and the URI path will be made absolute in order to forward the request through the proxy PROXY. A default proxy can be set in the config file for all request that does not have a "x-relayer-proxy" header (If this value is set, all request will be send through the proxy).
+* EXAMPLE: curl -v --header --header "X-relayer-proxy: [proxy]:[port]" --header "X-Relayer-Host:http://[target-host]:[port]" http://[rush-host]:[port]/
+
 [More examples](TEST-CURLS)
+
 
 ##Retrieving Data: GET / Callback / Events
 Rush provides several mechanisms to obtain information about the relayed transactions. Each of those mechanism will expose **JSON** data structures that may vary depending on policies or channel used.
