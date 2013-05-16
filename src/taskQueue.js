@@ -22,9 +22,9 @@ logger.prefix = path.basename(module.filename, '.js');
 
 // ?????? Pool grande de conexiones a redis? Tiene sentido???
 
-var rcli = redis.createClient(redis.DEFAULT_PORT, config.redisHost);
+var rcli = redis.createClient(config.redisPort, config.redisHost);
 require('./hookLogger.js').initRedisHook(rcli, logger);
-var rcliBlocking = redis.createClient(redis.DEFAULT_PORT, config.redisHost);
+var rcliBlocking = redis.createClient(config.redisPort, config.redisHost);
 require('./hookLogger.js').initRedisHook(rcliBlocking, logger);
 
 

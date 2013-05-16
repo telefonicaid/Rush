@@ -16,6 +16,7 @@ var dir_prefix = process.env.RUSH_DIR_PREFIX || './';
 // redis host
 exports.queue = {};
 exports.queue.redisHost = 'localhost';
+exports.queue.redisPort = 6379;
 
 exports.dbrelayer = {};
 exports.dbrelayer.keyPrefix = 'wrH:';
@@ -96,8 +97,9 @@ if (process.env.RUSH_GEN_MONGO) {
 //  statusCode: 'result.statusCode'};
 
 exports.consumer.evModules = [
-    {module: './evCallback'}
-    ,{module: './evPersistence'}
+    {module: './evCallback'},
+    {module: './evPersistence'},
+    {module: './evPopbox'}
 //    ,{module: './gevLsnr', config: gevLsnr}
 ];
 
