@@ -33,7 +33,7 @@ exports.consumer_id = 'consumerA:';
 //exports.evLsnr.collectionError = 'RushError';
 
 exports.listener = {};
-exports.listener.port = 3001;
+exports.listener.port = 5001;
 
 exports.consumer = {};
 exports.consumer.maxPoppers = 30;
@@ -99,7 +99,6 @@ if (process.env.RUSH_GEN_MONGO) {
 exports.consumer.evModules = [
     {module: './evCallback'},
     {module: './evPersistence'},
-    {module: './evPopbox'}
 //    ,{module: './gevLsnr', config: gevLsnr}
 ];
 
