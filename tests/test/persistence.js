@@ -1,16 +1,20 @@
+var async = require('async');
 var should = require('should');
+var config = require('./config.js')
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
-var async = require('async');
 
 var serversToShutDown = [];
+
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
 
 function executeTest(method, content, persistence, done) {
   'use strict';
 
   var id, options = {};
-  options.host = 'localhost';
-  options.port = 5001;
+  options.host = HOST;
+  options.port = PORT;
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
@@ -32,7 +36,7 @@ function executeTest(method, content, persistence, done) {
         var checked = false;
         var interval = setInterval(function() {
 
-          var options = { port: 5001, host: 'localhost',
+          var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
           function checkResponse(err, data) {
@@ -117,8 +121,8 @@ describe('Persistence', function() {
 
   it('should return error headers (ENOTFOUND)', function(done) {
     var id, options = {};
-    options.host = 'localhost';
-    options.port = 5001;
+    options.host = HOST;
+    options.port = PORT;
     options.headers = {};
     options.method = 'POST';
     options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
@@ -144,7 +148,7 @@ describe('Persistence', function() {
         var checked = false;
         var interval = setInterval(function() {
 
-          var options = { port: 5001, host: 'localhost',
+          var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
           function checkResponse(err, data) {

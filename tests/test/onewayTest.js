@@ -1,11 +1,11 @@
+var http = require('http');
 var should = require('should');
 var config = require('./config.js');
-var http = require('http');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
-var host = config.rushServer.hostname;
-var port = config.rushServer.port;
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
 
 var HEADER_TEST_VALUE = 'valueTest';
 
@@ -18,8 +18,8 @@ function executeTest(method, content, done) {
   };
 
   var options = {
-    host: host,
-    port: port,
+    host: HOST,
+    port: PORT,
     method: method,
     headers: headers
   };

@@ -1,14 +1,18 @@
+var async = require('async');
 var should = require('should');
+var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
-var async = require('async');
+
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
 
 function executeTest(method, done) {
   var id, options = {};
 
   options.method = method;
-  options.host = 'localhost';
-  options.port = 5001;
+  options.host = HOST;
+  options.port = PORT;
   options.headers = {};
   options.headers['content-type'] = 'application/json';
   options.headers['X-Relayer-Host'] = 'http://localhost:8014';
@@ -30,7 +34,7 @@ function executeTest(method, done) {
         var checked = false;
         var interval = setInterval(function() {
 
-          var options = { port: 5001, host: 'localhost',
+          var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
           function checkResponse(err, data) {

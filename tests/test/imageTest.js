@@ -1,10 +1,12 @@
-var should = require('should');
-var utils = require('./utils.js');
 var http = require('http');
 var fs = require('fs');
-var config = require('./config');
 var path = require('path');
+var should = require('should');
+var config = require('./config');
+var utils = require('./utils.js');
 
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
 var DIR_MODULE = path.dirname(module.filename);
 
 describe('Image Test', function() {
@@ -24,8 +26,8 @@ describe('Image Test', function() {
     function makeRequest() {
       var options = {};
 
-      options.host = 'localhost';
-      options.port = 5001;
+      options.host = HOST;
+      options.port = PORT;
       options.headers = {};
       options.method = 'GET';
       options.headers['content-type'] = 'application/json';
@@ -50,8 +52,8 @@ describe('Image Test', function() {
         var interval = setInterval(function() {
           var options = {};
 
-          options.host = 'localhost';
-          options.port = 5001;
+          options.host = config.rushServer.host;
+          options.port = config.rushServer.port;
           options.path = '/response/' + petitionID;
 
           function checkResponse(err, res) {

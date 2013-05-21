@@ -4,6 +4,9 @@ var config = require('./config.js');
 var simpleServer = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
+
 describe('Proxy Server', function() {
   'use strict';
 
@@ -29,8 +32,8 @@ describe('Proxy Server', function() {
     var makeRequest = function () {
 
       var options = {};
-      options.host = config.rushServer.hostname;
-      options.port = config.rushServer.port;
+      options.host = HOST;
+      options.port = PORT;
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';
@@ -69,7 +72,7 @@ describe('Proxy Server', function() {
       var checked = false;
       var interval = setInterval(function() {
 
-        var options = { port: config.rushServer.port, host: config.rushServer.hostname,
+        var options = { port: PORT, host: HOST,
           path: '/response/' + id, method: 'GET'};
 
         function checkResponse(err, data) {
@@ -104,18 +107,18 @@ describe('Proxy Server', function() {
   }
 
   it('GET', function(done) {
-    makeTest('locahost:5001', 'GET', headers, '', done);
+    makeTest('locahost:56841', 'GET', headers, '', done);
   });
 
   it('POST', function(done) {
-    makeTest('locahost:5001', 'POST', headers, 'this is a test', done);
+    makeTest('locahost:56841', 'POST', headers, 'this is a test', done);
   });
 
   it('PUT', function(done) {
-    makeTest('locahost:5001', 'PUT', headers, 'this is a test', done);
+    makeTest('locahost:56841', 'PUT', headers, 'this is a test', done);
   });
 
   it('DELETE', function(done) {
-    makeTest('locahost:5001', 'DELETE', headers, '', done);
+    makeTest('locahost:56841', 'DELETE', headers, '', done);
   });
 });

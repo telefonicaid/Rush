@@ -4,6 +4,9 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
+
 var applicationContent = 'application/json',
     relayerHost = 'http://localhost:' + config.simpleServerPort,
     personalHeader1name = 'personal-header-1',
@@ -12,8 +15,8 @@ var applicationContent = 'application/json',
     personalHeader2value = 'TEST2';
 
 var options = {};
-options.host = config.rushServer.hostname;
-options.port = config.rushServer.port;
+options.host = HOST;
+options.port = PORT;
 
 var serversToShutDown = [];
 
@@ -58,7 +61,7 @@ function makeRequest(type, persistence, content, done) {
       var checked = false;
       var interval = setInterval(function() {
 
-        var options = { port: config.rushServer.port, host: 'localhost',
+        var options = { port: PORT, host: HOST,
           path: '/response/' + id, method: 'GET'};
 
         function checkResponse(err, data) {
@@ -265,7 +268,7 @@ describe('Persistence HTTPCallback', function() {
             var checked = false;
             var interval = setInterval(function() {
 
-              var options = { port: 5001, host: 'localhost',
+              var options = { port: PORT, host: HOST,
                 path: '/response/' + id, method: 'GET'};
 
               function checkResponse(err, data) {
@@ -337,7 +340,7 @@ describe('Persistence HTTPCallback', function() {
           res.end();
           callbackServer.close();
 
-          var options = { port: config.rushServer.port, host: 'localhost',
+          var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
           setTimeout(function() {
             utils.makeRequest(options, '', function(err, data) {

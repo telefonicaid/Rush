@@ -4,6 +4,9 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
+
 var applicationContent = 'application/json',
     personalHeader1name = 'personal-header-1',
     personalHeader1value = 'TEST1',
@@ -11,8 +14,8 @@ var applicationContent = 'application/json',
     personalHeader2value = 'TEST2';
 
 var options = {};
-options.host = config.rushServer.hostname;
-options.port = config.rushServer.port;
+options.host = HOST;
+options.port = PORT;
 options.headers = {};
 options.headers['content-type'] = applicationContent;
 options.headers[personalHeader1name] = personalHeader1value;

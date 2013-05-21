@@ -3,6 +3,9 @@ var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
 
+var HOST = config.rushServer.hostname;
+var PORT = config.rushServer.port;
+
 var serversToShutDown = [];
 
 function runTest(retryTimes, petitionCorrect, serverTimes, done) {
@@ -22,8 +25,8 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 
     //Petition method
     var options = {};
-    options.host = config.rushServer.hostname;
-    options.port = config.rushServer.port;
+    options.host = HOST;
+    options.port = PORT;
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = APPLICATION_CONTENT;
