@@ -11,7 +11,7 @@ describe('errors Test', function() {
   beforeEach(function(done) {
     options = {};
     options.host = 'localhost';
-    options.port = 3001;
+    options.port = 5001;
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = 'application/json';
@@ -20,10 +20,10 @@ describe('errors Test', function() {
   });
 
   it('Should return protocol error(test 1)', function(done) {
-    options.headers['X-Relayer-Host'] = 'localhost:3001';
+    options.headers['X-Relayer-Host'] = 'localhost:5001';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       JSON.parse(data).errors[0].should.be.equal(
-          'Invalid protocol localhost:3001');
+          'Invalid protocol localhost:5001');
       done();
     });
   });

@@ -10,7 +10,7 @@ function executeTest(method, content, persistence, done) {
 
   var id, options = {};
   options.host = 'localhost';
-  options.port = 3001;
+  options.port = 5001;
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
@@ -32,7 +32,7 @@ function executeTest(method, content, persistence, done) {
         var checked = false;
         var interval = setInterval(function() {
 
-          var options = { port: 3001, host: 'localhost',
+          var options = { port: 5001, host: 'localhost',
             path: '/response/' + id, method: 'GET'};
 
           function checkResponse(err, data) {
@@ -118,7 +118,7 @@ describe('Persistence', function() {
   it('should return error headers (ENOTFOUND)', function(done) {
     var id, options = {};
     options.host = 'localhost';
-    options.port = 3001;
+    options.port = 5001;
     options.headers = {};
     options.method = 'POST';
     options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
@@ -144,7 +144,7 @@ describe('Persistence', function() {
         var checked = false;
         var interval = setInterval(function() {
 
-          var options = { port: 3001, host: 'localhost',
+          var options = { port: 5001, host: 'localhost',
             path: '/response/' + id, method: 'GET'};
 
           function checkResponse(err, data) {

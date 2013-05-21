@@ -21,7 +21,7 @@ var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
 
-var rcli = redis.createClient(redis.DEFAULT_PORT, config.redisHost);
+var rcli = redis.createClient(config.redisPort, config.redisHost);
 require('./hookLogger.js').initRedisHook(rcli, logger);
 
 function update(key, obj, cllbk) {
