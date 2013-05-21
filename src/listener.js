@@ -55,18 +55,6 @@ async.parallel(evInitArray,
     });
 
 
-process.on('uncaughtException', function onUncaughtException(err) {
-  'use strict';
-  logger.error('onUncaughtException', err);
-  if (err && err.fatal) {
-    setTimeout(function() {
-      process.exit();
-    }, 1000);
-    process.stdout.end();
-  }
-});
-
-
 function startListener() {
   'use strict';
 

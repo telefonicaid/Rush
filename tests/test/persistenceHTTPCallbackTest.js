@@ -265,7 +265,7 @@ describe('Persistence HTTPCallback', function() {
             var checked = false;
             var interval = setInterval(function() {
 
-              var options = { port: 3001, host: 'localhost',
+              var options = { port: 5001, host: 'localhost',
                 path: '/response/' + id, method: 'GET'};
 
               function checkResponse(err, data) {

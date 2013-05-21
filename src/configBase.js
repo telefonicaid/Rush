@@ -16,6 +16,7 @@ var dir_prefix = process.env.RUSH_DIR_PREFIX || './';
 // redis host
 exports.queue = {};
 exports.queue.redisHost = 'localhost';
+exports.queue.redisPort = 6379;
 
 exports.dbrelayer = {};
 exports.dbrelayer.keyPrefix = 'wrH:';
@@ -32,7 +33,7 @@ exports.consumer_id = 'consumerA:';
 //exports.evLsnr.collectionError = 'RushError';
 
 exports.listener = {};
-exports.listener.port = 3001;
+exports.listener.port = 5001;
 
 exports.consumer = {};
 exports.consumer.maxPoppers = 30;
@@ -96,8 +97,8 @@ if (process.env.RUSH_GEN_MONGO) {
 //  statusCode: 'result.statusCode'};
 
 exports.consumer.evModules = [
-    {module: './evCallback'}
-    ,{module: './evPersistence'}
+    {module: './evCallback'},
+    {module: './evPersistence'},
 //    ,{module: './gevLsnr', config: gevLsnr}
 ];
 

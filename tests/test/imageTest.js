@@ -25,7 +25,7 @@ describe('Image Test', function() {
       var options = {};
 
       options.host = 'localhost';
-      options.port = 3001;
+      options.port = 5001;
       options.headers = {};
       options.method = 'GET';
       options.headers['content-type'] = 'application/json';
@@ -51,7 +51,7 @@ describe('Image Test', function() {
           var options = {};
 
           options.host = 'localhost';
-          options.port = 3001;
+          options.port = 5001;
           options.path = '/response/' + petitionID;
 
           function checkResponse(err, res) {
