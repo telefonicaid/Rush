@@ -1,6 +1,5 @@
-#Rush [![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush) [![Dependency Status](https://david-dm.org/telefonicaid/Rush.png)](https://david-dm.org/telefonicaid/Rush)
+Rush [![Build Status](https://travis-ci.org/telefonicaid/Rush.png)](https://travis-ci.org/telefonicaid/Rush) [![Dependency Status](https://david-dm.org/telefonicaid/Rush.png)](https://david-dm.org/telefonicaid/Rush)
 ===
-
 * Would you like to make effortless Async HTTP request?
 * Do yo want to track the state of your relayed requests?
 * Add automatic retransmissions/retries of your request?
