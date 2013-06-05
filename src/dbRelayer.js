@@ -12,6 +12,7 @@
 
 var configGlobal = require('./configBase');
 var config = configGlobal.dbrelayer;
+var dbCluster = require('./dbCluster.js');
 
 var redis = require('redis');
 
@@ -38,9 +39,9 @@ function update(key, obj, cllbk) {
       o_aux[p] = obj[p];
     }
   }
-
-  rcli.hmset(config.keyPrefix + key, o_aux, function onHmset(err, res) {
-    rcli.expire(config.keyPrefix + key,
+  var db = dbCluster.getDb(key);
+  db.hmset(config.keyPrefix + key, o_aux, function onHmset(err, res) {
+    db.expire(config.keyPrefix + key,
         configGlobal.expireTime, function(err) {
       if (err) {
         logger.error('expire(err, res) ', [config.keyPrefix +
@@ -56,7 +57,8 @@ function update(key, obj, cllbk) {
 
 function getData(key, callback) {
   'use strict';
-  rcli.hgetall(config.keyPrefix + key, function onHgetall(err, data) {
+  var db = dbCluster.getDb(key);
+  db.hgetall(config.keyPrefix + key, function onHgetall(err, data) {
     if (err) {
       logger.warning('onHgetall', err);
       callback(err);

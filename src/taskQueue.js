@@ -13,35 +13,30 @@
 var redis = require('redis');
 var configGlobal = require('./configBase');
 var config = configGlobal.queue;
+var dbCluster = require('./dbCluster.js');
 
 var path = require('path');
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 logger.prefix = path.basename(module.filename, '.js');
 
-
-// ?????? Pool grande de conexiones a redis? Tiene sentido???
-
-var rcli = redis.createClient(config.redisPort, config.redisHost);
-require('./hookLogger.js').initRedisHook(rcli, logger);
-var rcliBlocking = redis.createClient(config.redisPort, config.redisHost);
-require('./hookLogger.js').initRedisHook(rcliBlocking, logger);
-
-
 //redis.debug_mode = true;
 
 function put(key, obj, errFun) {
     'use strict';
     var simpleReqStr = JSON.stringify(obj);
-    rcli.lpush(key, simpleReqStr, errFun);
+    var db = dbCluster.getDb(obj.id);
+    db.lpush(key, simpleReqStr, errFun);
 }
 
 function get(keys, auxQueueId, callback) {
     'use strict';
-    rcliBlocking.brpop(keys.control, keys.hpri, keys.lpri, 0, function onPop(err, data) {
+    var ownDb = dbCluster.getOwnDb(auxQueueId);
+    var db = dbCluster.getDb(auxQueueId);
+    ownDb.brpop(keys.control, keys.hpri, keys.lpri, 0, function onPop(err, data) {
             //technical DEBT dou to REDIS unsupported functionality
             //BRPOPLPUSH from multiple sources OR LUA Scripting
-            rcli.lpush(auxQueueId, data[1], function onPush(err) {
+            db.lpush(auxQueueId, data[1], function onPush(err) {
                 var obj = JSON.parse(data[1]);
                 callback(err, { queueId: data[0], task: obj });
             });
@@ -50,7 +45,8 @@ function get(keys, auxQueueId, callback) {
 
 function getPending(idconsumer, callback) {
     'use strict';
-    rcli.rpop(idconsumer, function onPendingData(err, data) {
+    var db = dbCluster.getDb(idconsumer);
+    db.rpop(idconsumer, function onPendingData(err, data) {
         var obj = JSON.parse(data);
         if (callback) {callback(err, { queueId: 'PendingRecovery', task: obj });}
     });
@@ -58,7 +54,8 @@ function getPending(idconsumer, callback) {
 
 function remProcessingQueue(idconsumer, callback) {
     'use strict';
-    rcli.del(idconsumer, callback);
+    var db = dbCluster.getDb(idconsumer);
+    db.del(idconsumer, callback);
 }
 
 exports.put = put;

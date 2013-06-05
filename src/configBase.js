@@ -14,9 +14,19 @@ var dir_prefix = process.env.RUSH_DIR_PREFIX || './';
 
 
 // redis host
-exports.queue = {};
-exports.queue.redisHost = 'localhost';
-exports.queue.redisPort = 6379;
+exports.redisServers = [
+  {host: 'localhost', port: 6379, slaves : [{host : 'localhost', port : 7777}]}
+];
+exports.selectedDB = 0;
+
+exports.sentinels = [
+  {host : 'localhost', port : 6001},
+  {host : 'localhost', port : 6002}
+];
+
+exports.pool = {};
+exports.pool.maxElems = 500;
+
 
 exports.dbrelayer = {};
 exports.dbrelayer.keyPrefix = 'wrH:';
