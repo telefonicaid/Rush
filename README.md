@@ -22,7 +22,7 @@ In order to run Rush, you have to follow the next steps:
 ```
 npm install --production
 ```
-3. Then you have to set up the databases editing the config file (`/src/configBase.js`). You can set Redis location and MongoDB location.
+3. Then you have to set up the databases editing the config file (`/src/configBase.js`). You must set Redis location and MongoDB location.
 4. Once, you have set Redis hostname, you have to run it. Go to the **source folder** of your own installation of Redis and execute the following command:
 ```
 ./redis-server
