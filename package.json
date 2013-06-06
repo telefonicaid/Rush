@@ -49,6 +49,6 @@
         "node":"0.6.6"
     },
     "scripts": {
-        "test": "make test -C ./tests"
+        "test": "grunt test"
     }
 }
