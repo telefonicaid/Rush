@@ -1,7 +1,6 @@
 language: node_js
 
 node_js:
- - "0.6"
  - "0.8"
  - "0.10"
 
@@ -18,5 +17,5 @@ install:
  - npm install
 
 before_script:
- - node src/listener.js &
- - node src/consumer.js &
+ - node lib/listener.js &
+ - node lib/consumer.js &
