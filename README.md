@@ -15,4 +15,4 @@ Rush implements an scalable mechanism to provide such functionality, with minor 
 
 Ask us for your OpenSource License
 
-[[WIKI and DOCS|(https://github.com/telefonicaid/Rush/wiki)]]
+Still interested, visit our [WIKI and DOCS](https://github.com/telefonicaid/Rush/wiki) section.
