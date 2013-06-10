@@ -31,33 +31,34 @@ var makeRequest = function(options, content, cb) {
 };
 
 var makeRequestHttps = function(options, content, cb) {
-    'use strict';
-    options.agent = new https.Agent(options);
+  'use strict';
+  options.agent = new https.Agent(options);
 
-    var req = https.request(options, function(res) {
-       // console.log("statusCode: ", res.statusCode);
-       // console.log("headers: ", res.headers);
-        var data = ''; //returned object from request
-        res.setEncoding('utf8');
+  var req = https.request(options, function(res) {
 
-        res.on('data', function(chunk) {
-            data += chunk;
-        });
+     // console.log("statusCode: ", res.statusCode);
+     // console.log("headers: ", res.headers);
+    var data = ''; //returned object from request
+    res.setEncoding('utf8');
 
-        res.on('end', function() {
-            cb(null, data);
-        });
+    res.on('data', function(chunk) {
+      data += chunk;
     });
 
-    req.on('error', function(e) {
-        cb(e, null);
+    res.on('end', function() {
+      cb(null, data);
     });
+  });
 
-    if (options.method === 'POST' || options.method === 'PUT') {
-        req.write(content);
-    }
+  req.on('error', function(e) {
+      cb(e, null);
+  });
 
-    req.end();
+  if (options.method === 'POST' || options.method === 'PUT') {
+    req.write(content);
+  }
+
+  req.end();
 };
 
 exports.makeRequest = makeRequest;
