@@ -1,6 +1,7 @@
 var config = require('./config.js');
 var https = require('https');
 var http = require('http');
+var should = require('should');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 var fs = require('fs');
@@ -34,7 +35,7 @@ function executeTest(method, content, done) {
         });
       },
       function (method, headers, body) {
-        method.should.equal(method);
+        method.should.be.equal(method);
         headers.should.have.property('testheader', HEADER_TEST_VALUE);
         headers.should.have.property('x-forwarded-for');
         headers.should.have.property('host', config.simpleServerHostname + ":" + config.simpleServerPort);
