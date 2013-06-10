@@ -40,10 +40,10 @@ module.exports = function(grunt) {
                 ui: 'bdd',
                 reporter: 'spec'
             },
-            e2e: {
+            acceptance: {
                 src: [
                     'tools/mocha-globals.js',
-                    'test/e2e/*.js'
+                    'test/acceptance/*.js'
                 ]}
         },
 
