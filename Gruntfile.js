@@ -43,7 +43,7 @@ module.exports = function(grunt) {
             e2e: {
                 src: [
                     'tools/mocha-globals.js',
-                    'test/e2e/*.js'
+                    'test/acceptance/*.js'
                 ]}
         },
 
