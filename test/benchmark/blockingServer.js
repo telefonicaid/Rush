@@ -33,7 +33,7 @@ var doOneTest = function (time, callback) {
       var completed = 0;
 
       function doReq(i) {
-        client.client('localhost', 3001, "http://localhost:5001");
+        client.client('localhost', config.rushServer.port, 'http://' + config.targetServer.host + ':' + config.targetServer.port);
         i++;
 
         if (i < config.blockingServer.numPetitions) {
