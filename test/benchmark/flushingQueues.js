@@ -41,7 +41,7 @@ var doOneTest = function (size, callback) {
 
                 //Launch consumers
                 for (var i = 0; i < NUM_CONSUMERS; i++) {
-                  children.push(childProcess.fork('../src/consumer.js'));
+                  children.push(childProcess.fork('../../lib/consumer.js'));
                 }
               },
 
@@ -75,7 +75,8 @@ var doOneTest = function (size, callback) {
 
       //Queue the petitions
       for (var i = 0; i < NUM_SERVICES; i++) {
-        client.client('localhost', 3001, 'http://localhost:5001', processPetitions);
+        client.client('localhost', config.rushServer.port,
+            'http://' + config.targetServer.host + ':' + config.targetServer.port, processPetitions);
       }
     });
   });

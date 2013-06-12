@@ -1,4 +1,16 @@
 /**
+ *
+ * @type {{host: string, port: number}}
+ */
+exports.targetServer = {host:'localhost', port:54730};
+
+/**
+ *
+ * @type {{host: string, port: number}}
+ */
+exports.rushServer = {host:'localhost', port:5001};
+
+/**
  * Redis information
  * @type {Object}
  */
