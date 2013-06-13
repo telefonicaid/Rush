@@ -50,7 +50,7 @@ function executeTest(method, content, done) {
 //	serversToShutDown.push(simpleServer);
 }
 
-describe('Oneway', function() {
+describe('Oneway Acceptance funcionality', function() {
 
 	afterEach(function() {
 		for (var i = 0; i < serversToShutDown.length; i++) {
