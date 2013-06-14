@@ -16,6 +16,7 @@ var makeRequest = function(options, content, cb) {
     res.on('end', function() {
       cb(null, data);
     });
+
   });
 
   req.on('error', function(e) {
@@ -25,6 +26,7 @@ var makeRequest = function(options, content, cb) {
   if (options.method === 'POST' || options.method === 'PUT') {
     req.write(content);
   }
+	//console.log("request sent",req);
 
   req.end();
 

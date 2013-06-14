@@ -13,9 +13,11 @@ var serversToShutDown = [];
 
 function executeTest(method, content, done) {
 	var headers = {
-			'X-Relayer-Host': 'http://localhost:8014',
+		//	'X-Relayer-Host': 'http://localhost:8014',
+		//	'X-Relayer-Host': 'http://194.183.97.65:8014',
 		//	'X-Relayer-Host': 'http://' + config.rushServer.hostname + ':8014', // + config.rushServer.port,
-		'testheader': HEADER_TEST_VALUE
+			'X-Relayer-Host': 'http://www.google.com',
+     		'testheader': HEADER_TEST_VALUE
 	};
 
 	var options = {
@@ -25,32 +27,14 @@ function executeTest(method, content, done) {
 		headers: headers
 	};
 
-
-	     /*
-	var simpleServer = server.serverListener(
-			function() {
-				utils.makeRequest(options, content, function() {
-					//content.
-				});
-			}  ,
-			function(method, headers, body) {
-				method.should.equal(method);
-        headers.should.have.property('testheader', HEADER_TEST_VALUE);
-        if (content) {
-
-					body.should.be.equal(content);
-				}
-
-		//		done();
-			}
-
-	); */
+	utils.makeRequest(options, content, function() {
+		data.should.be.equal(content);
+	});
 
 	done();
-//	serversToShutDown.push(simpleServer);
 }
 
-describe('Oneway Acceptance funcionality', function() {
+describe('Oneway Acceptance basic funcionality TestSuite', function() {
 
 	afterEach(function() {
 		for (var i = 0; i < serversToShutDown.length; i++) {
@@ -65,50 +49,48 @@ describe('Oneway Acceptance funcionality', function() {
 	});
 
 
-it('Should return the same headers and the same method (GET ) 0', function(done) {
+it('Should return the same headers and the same method / GET 0', function(done) {
 	setTimeout(done, 50000);
 	executeTest('GET', undefined, done);
-
 });
 
-
-	it('Should return the same headers, method and body (POST) 1', function(done) {
+	it('Should return the same headers and the same method / POST 1', function(done) {
 		var content = 'Hello World'
 		executeTest('POST', content, done);
 	});
 
-	it('Should return the same headers, method and body (PUT) 2', function(done) {
+	it('Should return the same headers and the same method / PUT 2', function(done) {
 		var content = 'Hello World'
 		executeTest('PUT', content, done);
 	});
 
-	it('Should return the same headers and the same method (DELETE) 3', function(done) {
+	it('Should return the same headers and the same method / GET 3', function(done) {
 		executeTest('GET', undefined, done);
 	});
-	it('Should return the same headers, method and body (POST) 4', function(done) {
+	it('Should return the same headers and the same method / GET 4', function(done) {
 		var content = 'Hello World'
 		executeTest('POST', content, done);
 	});
 
-	it('Should return the same headers, method and body (PUT) 5 ', function(done) {
-		var content = 'Hello World'
+	it('Should  return the same headers content and the same method / PUT 5 ', function(done) {
+		var content = 'Hello World &&&&&&'
 		executeTest('PUT', content, done);
 	});
 
-	it('Should return the same headers and the same method (DELETE) 6 ', function(done) {
+	it('Should  return the same headers content and the same method / DELETE 6 ', function(done) {
 		executeTest('GET', undefined, done);
 	})
-	it('Should return the same headers, method and body (POST) 7 ', function(done) {
-		var content = 'Hello World'
+	it('Should  return the same headers content and the same method / POST 7 ', function(done) {
+		var content = 'Hello World &&&&&&&'
 		executeTest('POST', content, done);
 	});
 
-	it('Should return the same headers, method and body (PUT) 8 ', function(done) {
-		var content = 'Hello World'
+	it('Should  return the same headers content and the same method / PUT 8 ', function(done) {
+		var content = 'Hello World &&&&&&&'
 		executeTest('PUT', content, done);
 	});
 
-	it('Should return the same headers and the same method (DELETE) 9', function(done) {
+	it('Should  return the same headers content and the same method / DELETE 9', function(done) {
 		executeTest('GET', undefined, done);
 	})
 
