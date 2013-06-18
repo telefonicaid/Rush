@@ -12,9 +12,7 @@ objetictives have been defined. The performance-testing effort will be based, th
 * Tune customizations
 
 
-###Performance testing objectives
-
-###Performance testing objectives
+The following priority performance objectives will focus the performance testing:
 
 -  Verify that there is no performance degradation over the previous benchmark process
 -	Measure the performance of a component-like composition
