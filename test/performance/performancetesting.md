@@ -14,50 +14,17 @@ objetictives have been defined. The performance-testing effort will be based, th
 
 ###Performance testing objectives
 
+###Performance testing objectives
+
 -  Verify that there is no performance degradation over the previous benchmark process
 -	Measure the performance of a component-like composition
-"	Request/second capacity 
-"	Response time
-"	Throughput
-"	Redis queue filling/flushing rate
-"	System performance
-"	Process performance
+	*Request/second capacity 
+	*Response time
+	*Throughput
+	*Redis queue filling/flushing rate
+	*System performance
+	*Process performance
 -	Verify the ideal configuration of hw/sw for the upgrade to a service
-"	Measure the performance for minimum deployment, scaling workers deployment, scaling entries deployment and HA playground deployment on the cloud (Amazon Web Services)
-"	Analyse the results to determine the optimum deployment model on AWS for a given performance requirement
+    *Measure the performance for minimum deployment, scaling workers deployment, scaling entries deployment and HA playground deployment on the cloud (Amazon Web Services)
+    *Analyse the results to determine the optimum deployment model on AWS for a given performance requirement
 -	Verify the ideal customization of the OS properties to optimize the performance
-
-
-
-
-TEST STRATEGY
--------------
-
-###System comprehension
-
-
-
-###Load model
-
-###Metrics/Indicators Specification
-
-###Test Design
-
-###Test Execution
-
-###Results Analysis
-
-###Review and Update of the Test Set
-
-TEST ENVIRONMENT
-----------------
-
-
-WORK PLAN
----------
-
-RISKS
------
-
-ERROR MANAGEMENT PROCESS
------------------------- 
