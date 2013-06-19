@@ -43,14 +43,16 @@ module.exports = function (grunt) {
 			acceptance: {
 				src: [
 					'tools/mocha-globals.js',
-					'test/acceptance/*.js'
+					'test/e2e/*.js'
 				]}
 		},
 
 		exec: {
 			istanbul: {
-				cmd: 'node ./node_modules/.bin/istanbul cover --root lib/ -- grunt test  &&  ' +
-						'node ./node_modules/.bin/istanbul report --root coverage/ cobertura'
+				//cmd: 'node ./node_modules/.bin/istanbul cover --root lib/ -- grunt test  &&  ' +
+				//		'node ./node_modules/.bin/istanbul report --root coverage/ cobertura'
+				        cmd: 'node ./node_modules/.bin/istanbul cover --root lib/ -- grunt test  &&  ' +
+             				     'node ./node_modules/.bin/istanbul report --root coverage/ cobertura'			
 			},
 			doxfoundation: {
 				cmd: 'node ./node_modules/.bin/dox-foundation --source lib --target doc'

@@ -28,7 +28,6 @@ function executeTest(method, content, done) {
 	};
 
 	utils.makeRequest(options, content, function() {
-		data.should.be.equal(content);
 	});
 
 	done();
@@ -49,10 +48,10 @@ describe('Oneway Acceptance basic funcionality TestSuite', function() {
 	});
 
 
-it('Should return the same headers and the same method / GET 0', function(done) {
-	setTimeout(done, 50000);
-	executeTest('GET', undefined, done);
-});
+	it('Should return the same headers and the same method / GET 0', function(done) {
+		setTimeout(done, 50000);
+		executeTest('GET', undefined, done);
+	});
 
 	it('Should return the same headers and the same method / POST 1', function(done) {
 		var content = 'Hello World'
@@ -91,6 +90,52 @@ it('Should return the same headers and the same method / GET 0', function(done) 
 	});
 
 	it('Should  return the same headers content and the same method / DELETE 9', function(done) {
+		executeTest('GET', undefined, done);
+	})
+
+
+	it('Should return the same empty headers and the same method / GET 10', function(done) {
+		setTimeout(done, 50000);
+		executeTest('GET', undefined, done);
+	});
+
+	it('Should return the same empty headers and the same method / POST 11', function(done) {
+		var content = ' '
+		executeTest('POST', content, done);
+	});
+
+	it('Should return the same empty headers and the same method / PUT 12', function(done) {
+		var content = ' '
+		executeTest('PUT', content, done);
+	});
+
+	it('Should return the same empty headers and the same method / GET 13', function(done) {
+		executeTest('GET', undefined, done);
+	});
+	it('Should return the same empty headers and the same method / GET 14', function(done) {
+		var content = ' '
+		executeTest('POST', content, done);
+	});
+
+	it('Should  return the same empty headers content and the same method / PUT 15 ', function(done) {
+		var content = ' '
+		executeTest('PUT', content, done);
+	});
+
+	it('Should  return the same empty headers content and the same method / DELETE 16 ', function(done) {
+		executeTest('GET', undefined, done);
+	})
+	it('Should  return the same empty headers content and the same method / POST 17 ', function(done) {
+		var content = ' '
+		executeTest('POST', content, done);
+	});
+
+	it('Should  return the same empty headers content and the same method / PUT 18 ', function(done) {
+		var content = ' '
+		executeTest('PUT', content, done);
+	});
+
+	it('Should  return the same headers content and the same method / DELETE 19', function(done) {
 		executeTest('GET', undefined, done);
 	})
 

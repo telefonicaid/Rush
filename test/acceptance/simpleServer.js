@@ -32,4 +32,12 @@ var serverListener = function(connectedCallback, dataCallback) {
 
 };
 
+var serverListener2 = function() {
+	return "test";
+
+
+};
+
 exports.serverListener = serverListener;
+
+exports.serverListener2 = serverListener2;

@@ -1,6 +1,7 @@
 http = require('http');
 https = require('https');
 
+
 var makeRequest = function(options, content, cb) {
   'use strict';
 
@@ -15,6 +16,7 @@ var makeRequest = function(options, content, cb) {
 
     res.on('end', function() {
       cb(null, data);
+ //    console.log("request sent",req);
     });
 
   });

@@ -9,7 +9,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 var DIR_MODULE = path.dirname(module.filename);
 
-describe('Image Test', function() {
+describe('Feature: ENCODING', function() {
 
   var server, petitionID;
   var contentBinary = fs.readFileSync(DIR_MODULE + '/robot.png');
