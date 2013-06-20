@@ -1,6 +1,5 @@
 var should = require('should');
 var superagent = require('superagent');
-var utils = require('./utils.js');
 var config = require('./config');
 
 var HOST = config.rushServer.hostname;
