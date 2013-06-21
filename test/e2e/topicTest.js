@@ -30,44 +30,32 @@ function executeTest(method, done) {
       },
 
       function(method, headers, body) {
-
         var checked = false;
         var interval = setInterval(function() {
-
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
-
           function checkResponse(err, data) {
-
             if (data !== '{}' && ! checked) {
-
               clearInterval(interval);
-
               var JSONres = JSON.parse(data);
               JSONres.body.should.be.equal('');
-              JSONres.headers.should.have.property('test-header',
-                  'test header');
+              JSONres.headers.should.have.property('test-header','test header');
               JSONres.should.have.property('topic', 'Topic test');
-
               checked = true;
               done();
-
             }
           }
-
           utils.makeRequest(options, '', checkResponse);
-
         }, 10);
       }
   );
-
   serversToShutDown.push(simpleServer);
 }
 
 var serversToShutDown = [];
 
 
-describe('Topic Test', function() {
+describe('Feature: Topic', function() {
 
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
@@ -81,17 +69,17 @@ describe('Topic Test', function() {
   });
 
 
-  it('Should return  the correct topic id (GET)', function(done) {
+  it('Should return  the correct topic id / GET', function(done) {
     executeTest('GET', done);
   });
 
 
-  it('Should return  the correct topic id (POST)', function(done) {
+  it('Should return  the correct topic id / POST', function(done) {
     executeTest('POST', done);
 
   });
 
-  it('Should return  the correct topic id (PUT)', function(done) {
+  it('Should return  the correct topic id / PUT', function(done) {
     executeTest('PUT', done);
   });
 });

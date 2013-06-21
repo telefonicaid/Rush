@@ -87,7 +87,7 @@ function executeTest(method, content, persistence, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Persistence', function() {
+describe('Feature: Persistence', function() {
 
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {

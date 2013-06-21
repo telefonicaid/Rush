@@ -7,7 +7,7 @@ var utils = require('./utils.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Proxy Server', function() {
+describe('Feature: Proxy Server', function() {
   'use strict';
 
   var proxyServer;
@@ -106,19 +106,19 @@ describe('Proxy Server', function() {
     });
   }
 
-  it('GET', function(done) {
+  it('Using method / GET', function(done) {
     makeTest('locahost:56841', 'GET', headers, '', done);
   });
 
-  it('POST', function(done) {
+  it('Using method / POST', function(done) {
     makeTest('locahost:56841', 'POST', headers, 'this is a test', done);
   });
 
-  it('PUT', function(done) {
+  it('Using method / PUT', function(done) {
     makeTest('locahost:56841', 'PUT', headers, 'this is a test', done);
   });
 
-  it('DELETE', function(done) {
+  it('Using method / DELETE', function(done) {
     makeTest('locahost:56841', 'DELETE', headers, '', done);
   });
 });
