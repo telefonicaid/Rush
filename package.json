@@ -43,7 +43,10 @@
     "dox-foundation": "*",
     "grunt-cli": "0.1.8",
     "request": "2.21.0",
-    "should": "1.2.0"
+    "should": "1.2.0",
+    "superagent": "0.14.9"
+
+	
   },
   "license": "AGPL",
   "engine": {
