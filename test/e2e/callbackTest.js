@@ -98,7 +98,7 @@ function makeRequest(type, content, done) {
   serversToShutDown.push(server_callback);
 }
 
-describe('HTTP_Callback', function() {
+describe('Feature: HTTP_Callback', function() {
   'use strict';
   var content = 'HTTP_Callback Test';
 
@@ -114,7 +114,7 @@ describe('HTTP_Callback', function() {
     serversToShutDown = [];
   });
 
-  describe('#POST', function() {
+  describe('Using method / POST', function() {
 
     it('Should receive a callback on a correct ' +
         'POST petition', function(done) {
@@ -122,7 +122,7 @@ describe('HTTP_Callback', function() {
     });
   });
 
-  describe('#PUT', function() {
+  describe('Using method / PUT', function() {
 
     it('Should receive a callback on a correct ' +
         'PUT petition ', function(done) {
@@ -130,7 +130,7 @@ describe('HTTP_Callback', function() {
     });
   });
 
-  describe('#GET', function() {
+  describe('Using method / GET', function() {
 
     it('Should receive a callback on a correct ' +
         'GET petition ', function(done) {
@@ -138,7 +138,7 @@ describe('HTTP_Callback', function() {
     });
   });
 
-  describe('#DELETE', function() {
+  describe('Using method / DELETE', function() {
 
     it('Should receive a callback on a correct ' +
         'DELETE petition ', function(done) {

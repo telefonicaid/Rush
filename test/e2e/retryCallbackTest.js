@@ -134,7 +134,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Retry', function() {
+describe('Feature: Retry and Callback', function() {
 
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
