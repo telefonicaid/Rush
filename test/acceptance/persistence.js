@@ -173,7 +173,7 @@ describe('Persistence', function() {
       }
     ], function(err, res) {
       var resGet = res[1];
-      resGet.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
+      resGet.should.have.property('error', 'getaddrinfo ENOTFOUND');
       done();
     });
   });

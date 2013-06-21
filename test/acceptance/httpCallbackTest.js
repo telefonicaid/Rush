@@ -187,7 +187,7 @@ describe('HTTP_Callback', function() {
               should.not.exist(parsedJSON.result);
 
               parsedJSON.should.have.property('error',
-                  'ENOTFOUND(getaddrinfo)');
+                  'getaddrinfo ENOTFOUND');
 
               res.writeHead(200);
               res.end();
