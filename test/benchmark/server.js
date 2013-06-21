@@ -1,4 +1,5 @@
 var http = require('http');
+var config = require('./config.js')
 
 var createServer = function (timeout, resSize, launchedCB, connectionCB) {
   'use strict';
@@ -19,7 +20,7 @@ var createServer = function (timeout, resSize, launchedCB, connectionCB) {
       }, timeout);
     });
 
-  }).listen(5001, 'localhost', launchedCB);
+  }).listen(config.targetServer.port, config.targetServer.host, launchedCB);
 
   server.isClosed = false;
 

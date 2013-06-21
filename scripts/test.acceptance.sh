@@ -1,4 +1,3 @@
-############################ Config file version#######################################
 # To run script edit acceptance.cfg and type ./test.acceptance.sh or direct use ./test.acceptance.sh test_suite environment to override config
 
 #!/bin/bash
@@ -18,3 +17,4 @@ else
 fi
 
 exit $?
+

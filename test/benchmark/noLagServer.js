@@ -25,7 +25,8 @@ scenario.test('Payload of ' + (config.noLagServer.size / (1024 * 1024)) + '  MB'
     var completed = 0;
 
     function doReq(i) {
-      client.client('localhost', 3001, "http://localhost:5001");
+      client.client('localhost', config.rushServer.port,
+          'http://' + config.targetServer.host + ':' + config.targetServer.port);
       i++;
 
       if (i < config.noLagServer.numPetitions) {
