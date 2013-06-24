@@ -284,7 +284,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
                   JSONRes.should.have.property('statusCode', '200');
                   JSONRes.should.have.property('callback_err',
-                      'ENOTFOUND(getaddrinfo)');
+                      'getaddrinfo ENOTFOUND');
 
                   checked = true;
                   done();
@@ -334,7 +334,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
           //Test content
           parsedJSON.should.have.property('error',
-              'ENOTFOUND(getaddrinfo)');
+              'getaddrinfo ENOTFOUND');
 
           res.writeHead(200);
           res.end();
@@ -346,7 +346,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
             utils.makeRequest(options, '', function(err, data) {
               var JSONparsed = JSON.parse(data);
               JSONparsed.should.have.property(
-                  'error', 'ENOTFOUND(getaddrinfo)');
+                  'error', 'getaddrinfo ENOTFOUND');
               JSONparsed.should.have.property('callback_status', '200');
               done();
             });
