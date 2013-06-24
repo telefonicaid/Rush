@@ -140,7 +140,7 @@ function makeRequest(type, persistence, content, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Persistence HTTPCallback', function() {
+describe('Feature: Persistence HTTP_Callback', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
 
@@ -166,7 +166,7 @@ describe('Persistence HTTPCallback', function() {
     serversToShutDown = [];
   });
 
-  describe('#POST', function() {
+  describe('Using method / POST', function() {
 
     it('Persistence: BODY', function(done) {
       this.timeout(3000);
@@ -184,7 +184,7 @@ describe('Persistence HTTPCallback', function() {
     });
   });
 
-  describe('#PUT', function() {
+  describe('Using method / PUT', function() {
 
     it('Persistence: BODY', function(done) {
       this.timeout(3000);
@@ -202,7 +202,7 @@ describe('Persistence HTTPCallback', function() {
     });
   });
 
-  describe('#GET', function() {
+  describe('Using method / GET', function() {
 
     it('Persistence: BODY', function(done) {
       this.timeout(3000);
@@ -220,7 +220,7 @@ describe('Persistence HTTPCallback', function() {
     });
   });
 
-  describe('#DELETE', function() {
+  describe('Using method / DELETE', function() {
 
     it('Persistence: BODY', function(done) {
       this.timeout(3000);

@@ -43,7 +43,7 @@ module.exports = function (grunt) {
 			acceptance: {
 				src: [
 					'tools/mocha-globals.js',
-					'test/acceptance/*.js'
+					'test/e2e/*.js'
 				]}
 		},
 

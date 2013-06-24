@@ -76,7 +76,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   serversToShutDown.push(srv);
 }
 
-describe('Retry', function() {
+describe('Feature: Retry', function() {
 
 
   afterEach(function() {

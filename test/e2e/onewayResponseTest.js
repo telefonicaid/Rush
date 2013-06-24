@@ -7,7 +7,7 @@ var utils = require('./utils.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('errors Test', function() {
+describe('Feature: Oneway Response errors ', function() {
 
   var options;
 
@@ -22,7 +22,7 @@ describe('errors Test', function() {
     done();
   });
 
-  it('Should return protocol error(test 1)', function(done) {
+  it('Should return protocol error (test 1)', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:3001';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       JSON.parse(data).errors[0].should.be.equal(
