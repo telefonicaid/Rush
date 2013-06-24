@@ -3,39 +3,63 @@ var redis = require('redis');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var childProcess = require('child_process');
+var _ = require('underscore');
 
 var log = require('PDITCLogger');
 var logger = log.newLogger();
 
 Sentinel = function(port, host){
   var self = this;
-  self.up = true;
+  self.port = port;
+  self.host = host;
 
-  console.log("new sentinel", port);
+  self.sentinelCli = redis.createClient(port, 'localhost');
 
-  sentinelCli = redis.createClient(port, 'localhost');
+  self.up = false;
 
-  sentinelCli.on('error', function(err){
+  self.sentinelCli.on('error', function(err){
     self.up = false;
     self.emit('wentDown');
   });
 
-  sentinelCli.on('ready', function(){
-    self.emit('ready');
-    persistenceMasterMonitor(self, sentinelCli);
+  self.sentinelCli.on('ready', function(){
+    self.up = true;
+    persistenceMasterMonitor(self, function(newMaster){
+      self.emit('changed', newMaster);
+    });
+    self.emit('sentinelReady');
   });
 };
 
-var persistenceMasterMonitor = function(sentinel, cli){
-  'use strict';
-
-  cli.subscribe('+switch-master');
-  cli.on('message', function(channel, message){
-    var splitted = message.split(' ');
-    var index = splitted[0], host = splitted[3], port = splitted[4];
-    sentinel.emit('changed', {index : parseInt(index), host : host, port : port});
-  });
-};
 
 util.inherits(Sentinel, EventEmitter);
+
+Sentinel.prototype.getMasters = function(callback){
+  var self = this;
+
+  var cli = redis.createClient(self.port, self.host);
+  cli.send_command("SENTINEL", ["masters"], function(err, res){
+    var masters = {};
+    for(var i=0; i < res.length; i++){
+      var keys = _.filter(res[i], function(num, key){ return key % 2 === 0; });
+      var values = _.filter(res[i], function(num, key){ return key % 2 !== 0; });
+      var toObject = _.object(keys, values);
+      toObject = _.pick(toObject, "ip", "port", "name");
+      masters[toObject.name] = toObject;
+    }
+    callback(err, masters);
+  });
+};
+
+function persistenceMasterMonitor(sentinel, onChanged){
+  'use strict';
+
+  sentinel.sentinelCli.subscribe('+switch-master');
+  sentinel.sentinelCli.on('message', function(channel, message){
+    var splitted = message.split(' ');
+    var index = splitted[0], host = splitted[3], port = splitted[4];
+    onChanged({master : index, host : host, port : port});
+  });
+};
+
 module.exports = Sentinel;

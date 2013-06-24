@@ -73,14 +73,16 @@ Monitor.prototype.start = function(){
 
   self.monitor = setInterval(function(){
     var failing = [];
-    for(var i = 0; i < self.connections.length; i++){
-      if(!self.connections[i].connected()){
+    for(var i in self.connections){
+      if(!self.connections[i].con.connected()){
         failing.push({host : self.connections[i].host, port : self.connections[i].port});
       }
     }
     if(failing.length === 0){
+      console.log("connected");
       self.emit('connected');
     } else {
+      console.log("disconnected");
       self.emit('disconnected', failing);
     }
 
@@ -101,54 +103,10 @@ Monitor.prototype.restart = function(connections){
   this.start();
 };
 
-/**
- *
- * @param rc
- * @param masterHost
- * @param masterPort
- */
-var slaveOf = function(rc, masterHost, masterPort) {
-  'use strict';
-  if (!(masterHost && masterPort)) {
-    logger.error('Masters must be defined in slave' +
-        ' configuration. Look at configFile');
-    throw 'fatalError';
-  }
-
-  rc.slaveof(masterHost, masterPort, function(err) {
-    if (err) {
-      logger.error('slaveOf(rc, masterHost, masterPort):: ' + err);
-      throw 'fatalError';
-    }
-  });
-};
-
-var addSlaves = function(dbObject){
-  var slaves = dbObject.slaves || [];
-  for(var i = 0; i < slaves.length; i++){
-    var rc = redisModule.createClient(slaves[i].port, slaves[i].host);
-    slaveOf(rc, dbObject.host, dbObject.port);
-    rc.quit();
-  }
-};
-
 logger.prefix = path.basename(module.filename, '.js');
 
-var dbArray = [];
-//Create the pool array - One pool for each server
-var poolArray = [];
-
-for (var i = 0; i < config.redisServers.length; i++) {
-  var port = config.redisServers[i].port || redisModule.DEFAULT_PORT;
-  var host = config.redisServers[i].host;
-  var connection = new Connection(port, host);
-  var pool = poolMod.Pool(port, host);
-  poolArray.push(pool);
-
-  addSlaves(config.redisServers[i]);
-  dbArray.push(connection);
-}
-
+var dbObject = {};
+var mastersArray = [];
 var sentinels = [];
 
 for(var i = 0; i < config.sentinels.length; i++){
@@ -156,6 +114,7 @@ for(var i = 0; i < config.sentinels.length; i++){
   var host = config.sentinels[i].host || 'localhost';
   var newSentinel = new Sentinel(port, host);
   sentinels.push(newSentinel);
+  newSentinel.once('sentinelReady', oneConnected);
 }
 
 function isConnected(){
@@ -168,59 +127,69 @@ function notConnected(failing){
 }
 
 var handlerChanged = function(newMaster){
-  var host = newMaster.host, port = newMaster.port, index = newMaster.index;
-
-  dbArray[index] = new Connection(port, host);
+  var host = newMaster.host, port = newMaster.port, master = newMaster.master;
+  dbObject[master].con = new Connection(port, host);
   var newPool = poolMod.Pool(port, host);
-  poolArray[index] = newPool;
+  dbObject[master].pool = newPool;
 
-  monitor.restart(dbArray);
+  console.log(dbObject);
+
+  monitor.restart(dbObject);
 };
 
 var checkSentinels = function(){
-  var canInitFailover = false;
-  var minQuorum = Number.MAX_VALUE;
   var sentsUp = 0;
   for(var i = 0; i < sentinels.length; i++){
     if(sentinels[i].up){
       sentsUp++;
-      if(sentinels[i].quorum < minQuorum) minQuorum = sentinels[i].quorum;
-      if(sentinels[i].canFail) canInitFailover = true;
     }
   }
-  if(minQuorum > sentsUp){
+  if(config.minQuorum > sentsUp){
     logger.warning("Imposible to reach an agreement between Sentinels");
   }
-  if(!canInitFailover){
-    logger.warning("Imposible to init a failover");
-  }
 };
-
-var currentSentinel;
 
 var sentinelHandler = function(){
   checkSentinels();
   for(var i = 0; i < sentinels.length; i++){
     console.log(sentinels[i].up);
     if(sentinels[i].up){
-      currentSentinel = sentinels[i];
+      var currentSentinel = sentinels[i];
       currentSentinel.on('changed', handlerChanged);
       currentSentinel.on('wentDown', function onError(){
         currentSentinel.removeListener('wentDown', onError);
         currentSentinel.removeListener('changed', handlerChanged);
         sentinelHandler();
       });
-      return;
+      return currentSentinel;
     }
   }
 };
 
-sentinelHandler();
+function oneConnected(){
+  process.removeAllListeners('sentinelReady');
+  var currentSentinel = sentinelHandler();
+  currentSentinel.getMasters(function(err, masters){
+    dbObject = masters;
+    for (var master in masters) {
+      var port = masters[master].port || redisModule.DEFAULT_PORT;
+      var host = masters[master].ip;
+      var connection = new Connection(port, host);
+      var pool = poolMod.Pool(port, host);
+      dbObject[master].pool = pool;
+      dbObject[master].con = connection;
 
-var monitor = new Monitor(dbArray);
-monitor.start();
-monitor.on('connected', isConnected);
-monitor.on('disconnected', notConnected);
+      mastersArray.push(master);
+    }
+    mastersArray.sort();
+
+
+    var monitor = new Monitor(dbObject);
+    monitor.start();
+    monitor.on('connected', isConnected);
+    monitor.on('disconnected', notConnected);
+  });
+}
 
 var checkAvailable = function(req, res, next){
   'use strict';
@@ -243,14 +212,14 @@ var checkAvailable = function(req, res, next){
 var getDb = function(id) {
   'use strict';
   var hash = hashMe(id, dbArray.length);
-  return dbArray[hash].db;
+  return dbObject[dbArray[hash]].con.db;
 };
 
 var getOwnDb = function(id, callback) {
   'use strict';
   var hash = hashMe(id, dbArray.length);
   //get the pool
-  var pool = poolArray[hash];
+  var pool = dbObject[dbArray[hash]].pool;
   return pool.get(id);
 };
 
