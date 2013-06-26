@@ -96,7 +96,6 @@ describe('Feature: Oneway Response errors ', function() {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
       parsedJSON.should.not.have.property('errors');
-      parsedJSON.should.have.property('ok', true);
       done();
     });
   });
@@ -107,7 +106,6 @@ describe('Feature: Oneway Response errors ', function() {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
       parsedJSON.should.not.have.property('errors');
-      parsedJSON.should.have.property('ok', true);
       done();
     });
   });
@@ -118,7 +116,6 @@ describe('Feature: Oneway Response errors ', function() {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
       parsedJSON.should.not.have.property('errors');
-      parsedJSON.should.have.property('ok', true);
       done();
     });
   });
@@ -129,7 +126,6 @@ describe('Feature: Oneway Response errors ', function() {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
       parsedJSON.should.not.have.property('errors');
-      parsedJSON.should.have.property('ok', true);
       done();
     });
   });
@@ -144,7 +140,6 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options2, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('ok', false);
       jsonRes.should.have.property('errors');
       jsonRes.errors.should.include('invalid persistence type: INVALID');
       done();
@@ -159,7 +154,6 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('ok', false);
       jsonRes.should.have.property('errors');
       jsonRes.errors.should.include('invalid retry value: 5-7,4,8');
       done();
@@ -174,7 +168,6 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('ok', false);
       jsonRes.should.have.property('errors');
       jsonRes.errors.should.include('Hostname expected.' +
           ' Empty host after protocol');
@@ -190,7 +183,6 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('ok', false);
       jsonRes.should.have.property('errors');
       jsonRes.errors.should.include('Invalid protocol localhost:8000');
       done();
