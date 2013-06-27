@@ -104,7 +104,7 @@ describe('Feature: Persistence', function() {
 
   it('should return 404 if the persistence doesn\'t exist', function(done){
     var id = 'not_an_id';
-    utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, function(err, data, res) {
+    utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, '', function(err, data, res) {
       should.not.exist(err);
       res.should.have.property('statusCode', 404);
       var JSONres = JSON.parse(data);
