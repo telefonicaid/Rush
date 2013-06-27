@@ -39,9 +39,9 @@ function executeTest(method, content, persistence, done) {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
-          function checkResponse(err, data) {
+          function checkResponse(err, data, res) {
 
-            if (data !== '{}' && ! checked) {
+            if (res.statusCode !== 404 && ! checked) {
 
               clearInterval(interval);
 
@@ -102,6 +102,16 @@ describe('Feature: Persistence', function() {
   });
 
 
+  it('should return 404 if the persistence doesn\'t exist', function(done){
+    var id = 'not_an_id';
+    utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, '', function(err, data, res) {
+      should.not.exist(err);
+      res.should.have.property('statusCode', 404);
+      var JSONres = JSON.parse(data);
+      JSONres.should.have.property('error', 'ID ' + id + ' does not exist');
+      done();
+    });
+  });
 
   it('should return empty body and test-header', function(done) {
     executeTest('GET', '', 'BODY', done);
@@ -151,9 +161,9 @@ describe('Feature: Persistence', function() {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
-          function checkResponse(err, data) {
+          function checkResponse(err, data, res) {
 
-            if (data !== '{}' && ! checked) {
+            if (res.statusCode !== 404 && ! checked) {
 
               clearInterval(interval);
 
