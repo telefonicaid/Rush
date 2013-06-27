@@ -39,9 +39,9 @@ function executeTest(method, content, persistence, done) {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
-          function checkResponse(err, data) {
+          function checkResponse(err, data, res) {
 
-            if (data !== '{}' && ! checked) {
+            if (res.statusCode !== 404 && ! checked) {
 
               clearInterval(interval);
 
@@ -151,9 +151,9 @@ describe('Feature: Persistence', function() {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
-          function checkResponse(err, data) {
+          function checkResponse(err, data, res) {
 
-            if (data !== '{}' && ! checked) {
+            if (res.statusCode !== 404 && ! checked) {
 
               clearInterval(interval);
 

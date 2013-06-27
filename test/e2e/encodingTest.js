@@ -56,13 +56,13 @@ describe('Feature: ENCODING', function() {
           options.port = config.rushServer.port;
           options.path = '/response/' + petitionID;
 
-          function checkResponse(err, res) {
-            if (res !== '{}' && ! checked) {
+          function checkResponse(err, data, res) {
+            if (res.statusCode !== 404 && !checked) {
               clearInterval(interval);
 
               should.not.exist(err);
 
-              var parsedJSON = JSON.parse(res);
+              var parsedJSON = JSON.parse(data);
               parsedJSON.should.have.property('body');
               parsedJSON.should.have.property('encoding', 'base64');
 
