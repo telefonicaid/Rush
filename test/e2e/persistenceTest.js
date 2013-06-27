@@ -3,7 +3,6 @@ var should = require('should');
 var config = require('./config.js')
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
-var http = require('http');
 
 var serversToShutDown = [];
 
@@ -104,8 +103,13 @@ describe('Feature: Persistence', function() {
 
 
   it('should return 404 if the persistence doesn\'t exist', function(done){
-    http.get({hostname:HOST, port:PORT, path : '/response/not_an_id'}, function(res) {
-      res.should.have.property('statusCode', '404');
+    var id = 'not_an_id';
+    utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, function(err, data, res) {
+      should.not.exist(err);
+      res.should.have.property('statusCode', 404);
+      var JSONres = JSON.parse(data);
+      JSONres.should.have.property('error', 'ID ' + id + ' does not exist');
+      done();
     });
   });
 
