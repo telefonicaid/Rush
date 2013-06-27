@@ -1,7 +1,3 @@
-// https://pdihub.hi.inet/TDAF/tdaf-api-authserver/blob/feature/APIAUTHSVR-6/test/acceptance/component/grant-types/client-credentials/client-credentials
-// DATASET
-
-
 var should = require('should');
 var chai = require('chai');
 var superagent = require('superagent');
@@ -20,7 +16,7 @@ var REDIS_PORT = config.redisServer.port;
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
 var ENDPOINT = config.externalEndpoint;
 var TIMEOUT = 1000;
-var QUEUE = "wrL:hpri";
+var QUEUE = "wrL:hpri"; //Task
 
 var ALL_HEADERS = [
   "x-relayer-persistence",
@@ -38,14 +34,17 @@ describe('TASK QUEUE', function () {
   rc.flushall();
 
   var dataSet = [
-        {method: 'GET', headers: {}, name : "Scenario 1: Should return valid task with OneWay policy and GET method"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name : "Scenario 2: Should return valid task with OneWay policy and GET method"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "HEADER"}, name : "Scenario 3: Should return valid task with OneWay policy and GET method"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "BODY"}, name : "Scenario 4: Should return valid task with OneWay policy and GET method"},
-        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com"}, name : "Scenario 4: Should return valid task with OneWay policy and GET method"},
-        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com", "x-relayer-httpcallback-error" : "http://noname.com"}, name : "Scenario 4: Should return valid task with OneWay policy and GET method"},
-        {method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Scenario 4: Should return valid task with OneWay policy and GET method"},
-        {method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Scenario 4: Should return valid task with OneWay policy and GET method"}
+        {method: 'GET', headers: {}, name : "Case 1: Should return a valid task with OneWay policy and GET method"},
+        {method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name : "Case 2: Task should contain STATUS persistence"},
+        {method: 'GET', headers: {"x-relayer-persistence" : "HEADER"}, name : "Case 3: Task should contain HEADER persistence"},
+        {method: 'GET', headers: {"x-relayer-persistence" : "BODY"}, name : "Case 4: Task should contain BODY persistence"},
+        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com"}, name : "Case 5: Task should contain x-relayer-httpcallback atribute"},
+        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com", "x-relayer-httpcallback-error" : "http://noname.com"}, name : "Case 6: Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error"},
+        {method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Case 7: Task should have property x-relayer-retry"},
+        {method: 'PUT', headers: {}, name : "Case 8: Task should be valid with PUT method"},
+        {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "Case 9: Task should have property x-relayer-topic"},
+        {method: 'PUT', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Case 10: Task should have property x-relayer-proxy"},
+        {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "Case 11: Task should have property x-relayer-topic"}
       ];
 
   for(var i=0; i < dataSet.length; i++){
@@ -63,7 +62,6 @@ describe('TASK QUEUE', function () {
             expect(err).to.not.exist;
             expect(res.statusCode).to.equal(200); //Status code 200
             expect(res.body).to.exist;
-            expect(res.body.ok).to.be.true;  //Ok and task id
             expect(res.body.id).to.exist;
 
             var transId = res.body.id;
@@ -84,8 +82,8 @@ describe('TASK QUEUE', function () {
                 expect(task.headers[head]).to.equal(data.headers[head]);
               }
 
-              var shouldNotExist = _.difference(ALL_HEADERS, Object.keys(data.headers));
-              for(var i=0; i < shouldNotExist.length; i++){
+              var shouldNotExist = _.difference(ALL_HEADERS, Object.keys(data.headers)); //headers that aren't in the request
+              for(var i=0; i < shouldNotExist.length; i++){                              //there should not be headers in the task that are not in the request
                 expect(task.headers).to.not.have.property(shouldNotExist[i]);
               }
               done();
