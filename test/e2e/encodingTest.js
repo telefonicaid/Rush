@@ -2,6 +2,8 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var should = require('should');
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 var config = require('./config');
 var utils = require('./utils.js');
 
@@ -13,6 +15,18 @@ describe('Feature: ENCODING', function() {
 
   var server, petitionID;
   var contentBinary = fs.readFileSync(DIR_MODULE + '/robot.png');
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
 
   afterEach(function(done) {
     if (server) {

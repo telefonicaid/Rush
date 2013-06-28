@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
 var listener = require('../lib/listener')
+listener.start();

@@ -1,5 +1,7 @@
 var http = require('http');
 var should = require('should');
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 var config = require('./config.js');
 var simpleServer = require('./simpleServer.js');
 var utils = require('./utils.js');
@@ -16,6 +18,18 @@ describe('Feature: Proxy Server', function() {
     headerTest: 'b',
     myOwnHeader: 'c'
   }
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
 
   afterEach(function(done) {
     try {

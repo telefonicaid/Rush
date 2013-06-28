@@ -2,6 +2,8 @@ var config = require('./config.js');
 var https = require('https');
 var http = require('http');
 var should = require('should');
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 var fs = require('fs');
@@ -50,6 +52,18 @@ function executeTest(method, content, done) {
 
 describe('Feature: ONEWAY with HTTPS', function () {
 
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
+
   afterEach(function () {
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
@@ -82,6 +96,18 @@ describe('Feature: ONEWAY with HTTPS', function () {
 });
 
 describe('Feature ONEWAY with HTTPS Limits', function () {
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
 
   afterEach(function () {
     for (var i = 0; i < serversToShutDown.length; i++) {

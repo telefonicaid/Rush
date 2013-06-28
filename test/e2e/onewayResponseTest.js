@@ -1,5 +1,7 @@
 var http = require('http');
 var should = require('should');
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
@@ -10,6 +12,18 @@ var PORT = config.rushServer.port;
 describe('Feature: Oneway Response errors ', function() {
 
   var options;
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
 
   beforeEach(function(done) {
     options = {};

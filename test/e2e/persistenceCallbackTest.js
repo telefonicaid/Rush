@@ -1,5 +1,7 @@
 var http = require('http');
 var should = require('should');
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
@@ -123,6 +125,8 @@ function makeRequest(type, persistence, content, done) {
               options.headers['x-relayer-httpcallback'] = httpcallback;
 
               utils.makeRequest(options, content, function(e, data) {
+                console.log(e);
+                console.log(data);
                 id = JSON.parse(data).id;
               });
             },
@@ -143,6 +147,18 @@ function makeRequest(type, persistence, content, done) {
 describe('Feature: Persistence HTTP_Callback', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
 
   beforeEach(function() {
     //Set initial headers

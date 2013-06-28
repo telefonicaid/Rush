@@ -1,5 +1,7 @@
 var http = require('http');
 var should = require('should');
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 var config = require('./config.js');
 var utils = require('./utils.js');
 
@@ -77,6 +79,18 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 }
 
 describe('Feature: Retry', function() {
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  })
 
 
   afterEach(function() {
