@@ -1,7 +1,5 @@
 var async = require('async');
 var should = require('should');
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
