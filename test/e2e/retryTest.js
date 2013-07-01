@@ -1,9 +1,10 @@
 var http = require('http');
 var should = require('should');
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
 var config = require('./config.js');
 var utils = require('./utils.js');
+
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -90,8 +91,7 @@ describe('Feature: Retry', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
-  })
-
+  });
 
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {

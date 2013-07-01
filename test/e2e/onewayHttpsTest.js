@@ -2,11 +2,12 @@ var config = require('./config.js');
 var https = require('https');
 var http = require('http');
 var should = require('should');
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 var fs = require('fs');
+
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 
 var HOST = config.rushServerHttps.hostname;
 var PORT = config.rushServerHttps.port;
@@ -62,7 +63,7 @@ describe('Feature: ONEWAY with HTTPS', function () {
     listener.stop(function() {
       consumer.stop(done);
     });
-  })
+  });
 
   afterEach(function () {
     for (var i = 0; i < serversToShutDown.length; i++) {
@@ -107,7 +108,7 @@ describe('Feature ONEWAY with HTTPS Limits', function () {
     listener.stop(function() {
       consumer.stop(done);
     });
-  })
+  });
 
   afterEach(function () {
     for (var i = 0; i < serversToShutDown.length; i++) {

@@ -2,10 +2,11 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var should = require('should');
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
 var config = require('./config');
 var utils = require('./utils.js');
+
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -26,7 +27,7 @@ describe('Feature: ENCODING', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
-  })
+  });
 
   afterEach(function(done) {
     if (server) {
