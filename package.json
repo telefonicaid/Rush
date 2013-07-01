@@ -20,7 +20,6 @@
 
   "dependencies": {
     "express": "3.2.4",
-    "hiredis": "*",
     "redis": "0.8.4",
     "node-uuid": "*",
     "async": "*",
