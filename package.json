@@ -21,7 +21,7 @@
   "dependencies": {
     "express": "3.2.4",
     "hiredis": "*",
-    "redis": "0.7.1",
+    "redis": "0.8.4",
     "node-uuid": "*",
     "async": "*",
     "mongodb": "*",
