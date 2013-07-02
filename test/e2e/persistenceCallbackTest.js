@@ -4,6 +4,9 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
@@ -123,6 +126,8 @@ function makeRequest(type, persistence, content, done) {
               options.headers['x-relayer-httpcallback'] = httpcallback;
 
               utils.makeRequest(options, content, function(e, data) {
+                console.log(e);
+                console.log(data);
                 id = JSON.parse(data).id;
               });
             },
@@ -143,6 +148,18 @@ function makeRequest(type, persistence, content, done) {
 describe('Feature: Persistence HTTP_Callback', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
 
   beforeEach(function() {
     //Set initial headers
@@ -284,7 +301,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
                   JSONRes.should.have.property('statusCode', '200');
                   JSONRes.should.have.property('callback_err',
-                      'ENOTFOUND(getaddrinfo)');
+                      'getaddrinfo ENOTFOUND');
 
                   checked = true;
                   done();
@@ -334,7 +351,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
           //Test content
           parsedJSON.should.have.property('error',
-              'ENOTFOUND(getaddrinfo)');
+              'getaddrinfo ENOTFOUND');
 
           res.writeHead(200);
           res.end();
@@ -346,7 +363,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
             utils.makeRequest(options, '', function(err, data) {
               var JSONparsed = JSON.parse(data);
               JSONparsed.should.have.property(
-                  'error', 'ENOTFOUND(getaddrinfo)');
+                  'error', 'getaddrinfo ENOTFOUND');
               JSONparsed.should.have.property('callback_status', '200');
               done();
             });

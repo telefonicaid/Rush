@@ -14,7 +14,7 @@ var makeRequest = function(options, content, cb) {
     });
 
     res.on('end', function() {
-      cb(null, data);
+      cb(null, data, res);
     });
   });
 

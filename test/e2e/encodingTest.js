@@ -5,6 +5,9 @@ var should = require('should');
 var config = require('./config');
 var utils = require('./utils.js');
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 var DIR_MODULE = path.dirname(module.filename);
@@ -13,6 +16,18 @@ describe('Feature: ENCODING', function() {
 
   var server, petitionID;
   var contentBinary = fs.readFileSync(DIR_MODULE + '/robot.png');
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
 
   afterEach(function(done) {
     if (server) {
@@ -56,13 +71,13 @@ describe('Feature: ENCODING', function() {
           options.port = config.rushServer.port;
           options.path = '/response/' + petitionID;
 
-          function checkResponse(err, res) {
-            if (res !== '{}' && ! checked) {
+          function checkResponse(err, data, res) {
+            if (res.statusCode !== 404 && !checked) {
               clearInterval(interval);
 
               should.not.exist(err);
 
-              var parsedJSON = JSON.parse(res);
+              var parsedJSON = JSON.parse(data);
               parsedJSON.should.have.property('body');
               parsedJSON.should.have.property('encoding', 'base64');
 
