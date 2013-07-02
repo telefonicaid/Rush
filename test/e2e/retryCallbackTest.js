@@ -30,6 +30,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
     var options = {};
     options.host = HOST;
     options.port = PORT;
+    options.path = '/relay';
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = APPLICATION_CONTENT;

@@ -37,11 +37,13 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
       function() {
 
         //Petition method
+        options.path = '/relay'
         options.method = type;
         options.headers['x-relayer-host'] = relayerhost;
         options.headers['x-relayer-httpcallback'] = httpCallBack;
 
         utils.makeRequest(options, content, function(err, data) {
+          console.log(err, data);
         });
 
       },

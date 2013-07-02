@@ -120,6 +120,7 @@ function makeRequest(type, persistence, content, done) {
             function() {
 
               //Make request
+              options.path = '/relay'
               options.method = type;
               options.headers['x-relayer-persistence'] = persistence;
               options.headers['x-relayer-host'] = relayerHost;

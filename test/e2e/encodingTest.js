@@ -43,6 +43,7 @@ describe('Feature: ENCODING', function() {
 
       options.host = HOST;
       options.port = PORT;
+      options.path = '/relay';
       options.headers = {};
       options.method = 'GET';
       options.headers['content-type'] = 'application/json';
