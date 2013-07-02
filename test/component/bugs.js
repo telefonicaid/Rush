@@ -4,6 +4,7 @@ var config = require('./config.js');
 var redis = require('redis');
 
 var expect = chai.expect;
+var listener = require('../../lib/listener.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -16,6 +17,15 @@ var ENDPOINT = config.externalEndpoint;
 var QUEUE = "wrL:hpri"; //Task
 
 describe('ISSUE #113', function () {
+
+  before(function (done) {
+    listener.start(done);
+  });
+
+  after(function (done) {
+    listener.stop(done);
+  });
+
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
   rc.flushall();
