@@ -109,6 +109,7 @@ function executeTest(method, content, newHeaders, persistence, done) {
     else if(headers['X-relayer-host'] === FAKEENDPOINT){
       expect(responses).to.have.property('STATE:error');
       expect(responses).to.not.have.property('STATE:completed');
+      expect(responses).to.have.property('STATE:persistence_state');
     }
     done();
   }
