@@ -43,7 +43,6 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
         options.headers['x-relayer-httpcallback'] = httpCallBack;
 
         utils.makeRequest(options, content, function(err, data) {
-          console.log(err, data);
         });
 
       },
