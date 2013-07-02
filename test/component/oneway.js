@@ -44,7 +44,7 @@ describe('TASK QUEUE', function () {
         {method: 'PUT', headers: {}, name : "Case 8: Task should be valid with PUT method"},
         {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "Case 9: Task should have property x-relayer-topic"},
         {method: 'PUT', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Case 10: Task should have property x-relayer-proxy"},
-        {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "Case 11: Task should have property x-relayer-topic"}
+        {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name : "Case 11: Task should have property x-relayer-encoding"}
       ];
 
   for(var i=0; i < dataSet.length; i++){
