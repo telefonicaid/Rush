@@ -98,8 +98,9 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
       if (petitionCorrect > serverTimes) {
         parsedJSON = JSON.parse(response);
 
-        parsedJSON.should.have.property('error', 'Not relayed request 500');
-        parsedJSON.should.have.property('statusCode', 500);
+        parsedJSON.should.have.property('exception');
+        parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+        parsedJSON['exception'].should.have.property('exceptionText', 'Not relayed request 500');
 
         parsedJSON.should.have.property('headers');
         parsedJSON.should.have.property('body');

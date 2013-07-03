@@ -201,7 +201,11 @@ describe('Feature: Persistence', function() {
       }
     ], function(err, res) {
       var resGet = res[1];
-      resGet.should.have.property('error', 'getaddrinfo ENOTFOUND');
+
+      resGet.should.have.property('exception');
+      resGet['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+      resGet['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
+
       done();
     });
   });

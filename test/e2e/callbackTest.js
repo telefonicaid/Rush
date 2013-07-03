@@ -203,8 +203,9 @@ describe('Feature: HTTP_Callback', function() {
               var parsedJSON = JSON.parse(response);
               should.not.exist(parsedJSON.result);
 
-              parsedJSON.should.have.property('error',
-                  'getaddrinfo ENOTFOUND');
+              parsedJSON.should.have.property('exception');
+              parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+              parsedJSON['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
 
               res.writeHead(200);
               res.end();

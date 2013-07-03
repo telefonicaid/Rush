@@ -351,8 +351,9 @@ describe('Feature: Persistence HTTP_Callback', function() {
           should.not.exist(parsedJSON.result);
 
           //Test content
-          parsedJSON.should.have.property('error',
-              'getaddrinfo ENOTFOUND');
+          parsedJSON.should.have.property('exception');
+          parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+          parsedJSON['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
 
           res.writeHead(200);
           res.end();
@@ -363,8 +364,9 @@ describe('Feature: Persistence HTTP_Callback', function() {
           setTimeout(function() {
             utils.makeRequest(options, '', function(err, data) {
               var JSONparsed = JSON.parse(data);
-              JSONparsed.should.have.property(
-                  'error', 'getaddrinfo ENOTFOUND');
+              parsedJSON.should.have.property('exception');
+              parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+              parsedJSON['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
               JSONparsed.should.have.property('callback_status', '200');
               done();
             });
