@@ -49,6 +49,7 @@ describe('Feature: Proxy Server', function() {
       var options = {};
       options.host = HOST;
       options.port = PORT;
+      options.path = '/relay';
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';

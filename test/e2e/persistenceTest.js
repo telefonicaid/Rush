@@ -18,6 +18,7 @@ function executeTest(method, content, persistence, done) {
   var id, options = {};
   options.host = HOST;
   options.port = PORT;
+  options.path = '/relay';
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
@@ -123,7 +124,8 @@ describe('Feature: Persistence', function() {
       should.not.exist(err);
       res.should.have.property('statusCode', 404);
       var JSONres = JSON.parse(data);
-      JSONres.should.have.property('error', 'ID ' + id + ' does not exist');
+      JSONres.should.have.property('exceptionId','SVC1006');
+      JSONres.should.have.property('exceptionText', 'Resource not_an_id does not exist');
       done();
     });
   });
@@ -148,6 +150,7 @@ describe('Feature: Persistence', function() {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
+    options.path = '/relay';
     options.headers = {};
     options.method = 'POST';
     options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
@@ -198,7 +201,11 @@ describe('Feature: Persistence', function() {
       }
     ], function(err, res) {
       var resGet = res[1];
-      resGet.should.have.property('error', 'getaddrinfo ENOTFOUND');
+
+      resGet.should.have.property('exception');
+      resGet['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+      resGet['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
+
       done();
     });
   });

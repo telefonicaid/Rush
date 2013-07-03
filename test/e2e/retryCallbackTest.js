@@ -30,6 +30,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
     var options = {};
     options.host = HOST;
     options.port = PORT;
+    options.path = '/relay';
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = APPLICATION_CONTENT;
@@ -97,8 +98,9 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
       if (petitionCorrect > serverTimes) {
         parsedJSON = JSON.parse(response);
 
-        parsedJSON.should.have.property('error', 'Not relayed request 500');
-        parsedJSON.should.have.property('statusCode', 500);
+        parsedJSON.should.have.property('exception');
+        parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+        parsedJSON['exception'].should.have.property('exceptionText', 'Not relayed request 500');
 
         parsedJSON.should.have.property('headers');
         parsedJSON.should.have.property('body');

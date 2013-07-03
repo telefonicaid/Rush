@@ -24,6 +24,7 @@ function executeTest(method, content, done) {
     host: HOST,
     port: PORT,
     method: method,
+    path: '/relay',
     headers: headers,
     //  key: fs.readFileSync('../../utils/server.key'),
     //   cert: fs.readFileSync('../../utils/server.crt'),
