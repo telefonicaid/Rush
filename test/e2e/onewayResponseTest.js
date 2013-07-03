@@ -30,6 +30,7 @@ describe('Feature: Oneway Response errors ', function() {
     options = {};
     options.host = HOST;
     options.port = PORT;
+    options.path = '/relay';
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = 'application/json';
@@ -40,18 +41,27 @@ describe('Feature: Oneway Response errors ', function() {
   it('Should return protocol error (test 1)', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:3001';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'Invalid protocol localhost:3001');
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Invalid protocol localhost:');
+
       done();
     });
   });
 
 
   it('Should return protocol error (test 2)', function(done) {
-    options.headers['X-Relayer-Host'] = 'no protocol';
+    var relayerHost = 'no protocol';
+    options.headers['X-Relayer-Host'] = relayerHost;
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'Invalid protocol no protocol');
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Protocol is not defined');
+
       done();
     });
   });
@@ -60,8 +70,12 @@ describe('Feature: Oneway Response errors ', function() {
   it('Should return invalid host error (test 3)', function(done) {
     options.headers['X-Relayer-Host'] = 'http://';
     utils.makeRequest(options, 'host error test', function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'Hostname expected. Empty host after protocol');
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Hostname expected. Empty host after protocol');
+
       done();
     });
   });
@@ -70,8 +84,12 @@ describe('Feature: Oneway Response errors ', function() {
   it('Should return invalid host error (test 4)', function(done) {
     options.headers['X-Relayer-Host'] = 'https://';
     utils.makeRequest(options, 'host error test', function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'Hostname expected. Empty host after protocol');
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Hostname expected. Empty host after protocol');
+
       done();
     });
   });
@@ -79,8 +97,12 @@ describe('Feature: Oneway Response errors ', function() {
   it('Should return invalid host error (test 5)', function(done) {
     options.headers['X-Relayer-Host'] = 'http://:8888';
     utils.makeRequest(options, 'host error test', function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'Hostname expected. Empty host after protocol');
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Hostname expected. Empty host after protocol');
+
       done();
     });
   });
@@ -88,19 +110,26 @@ describe('Feature: Oneway Response errors ', function() {
 
   it('Should return X-Relayer-Host missing error', function(done) {
     delete options.headers['X-Relayer-Host'];
-    utils.makeRequest(options, 'X-Relayer-Host missing test',
-        function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'x-relayer-host is missing');
+    utils.makeRequest(options, 'X-Relayer-Host missing test', function(e, data) {
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC1000');
+      parsedData.should.have.property('exceptionText', 'Missing mandatory parameter: x-relayer-host');
+
       done();
     });
   });
 
   it('Should return invialid protocol', function(done) {
-    options.headers['X-Relayer-Host'] = 'ftp://localhost:3001';
+    var protocol = 'ftp:';
+    options.headers['X-Relayer-Host'] = protocol + '//localhost:3001';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
-      JSON.parse(data).errors[0].should.be.equal(
-          'Invalid protocol ftp://localhost:3001');
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Invalid protocol ' + protocol);
+
       done();
     });
   });
@@ -110,7 +139,7 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
-      parsedJSON.should.not.have.property('errors');
+      parsedJSON.should.not.have.property('exceptionId');
       done();
     });
   });
@@ -120,7 +149,7 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
-      parsedJSON.should.not.have.property('errors');
+      parsedJSON.should.not.have.property('exceptionId');
       done();
     });
   });
@@ -130,7 +159,7 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
-      parsedJSON.should.not.have.property('errors');
+      parsedJSON.should.not.have.property('exceptionId');
       done();
     });
   });
@@ -140,7 +169,7 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
-      parsedJSON.should.not.have.property('errors');
+      parsedJSON.should.not.have.property('exceptionId');
       done();
     });
   });
@@ -155,9 +184,11 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options2, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('errors');
-      jsonRes.errors.should.include('invalid persistence type: INVALID');
+      jsonRes.should.have.property('exceptionId', 'SVC0003');
+      jsonRes.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-persistence. Possible ' +
+          'values are: BODY, STATUS, HEADER');
       done();
+
     });
   });
 
@@ -169,8 +200,10 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('errors');
-      jsonRes.errors.should.include('invalid retry value: 5-7,4,8');
+      jsonRes.should.have.property('exceptionId', 'SVC0002');
+      jsonRes.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-retry');
+      jsonRes.should.have.property('userMessage', 'Invalid retry value: 5-7,4,8');
+
       done();
     });
   });
@@ -183,9 +216,8 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('errors');
-      jsonRes.errors.should.include('Hostname expected.' +
-          ' Empty host after protocol');
+      jsonRes.should.have.property('exceptionId', 'SVC0002');
+      jsonRes.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-httpcallback');
       done();
     });
   });
@@ -198,8 +230,8 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
-      jsonRes.should.have.property('errors');
-      jsonRes.errors.should.include('Invalid protocol localhost:8000');
+      jsonRes.should.have.property('exceptionId', 'SVC0002');
+      jsonRes.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-httpcallback');
       done();
     });
   });

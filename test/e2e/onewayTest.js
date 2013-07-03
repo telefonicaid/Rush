@@ -23,6 +23,7 @@ function executeTest(method, content, done) {
   var options = {
     host: HOST,
     port: PORT,
+    path: '/relay',
     method: method,
     headers: headers
   };

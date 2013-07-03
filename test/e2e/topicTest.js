@@ -16,6 +16,7 @@ function executeTest(method, done) {
   options.method = method;
   options.host = HOST;
   options.port = PORT;
+  options.path = '/relay';
   options.headers = {};
   options.headers['content-type'] = 'application/json';
   options.headers['X-Relayer-Host'] = 'http://localhost:8014';
