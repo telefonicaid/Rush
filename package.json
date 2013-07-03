@@ -1,42 +1,57 @@
 {
-    "name":"Rush",
-    "version":"0.0.1",
-    "author":"Transversal Development",
-    "description":"a simple HTTP-Reayer",
-    "contributors":[
-        {
-            "name":"Carlos Romero Brox",
-            "email":"brox@tid.es"
-        },
-        {
-            "name":"Marcos Reyes",
-            "email":"mru@tid.es"
-        }
-    ],
-    "repository":{
-        "type":"git",
-        "url":"https://mrutid@github.com/mrutid/Rush.git"
+  "name": "Rush",
+  "version": "0.0.1",
+  "author": "Transversal Development",
+  "description": "a simple HTTP-Reayer",
+  "contributors": [
+    {
+      "name": "Carlos Romero Brox",
+      "email": "brox@tid.es"
     },
-
-    "dependencies":{
-        "hiredis": "*",
-        "redis":"0.7.1",
-        "node-uuid":"*",
-        "async":"*",
-        "mongodb":"*",
-        "hooker":"*",
-        "logger":"https://github.com/telefonicaid/pditclogger/tarball/master",
-        "performanceFramework":"https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
-    },
-    "devDependencies":{
-        "mocha":"1.6.0",
-        "should":"1.2.0"
-    },
-    "license":"AGPL",
-    "engine":{
-        "node":"0.6.6"
-    },
-    "scripts": {
-        "test": "make test -C ./tests"
+    {
+      "name": "Marcos Reyes",
+      "email": "mru@tid.es"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://mrutid@github.com/mrutid/Rush.git"
+  },
+
+  "dependencies": {
+    "express": "3.2.4",
+    "redis": "0.8.4",
+    "node-uuid": "*",
+    "async": "*",
+    "mongodb": "*",
+    "hooker": "*",
+    "logger": "https://github.com/telefonicaid/pditclogger/tarball/master",
+    "performanceFramework": "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.5.3",
+    "grunt-contrib-watch": "~0.4.3",
+    "grunt": "~0.4.1",
+    "grunt-plato": "0.2.0",
+    "mocha": "~1.9.0",
+    "grunt-simple-mocha": "~0.4.0",
+    "chai": "~1.5.0",
+    "sinon": "~1.6.0",
+    "istanbul": "~0.1.34",
+    "grunt-exec": "~0.4.0",
+    "dox-foundation": "*",
+    "grunt-cli": "0.1.8",
+    "request": "2.21.0",
+    "should": "1.2.0",
+    "superagent": "0.14.9"
+
+	
+  },
+  "license": "AGPL",
+  "engine": {
+    "node": "0.6.6"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
 }

@@ -1,0 +1,10 @@
+.idea
+*.log
+node_modules
+coverage
+report
+*.crt
+*.csr
+*.key
+*.key.org
+

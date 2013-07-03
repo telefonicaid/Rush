@@ -1,7 +1,6 @@
 language: node_js
 
 node_js:
- - "0.6"
  - "0.8"
  - "0.10"
 
@@ -18,5 +17,12 @@ install:
  - npm install
 
 before_script:
- - node src/listener.js &
- - node src/consumer.js &
+ - cd ./utils
+ - openssl genrsa -des3 -passout pass:test1234 -out server.key 1024
+ - openssl req -new -key server.key -batch -passin pass:test1234 -out server.csr
+ - cp server.key server.key.org
+ - openssl rsa -in server.key.org -passin pass:test1234 -out server.key
+ - openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+ - cd ..
+ - node lib/listener.js &
+ - node lib/consumer.js &
