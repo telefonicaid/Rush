@@ -12,7 +12,7 @@ var PORT = config.rushServer.port;
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
 
-var URL_RUSH = 'http://' + HOST + ':' + PORT;
+var URL_RUSH = 'http://' + HOST + ':' + PORT + '/relay';
 var ENDPOINT = config.externalEndpoint;
 var QUEUE = "wrL:hpri"; //Task
 
@@ -36,8 +36,11 @@ describe('ISSUE #113', function () {
       .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
       .set('x-relayer-persistence', "")
       .end(function(err, res) {
+
+          console.log(res.body);
+
         expect(err).to.not.exist;
-        expect(res.statusCode).to.equal(200); //Status code 200
+        expect(res.statusCode).to.equal(201); //Status code 201
         expect(res.body).to.exist;
         expect(res.body.id).to.exist;
 
