@@ -151,7 +151,9 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
   before(function (done) {
     listener.start(function() {
-      consumer.start(done);
+      consumer.start(function(){
+              console.log('eeeeeeeeeeeeeeeeeeeeeee');
+      });
     });
   });
 
