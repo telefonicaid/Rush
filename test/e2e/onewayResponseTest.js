@@ -30,7 +30,6 @@ describe('Feature: Oneway Response errors ', function() {
     options = {};
     options.host = HOST;
     options.port = PORT;
-    options.path = '/relay';
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = 'application/json';
@@ -40,68 +39,66 @@ describe('Feature: Oneway Response errors ', function() {
 
   it('Should return protocol error (test 1)', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:3001';
+    options.headers['X-Relayer-Protocol'] = 'ftp';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
 
       var parsedData = JSON.parse(data);
-      parsedData.should.have.property('exceptionId', 'SVC0002');
-      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
-      parsedData.should.have.property('userMessage', 'Invalid protocol localhost:');
+      parsedData.should.have.property('exceptionId', 'SVC0003');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-protocol. ' +
+          'Possible values are: http, https');
 
       done();
     });
   });
 
 
-  it('Should return protocol error (test 2)', function(done) {
-    var relayerHost = 'no protocol';
-    options.headers['X-Relayer-Host'] = relayerHost;
-    utils.makeRequest(options, 'Protocol error test', function(e, data) {
+  it('Should return invalid host error (test 2)', function(done) {
+    options.headers['X-Relayer-Host'] = 'http://localhost:2001';
+    utils.makeRequest(options, 'host error test', function(e, data) {
 
       var parsedData = JSON.parse(data);
       parsedData.should.have.property('exceptionId', 'SVC0002');
       parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
-      parsedData.should.have.property('userMessage', 'Protocol is not defined');
+      parsedData.should.have.property('userMessage', 'Valid format: host[:port]');
 
       done();
     });
   });
-
 
   it('Should return invalid host error (test 3)', function(done) {
-    options.headers['X-Relayer-Host'] = 'http://';
+    options.headers['X-Relayer-Host'] = 'localhost:65536';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
       var parsedData = JSON.parse(data);
       parsedData.should.have.property('exceptionId', 'SVC0002');
       parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
-      parsedData.should.have.property('userMessage', 'Hostname expected. Empty host after protocol');
+      parsedData.should.have.property('userMessage', 'Port should be a number between 0 and 65535');
 
       done();
     });
   });
 
-
   it('Should return invalid host error (test 4)', function(done) {
-    options.headers['X-Relayer-Host'] = 'https://';
+    options.headers['X-Relayer-Host'] = '';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
       var parsedData = JSON.parse(data);
-      parsedData.should.have.property('exceptionId', 'SVC0002');
-      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
-      parsedData.should.have.property('userMessage', 'Hostname expected. Empty host after protocol');
+      console.log(data);
+      parsedData.should.have.property('exceptionId', 'SVC1000');
+      parsedData.should.have.property('exceptionText', 'Missing mandatory parameter: x-relayer-host');
 
       done();
     });
   });
 
   it('Should return invalid host error (test 5)', function(done) {
-    options.headers['X-Relayer-Host'] = 'http://:8888';
+    options.headers['X-Relayer-Host'] = ':8888';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
       var parsedData = JSON.parse(data);
       parsedData.should.have.property('exceptionId', 'SVC0002');
       parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
-      parsedData.should.have.property('userMessage', 'Hostname expected. Empty host after protocol');
+      parsedData.should.have.property('userMessage', 'Valid format: host[:port]');
 
       done();
     });
@@ -120,22 +117,9 @@ describe('Feature: Oneway Response errors ', function() {
     });
   });
 
-  it('Should return invialid protocol', function(done) {
-    var protocol = 'ftp:';
-    options.headers['X-Relayer-Host'] = protocol + '//localhost:3001';
-    utils.makeRequest(options, 'Protocol error test', function(e, data) {
-
-      var parsedData = JSON.parse(data);
-      parsedData.should.have.property('exceptionId', 'SVC0002');
-      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
-      parsedData.should.have.property('userMessage', 'Invalid protocol ' + protocol);
-
-      done();
-    });
-  });
-
   it('Should not return an error. Should return and ID', function(done) {
-    options.headers['X-Relayer-Host'] = 'http://localhost:3001';
+    options.headers['X-Relayer-Host'] = 'localhost:3001';
+    options.headers['X-Relayer-protocol'] = 'http';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
@@ -145,7 +129,8 @@ describe('Feature: Oneway Response errors ', function() {
   });
 
   it('Should not return an error. Should return and ID', function(done) {
-    options.headers['X-Relayer-Host'] = 'https://localhost:3001';
+    options.headers['X-Relayer-Host'] = 'localhost:3001';
+    options.headers['X-Relayer-protocol'] = 'https';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
@@ -155,7 +140,7 @@ describe('Feature: Oneway Response errors ', function() {
   });
 
   it('Should not return an error. Should return and ID', function(done) {
-    options.headers['X-Relayer-Host'] = 'http://localhost';
+    options.headers['X-Relayer-Host'] = 'localhost';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
@@ -165,7 +150,8 @@ describe('Feature: Oneway Response errors ', function() {
   });
 
   it('Should not return an error. Should return and ID', function(done) {
-    options.headers['X-Relayer-Host'] = 'https://localhost';
+    options.headers['X-Relayer-Host'] = 'localhost';
+    options.headers['X-Relayer-protocol'] = 'https';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
@@ -178,7 +164,7 @@ describe('Feature: Oneway Response errors ', function() {
     var id;
 
     var options2 = options;
-    options2.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options2.headers['X-Relayer-Host'] = 'notAServer:8014';
     options2.headers['X-Relayer-Persistence'] = 'INVALID';
 
     utils.makeRequest(options2, 'body request', function(err, res) {
@@ -194,7 +180,7 @@ describe('Feature: Oneway Response errors ', function() {
 
   it('invalid retry parameter should throw error', function(done) {
     var id;
-    options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-Retry'] = '5-7,4,8';
 
     utils.makeRequest(options, 'body request', function(err, res) {
@@ -210,7 +196,7 @@ describe('Feature: Oneway Response errors ', function() {
 
   it('invalid httpcallback should throw error', function(done) {
     var id;
-    options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-httpcallback'] = 'http://';
 
     utils.makeRequest(options, 'body request', function(err, res) {
@@ -224,7 +210,7 @@ describe('Feature: Oneway Response errors ', function() {
 
   it('invalid httpcallback should throw error', function(done) {
     var id;
-    options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-httpcallback'] = 'localhost:8000';
 
     utils.makeRequest(options, 'body request', function(err, res) {

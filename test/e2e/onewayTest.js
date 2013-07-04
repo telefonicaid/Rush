@@ -16,14 +16,13 @@ var serversToShutDown = [];
 
 function executeTest(method, content, done) {
   var headers = {
-    'X-Relayer-Host': 'http://localhost:8014',
+    'X-Relayer-Host': 'localhost:8014',
     'testheader': HEADER_TEST_VALUE
   };
 
   var options = {
     host: HOST,
     port: PORT,
-    path: '/relay',
     method: method,
     headers: headers
   };
@@ -33,7 +32,7 @@ function executeTest(method, content, done) {
         utils.makeRequest(options, content, function() {
         });
       },
-      function(method, headers, body) {
+      function(method, headers, url, body) {
         method.should.equal(method);
 
         headers.should.have.property('testheader',

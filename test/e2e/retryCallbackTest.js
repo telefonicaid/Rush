@@ -15,7 +15,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 
   var CONTENT = 'Retry Test',
       APPLICATION_CONTENT = 'application/json',
-      RELAYER_HOST = 'http://localhost:' + config.simpleServerPort,
+      RELAYER_HOST = 'localhost:' + config.simpleServerPort,
       PERSONAL_HEADER_1_NAME = 'personal-header-1',
       PERSONAL_HEADER_1_VALUE = 'TEST1',
       PERSONAL_HEADER_2_NAME = 'personal-header-2',
@@ -30,7 +30,6 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
     var options = {};
     options.host = HOST;
     options.port = PORT;
-    options.path = '/relay';
     options.method = 'POST';
     options.headers = {};
     options.headers['content-type'] = APPLICATION_CONTENT;

@@ -16,15 +16,19 @@ var HEADER_TEST_VALUE = 'valueTest';
 var serversToShutDown = [];
 
 function executeTest(method, content, done) {
+
+  var PATH = '/test?parameters=sent&tab=01/test2?newparam=test&pAsSindng=Session';
+
   var headers = {
-    'X-Relayer-Host': 'http://127.0.0.1:8014/test?parameters=sent&tab=01/test2?newparam=test&pAsSindng=Session',
+    'X-Relayer-Host': '127.0.0.1:' + config.simpleServerPort,
+    'X-Relayer-Protocol': 'http',
     'testheader': HEADER_TEST_VALUE
   };
   var options = {
     host: HOST,
     port: PORT,
+    path: PATH,
     method: method,
-    path: '/relay',
     headers: headers,
     //  key: fs.readFileSync('../../utils/server.key'),
     //   cert: fs.readFileSync('../../utils/server.crt'),
@@ -32,14 +36,14 @@ function executeTest(method, content, done) {
     rejectUnauthorized: false
   };
 
-
   var simpleServer = server.serverListener(
       function () {
         utils.makeRequestHttps(options, content, function () {
         });
       },
-      function (method, headers, body) {
+      function (method, headers, url, body) {
         method.should.be.equal(method);
+        url.should.be.equal(PATH);
         headers.should.have.property('testheader', HEADER_TEST_VALUE);
         headers.should.have.property('x-forwarded-for');
         headers.should.have.property('host', config.simpleServerHostname + ":" + config.simpleServerPort);

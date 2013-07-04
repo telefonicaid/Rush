@@ -22,7 +22,7 @@ function executeTest(method, content, persistence, done) {
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
-  options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+  options.headers['X-Relayer-Host'] = 'localhost:' + config.simpleServerPort;
   options.headers['X-relayer-persistence'] = persistence;
   options.headers['test-header'] = 'test header';
 
@@ -45,7 +45,7 @@ function executeTest(method, content, persistence, done) {
 
           function checkResponse(err, data, res) {
 
-            if (res.statusCode !== 404 && ! checked) {
+            if (!checked && res.statusCode !== 404) {
 
               clearInterval(interval);
 
@@ -150,10 +150,9 @@ describe('Feature: Persistence', function() {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
-    options.path = '/relay';
     options.headers = {};
     options.method = 'POST';
-    options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-relayer-persistence'] = 'BODY';
     options.headers['test-header'] = 'test header';
 
@@ -181,7 +180,7 @@ describe('Feature: Persistence', function() {
 
           function checkResponse(err, data, res) {
 
-            if (res.statusCode !== 404 && ! checked) {
+            if (!checked && res.statusCode !== 404) {
 
               clearInterval(interval);
 

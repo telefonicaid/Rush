@@ -49,12 +49,11 @@ describe('Feature: Proxy Server', function() {
       var options = {};
       options.host = HOST;
       options.port = PORT;
-      options.path = '/relay';
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';
       options.headers['x-relayer-proxy'] = 'localhost:8014';
-      options.headers['x-relayer-host'] = 'http://' + relayerHost;
+      options.headers['x-relayer-host'] = relayerHost;
 
       //Insert our headers
       for (var header in headers) {
@@ -70,7 +69,8 @@ describe('Feature: Proxy Server', function() {
       });
     }
 
-    proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders, receivedContent) {
+    proxyServer = simpleServer.serverListener(makeRequest,
+        function (usedMethod, receivedHeaders, usedURL, receivedContent) {
       usedMethod.should.be.equal(method);
 
       receivedHeaders.should.have.property('host', relayerHost);  //target host
@@ -91,9 +91,9 @@ describe('Feature: Proxy Server', function() {
         var options = { port: PORT, host: HOST,
           path: '/response/' + id, method: 'GET'};
 
-        function checkResponse(err, data) {
+        function checkResponse(err, data, res) {
 
-          if (data !== '{}' && ! checked) {
+          if (!checked && res.statusCode !== 404) {
 
             clearInterval(interval);
             should.not.exist(err);

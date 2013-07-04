@@ -11,7 +11,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var applicationContent = 'application/json',
-    relayerHost = 'http://localhost:' + config.simpleServerPort,
+    relayerHost = 'localhost:' + config.simpleServerPort,
     personalHeader1name = 'personal-header-1',
     personalHeader1value = 'TEST1',
     personalHeader2name = 'personal-header-2',
@@ -67,9 +67,9 @@ function makeRequest(type, persistence, content, done) {
         var options = { port: PORT, host: HOST,
           path: '/response/' + id, method: 'GET'};
 
-        function checkResponse(err, data) {
+        function checkResponse(err, data, res) {
 
-          if (data !== '{}' && ! checked) {
+          if (!checked && res.statusCode !== 404) {
 
             clearInterval(interval);
 
@@ -120,7 +120,6 @@ function makeRequest(type, persistence, content, done) {
             function() {
 
               //Make request
-              options.path = '/relay'
               options.method = type;
               options.headers['x-relayer-persistence'] = persistence;
               options.headers['x-relayer-host'] = relayerHost;
@@ -133,7 +132,7 @@ function makeRequest(type, persistence, content, done) {
               });
             },
 
-            function(method, headers, contentReceived) {
+            function(method, headers, url, contentReceived) {
               method.should.be.equal(type);
               testHeraders(headers);
               contentReceived.should.be.equal(content);
@@ -278,7 +277,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
             });
           },
 
-          function(method, headers, contentReceived) {
+          function(method, headers, url, contentReceived) {
             method.should.be.equal(type);
             testHeraders(headers);
             contentReceived.should.be.equal(content);
@@ -289,9 +288,9 @@ describe('Feature: Persistence HTTP_Callback', function() {
               var options = { port: PORT, host: HOST,
                 path: '/response/' + id, method: 'GET'};
 
-              function checkResponse(err, data) {
+              function checkResponse(err, data, res) {
 
-                if (data !== '{}' && data.indexOf('callback_err') !== -1 && ! checked) {
+                if (!checked && res.statusCode !== 404 &&  data.indexOf('callback_err') !== -1) {
 
                   clearInterval(interval);
 
@@ -333,7 +332,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
       var portCallBack = config.callBackPort,
           callbackServer,
-          relayerHost = 'http://noexiste:1234',
+          relayerHost = 'noexiste:1234',
           httpCallBack = 'http://localhost:' + portCallBack, id;
 
       //Callback Server
