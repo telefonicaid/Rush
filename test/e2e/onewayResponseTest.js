@@ -83,7 +83,6 @@ describe('Feature: Oneway Response errors ', function() {
     utils.makeRequest(options, 'host error test', function(e, data) {
 
       var parsedData = JSON.parse(data);
-      console.log(data);
       parsedData.should.have.property('exceptionId', 'SVC1000');
       parsedData.should.have.property('exceptionText', 'Missing mandatory parameter: x-relayer-host');
 
