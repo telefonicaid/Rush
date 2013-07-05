@@ -12,8 +12,8 @@ var PORT = config.rushServer.port;
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
 
-var URL_RUSH = 'http://' + HOST + ':' + PORT + '/relay';
-var ENDPOINT = config.externalEndpoint;
+var URL_RUSH = 'http://' + HOST + ':' + PORT;
+var ENDPOINT = config.externalEndpoint + ':' + config.externalEndpointPort;
 var QUEUE = "wrL:hpri"; //Task
 
 describe('ISSUE #113', function () {
