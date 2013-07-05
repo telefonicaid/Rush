@@ -43,16 +43,18 @@ describe('Feature: Proxy Server', function() {
   function makeTest(relayerHost, method, headers, content, done) {
 
     var id;
+    var PATH = '/test1/test2/test3?aaa=bbb&ccc=ddd';
 
     var makeRequest = function () {
 
       var options = {};
       options.host = HOST;
       options.port = PORT;
+      options.path = PATH;
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';
-      options.headers['x-relayer-proxy'] = 'localhost:8014';
+      options.headers['x-relayer-proxy'] = config.simpleServerHostname + ':' + config.simpleServerPort;;
       options.headers['x-relayer-host'] = relayerHost;
 
       //Insert our headers
@@ -69,9 +71,12 @@ describe('Feature: Proxy Server', function() {
       });
     }
 
-    proxyServer = simpleServer.serverListener(makeRequest,
-        function (usedMethod, receivedHeaders, usedURL, receivedContent) {
+    proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders,
+        usedURL, receivedContent) {
+
       usedMethod.should.be.equal(method);
+      usedURL.should.be.equal('http://' + relayerHost + PATH);
+
 
       receivedHeaders.should.have.property('host', relayerHost);  //target host
       receivedHeaders.should.have.property('x-forwarded-for', '127.0.0.1');

@@ -46,7 +46,7 @@ describe('Feature: ENCODING', function() {
       options.headers = {};
       options.method = 'GET';
       options.headers['content-type'] = 'application/json';
-      options.headers['X-Relayer-Host'] = 'localhost:8014';
+      options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort,
       options.headers['X-relayer-persistence'] = 'BODY';
       options.headers['X-relayer-encoding'] = 'base64';
 

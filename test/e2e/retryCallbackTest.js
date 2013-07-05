@@ -15,7 +15,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 
   var CONTENT = 'Retry Test',
       APPLICATION_CONTENT = 'application/json',
-      RELAYER_HOST = 'localhost:' + config.simpleServerPort,
+      RELAYER_HOST =  config.simpleServerHostname + ':' + config.simpleServerPort,
       PERSONAL_HEADER_1_NAME = 'personal-header-1',
       PERSONAL_HEADER_1_VALUE = 'TEST1',
       PERSONAL_HEADER_2_NAME = 'personal-header-2',

@@ -103,6 +103,19 @@ describe('Feature: Oneway Response errors ', function() {
     });
   });
 
+  it('Should return invalid host error (test 6)', function(done) {
+    options.headers['X-Relayer-Host'] = 'localhost:8888/test';
+    utils.makeRequest(options, 'host error test', function(e, data) {
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-host');
+      parsedData.should.have.property('userMessage', 'Valid format: host[:port]');
+
+      done();
+    });
+  });
+
 
   it('Should return X-Relayer-Host missing error', function(done) {
     delete options.headers['X-Relayer-Host'];
@@ -155,6 +168,18 @@ describe('Feature: Oneway Response errors ', function() {
       var parsedJSON = JSON.parse(data);
       parsedJSON.should.have.property('id');
       parsedJSON.should.not.have.property('exceptionId');
+      done();
+    });
+  });
+
+  it('Should return an ID when GET /response/:id and X-Relayer-Host header is defined', function(done) {
+    options.headers['X-Relayer-Host'] = 'localhost';
+    options.headers['X-Relayer-protocol'] = 'https';
+    utils.makeRequest(options, 'Protocol error test', function(e, data, res) {
+      res.statusCode.should.be.equal(201);
+      var parsedJSON = JSON.parse(data);
+      parsedJSON.should.have.property('id');
+      Object.keys(parsedJSON).length.should.be.equal(1);
       done();
     });
   });

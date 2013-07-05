@@ -11,7 +11,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var applicationContent = 'application/json',
-    relayerHost = 'localhost:' + config.simpleServerPort,
+    relayerHost =  config.simpleServerHostname + ':' + config.simpleServerPort,
     personalHeader1name = 'personal-header-1',
     personalHeader1value = 'TEST1',
     personalHeader2name = 'personal-header-2',
@@ -114,6 +114,8 @@ function makeRequest(type, persistence, content, done) {
       //The petition will executed once the callback server and the target server are up
       function() {
 
+        var PATH = '/test1/test2?a=b&b=c';
+
         //Start up the server
         var simpleServer = server.serverListener(
 
@@ -121,6 +123,7 @@ function makeRequest(type, persistence, content, done) {
 
               //Make request
               options.method = type;
+              options.path = PATH;
               options.headers['x-relayer-persistence'] = persistence;
               options.headers['x-relayer-host'] = relayerHost;
               options.headers['x-relayer-httpcallback'] = httpcallback;
@@ -134,6 +137,7 @@ function makeRequest(type, persistence, content, done) {
 
             function(method, headers, url, contentReceived) {
               method.should.be.equal(type);
+              url.should.be.equal(PATH);
               testHeraders(headers);
               contentReceived.should.be.equal(content);
             }
