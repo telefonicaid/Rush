@@ -16,26 +16,32 @@ function executeTest(method, content, persistence, done) {
   'use strict';
 
   var id, options = {};
+  var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d';
+
   options.host = HOST;
   options.port = PORT;
-  options.path = '/relay';
+  options.path = PATH;
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
-  options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+  options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
   options.headers['X-relayer-persistence'] = persistence;
-  options.headers['test-header'] = 'test header';
-
+  options.headers[HEADER_NAME] = HEADER_VALUE;
 
   var simpleServer = server.serverListener(
 
       function() {
         utils.makeRequest(options, content, function(err, res) {
+          should.not.exist(err);
           id = JSON.parse(res).id;
         });
       },
 
-      function(method, headers, body) {
+      function(methodUsed, headersReceived, urlUsed, bodyReceived) {
+
+        methodUsed.should.be.equal(method);
+        headersReceived.should.have.property(HEADER_NAME, HEADER_VALUE);
+        urlUsed.should.be.equal(PATH);
 
         var checked = false;
         var interval = setInterval(function() {
@@ -45,7 +51,7 @@ function executeTest(method, content, persistence, done) {
 
           function checkResponse(err, data, res) {
 
-            if (res.statusCode !== 404 && ! checked) {
+            if (!checked && res.statusCode !== 404) {
 
               clearInterval(interval);
 
@@ -55,8 +61,7 @@ function executeTest(method, content, persistence, done) {
 
                 JSONres.should.have.property('body');
                 JSONres.body.should.be.equal(content);
-                JSONres.headers.should.have.property('test-header',
-                    'test header');
+                JSONres.headers.should.have.property(HEADER_NAME, HEADER_VALUE);
                 JSONres.should.have.property('statusCode', '200');
 
               } else if (persistence === 'HEADER') {
@@ -64,8 +69,7 @@ function executeTest(method, content, persistence, done) {
 
                 JSONres.should.not.have.property('body');
                 JSONres.should.have.property('headers');
-                JSONres.headers.should.have.property('test-header',
-                    'test header');
+                JSONres.headers.should.have.property(HEADER_NAME, HEADER_VALUE);
                 JSONres.should.have.property('statusCode', '200');
 
               } else if (persistence === 'STATUS') {
@@ -150,10 +154,9 @@ describe('Feature: Persistence', function() {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
-    options.path = '/relay';
     options.headers = {};
     options.method = 'POST';
-    options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-relayer-persistence'] = 'BODY';
     options.headers['test-header'] = 'test header';
 
@@ -181,7 +184,7 @@ describe('Feature: Persistence', function() {
 
           function checkResponse(err, data, res) {
 
-            if (res.statusCode !== 404 && ! checked) {
+            if (!checked && res.statusCode !== 404) {
 
               clearInterval(interval);
 
