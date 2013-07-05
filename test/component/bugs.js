@@ -37,8 +37,6 @@ describe('ISSUE #113', function () {
       .set('x-relayer-persistence', "")
       .end(function(err, res) {
 
-          console.log(res.body);
-
         expect(err).to.not.exist;
         expect(res.statusCode).to.equal(201); //Status code 201
         expect(res.body).to.exist;
