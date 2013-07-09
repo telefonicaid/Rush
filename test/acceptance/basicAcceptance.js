@@ -22,9 +22,9 @@ var describeTimeout = 60000;
 
 
 function _validScenario(data, i){
-	async.series([
-		function() {
 		it(data.name, function(done){
+
+			_.extend(data.headers, {"x-relayer-persistence" : "BODY"});
 			var agent = superagent.agent();
 			agent
 					[data.method.toLowerCase()](RUSHENDPOINT )
@@ -42,10 +42,9 @@ function _validScenario(data, i){
 						setTimeout(function () {
 							agent
 									.get(RUSHENDPOINT +'/response/' + res.body['id'])
-									.end(
-									function onResponse2(err2, res2) {
+									.end(function onResponse2(err2, res2) {
 										res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-										res2.should.have.status(200);
+										expect(res.statusCode).to.equal(200);
 										res2.text.should.include('id');
 										//res2.text.should.not.include('exception');
 										if (data.headers['x-relayer-topic']) {
@@ -54,15 +53,15 @@ function _validScenario(data, i){
 										else{
 											res2.body['topic'].should.eql('undefined');
 										}
-										if (vm) {console.log(i+1);
-											console.log(res2.body);}
+										if (vm) {
+											console.log(i+1);
+											console.log(res2.body);
+										}
+										done();
 									});
-
-							return done();
 						}, TIMEOUT);
 					});
 		});
-	}]);
 }
 
 
@@ -116,7 +115,7 @@ function _invalidScenario(data, i) {
 						}
 						done();
 					});
-		});
+			});
 		}]);
 }
 
@@ -285,9 +284,8 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 									res2.should.have.status(200);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
-
+									return done();
 								});
-						return done();
 					}, TIMEOUT);
 				};
 
@@ -321,9 +319,8 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 									res2.should.have.status(200);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
-
+									return done();
 								});
-						return done();
 					}, TIMEOUT);
 				};
 
@@ -357,9 +354,9 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 									res2.should.have.status(200);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
-
+									return done();
 								});
-						return done();
+
 					}, TIMEOUT);
 				};
 
@@ -393,9 +390,8 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 									res2.should.have.status(200);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
-
+									return done();
 								});
-						return done();
 					}, TIMEOUT);
 				};
 
@@ -409,11 +405,12 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 
 describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 	this.timeout(describeTimeout);
-});
+
 
 	describe('\nCheck single features: with a valid header policy request using method /GET', function () {
-		async.series([
-			function() {
+
+
+
 		var dataSetGET = [
 			{method: 'GET', headers: {"x-relayer-persistence" : "HEADER"}, name : "Persistance HEADER: Should accept the request and retrieve stored header"},
 			{method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name : "Persistance HEADER: Should accept the request and retrieve stored status"},
@@ -430,9 +427,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 
 		for(i=0; i < dataSetGET.length; i++){
 			_validScenario(dataSetGET[i]);  //Launch every test in data set
-			}
 		}
-		])
 	});
 
 
@@ -451,12 +446,9 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'POST', headers: {'x-relayer-topic' : 'TEST'}, name : "TOPIC: Should accept the request and retrieve the topic and the completed task"}
 		];
 
-		async.series([
-			function() {
-				for(i=0; i < dataSetPOST.length; i++){
+		for(i=0; i < dataSetPOST.length; i++){
 			_validScenario(dataSetPOST[i]);  //Launch every test in data set
 		}
-			}]);
 
 	});
 
@@ -476,10 +468,9 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 		];
 
 
-				for(i=0; i < dataSetPUT.length; i++){
-
+		for(i=0; i < dataSetPUT.length; i++){
 			_validScenario(dataSetPUT[i]);  //Launch every test in data set
-				}
+		}
 	});
 
 	describe('\nCheck single features: with a valid header policy request using method /DELETE', function () {
@@ -522,7 +513,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			_validScenario(dataSetOPTIONS[i]);  //Launch every test in data set
 		}
 	});
-
+});
 
 
 
