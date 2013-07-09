@@ -1,8 +1,2 @@
-exports.rushServer = {hostname: 'localhost', port: 5001};
-//exports.rushServer = {hostname: 'http://46.137.42.71', port: 5001};
-exports.rushServerHttps = {hostname: 'localhost', port: 5002};
-exports.callBackPort = 8015;
-exports.simpleServerHostname = '127.0.0.1';
-exports.simpleServerPort = 8014;
+exports.rushServer = {hostname: '46.137.53.220', port: 80};
 exports.externalEndpoint = 'http://www.google.es';
-exports.externalEndpointPort = 8080;
