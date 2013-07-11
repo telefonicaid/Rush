@@ -11,13 +11,13 @@ var PORT = config.rushServer.port;
 var RUSHENDPOINT = 'http://' + HOST + ':' + PORT;
 var ENDPOINT = config.externalEndpoint;
 if (!ENDPOINT){
-	ENDPOINT = 'http://www.google.es';
+	ENDPOINT = 'www.google.es';
 }
 // Verbose MODE
 var vm = false;
 // Time to wait to check the status of the task
 var TIMEOUT = 1000;
-var CREATED = 200; // 201 for UNICA
+var CREATED = 201; // 200 for older versions
 var describeTimeout = 60000;
 
 
