@@ -44,7 +44,7 @@ function _validScenario(data, i){
 								.get(RUSHENDPOINT +'/response/' + res.body['id'])
 								.end(function onResponse2(err2, res2) {
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									expect(res.statusCode).to.equal(200);
+									expect(res.statusCode).to.equal(CREATED);
 									res2.text.should.include('id');
 									//res2.text.should.not.include('exception');
 									if (data.headers['x-relayer-topic']) {
@@ -281,7 +281,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(200);
+									res2.should.have.status(CREATED);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
 									return done();
@@ -316,7 +316,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(200);
+									res2.should.have.status(CREATED);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
 									return done();
@@ -351,7 +351,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(200);
+									res2.should.have.status(CREATED);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
 									return done();
@@ -387,7 +387,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(200);
+									res2.should.have.status(CREATED);
 									res2.text.should.include('id');
 									res2.body['topic'].should.eql('undefined');
 									return done();
