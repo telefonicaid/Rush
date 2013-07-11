@@ -19,12 +19,13 @@
   },
 
   "dependencies": {
+    "underscore" : "1.5.1",
     "express": "3.2.4",
     "redis": "0.8.4",
-    "node-uuid": "*",
-    "async": "*",
-    "mongodb": "*",
-    "hooker": "*",
+    "node-uuid": "1.4.0",
+    "async": "0.2.9",
+    "mongodb": "1.3.11",
+    "hooker": "0.2.3",
     "logger": "https://github.com/telefonicaid/pditclogger/tarball/new_log_format",
     "performanceFramework": "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
   },

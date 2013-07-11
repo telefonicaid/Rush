@@ -129,8 +129,6 @@ function makeRequest(type, persistence, content, done) {
               options.headers['x-relayer-httpcallback'] = httpcallback;
 
               utils.makeRequest(options, content, function(e, data) {
-                console.log(e);
-                console.log(data);
                 id = JSON.parse(data).id;
               });
             },
@@ -304,10 +302,9 @@ describe('Feature: Persistence HTTP_Callback', function() {
                   testHeraders(JSONRes.headers);
 
                   JSONRes.should.have.property('statusCode', '200');
-                  JSONRes.should.have.property('callback_err',
-                      'getaddrinfo ENOTFOUND');
+	                JSONRes['callback_err'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-                  checked = true;
+	                checked = true;
                   done();
 
                 }
@@ -354,11 +351,11 @@ describe('Feature: Persistence HTTP_Callback', function() {
           should.not.exist(parsedJSON.result);
 
           //Test content
-          parsedJSON.should.have.property('exception');
           parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
-          parsedJSON['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
+          parsedJSON['exception'].should.have.property('exceptionText');
+          parsedJSON['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-          res.writeHead(200);
+	        res.writeHead(200);
           res.end();
           callbackServer.close();
 
@@ -367,10 +364,12 @@ describe('Feature: Persistence HTTP_Callback', function() {
           setTimeout(function() {
             utils.makeRequest(options, '', function(err, data) {
               var JSONparsed = JSON.parse(data);
-              parsedJSON.should.have.property('exception');
+
               parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
-              parsedJSON['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
+              parsedJSON['exception'].should.have.property('exceptionText');
+              JSONparsed['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
               JSONparsed.should.have.property('callback_status', '200');
+
               done();
             });
           }, 30 );
