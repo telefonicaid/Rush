@@ -26,7 +26,7 @@
     "async": "*",
     "mongodb": "*",
     "hooker": "*",
-    "logger": "https://github.com/telefonicaid/pditclogger/tarball/master",
+    "logger": "https://github.com/telefonicaid/pditclogger/tarball/new_log_format",
     "performanceFramework": "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
   },
   "devDependencies": {

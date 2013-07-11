@@ -46,7 +46,7 @@ describe('Feature: ENCODING', function() {
       options.headers = {};
       options.method = 'GET';
       options.headers['content-type'] = 'application/json';
-      options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+      options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort,
       options.headers['X-relayer-persistence'] = 'BODY';
       options.headers['X-relayer-encoding'] = 'base64';
 
@@ -72,7 +72,7 @@ describe('Feature: ENCODING', function() {
           options.path = '/response/' + petitionID;
 
           function checkResponse(err, data, res) {
-            if (res.statusCode !== 404 && !checked) {
+            if (!checked && res.statusCode !== 404) {
               clearInterval(interval);
 
               should.not.exist(err);

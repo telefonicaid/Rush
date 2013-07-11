@@ -29,7 +29,7 @@ var serversToShutDown = [];
 function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
   'use strict';
   //Variables
-  var relayerhost = 'http://localhost:' + config.simpleServerPort;
+  var RELAYER_HOST = config.simpleServerHostname + ':' + config.simpleServerPort, PATH = '/test1?a=b';
 
   //Start up the server
   var simpleServer = server.serverListener(
@@ -38,7 +38,8 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
 
         //Petition method
         options.method = type;
-        options.headers['x-relayer-host'] = relayerhost;
+        options.path = PATH,
+        options.headers['x-relayer-host'] = RELAYER_HOST;
         options.headers['x-relayer-httpcallback'] = httpCallBack;
 
         utils.makeRequest(options, content, function(err, data) {
@@ -46,9 +47,10 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
 
       },
 
-      function(method, headers, contentReceived) {
+      function(method, headers, url, contentReceived) {
         //Test method
         method.should.be.equal(type);
+        url.should.be.equal(PATH);
 
         //Test headers
         headers.should.have.property('content-type', applicationContent);
@@ -183,7 +185,7 @@ describe('Feature: HTTP_Callback', function() {
 
       var portCallBack = config.callBackPort,
           server_callback,
-          relayerHost = 'http://noexiste:1234',
+          relayerHost = 'noexiste:1234',
           httpCallBack = 'http://localhost:' + portCallBack;
 
       //Callback Server
@@ -202,7 +204,9 @@ describe('Feature: HTTP_Callback', function() {
               var parsedJSON = JSON.parse(response);
               should.not.exist(parsedJSON.result);
 
-	            parsedJSON['error'].should.match(/(ENOTFOUND|EADDRINFO)/);
+              parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+              parsedJSON['exception'].should.have.property('exceptionText');
+              parsedJSON['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
 	            res.writeHead(200);
               res.end();
