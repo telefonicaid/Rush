@@ -13,8 +13,8 @@ var PORT = config.rushServer.port;
 function executeTest(method, body, done) {
   var id, options = {};
   var PATH = '/testPath/test1/test2/?var=a&var2=b',
-      TEST_HEADER_NAME = 'test-header', TEST_HEADER_VALUE = 'test header value', TOPIC = 'Topic Test';
-
+      TEST_HEADER_NAME = 'test-header', TEST_HEADER_VALUE = 'test header value',
+      traceID = 'a8450a60-ea01-11e2-bd82-3baee03998f0';
 
   options.host = HOST;
   options.port = PORT;
@@ -25,7 +25,7 @@ function executeTest(method, body, done) {
   options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
   options.headers['X-relayer-persistence'] = 'BODY';
   options.headers[TEST_HEADER_NAME] = TEST_HEADER_VALUE;
-  options.headers['X-Relayer-topic'] = TOPIC;
+  options.headers['X-Relayer-traceid'] = traceID;
 
   var simpleServer = server.serverListener(
 
@@ -46,6 +46,7 @@ function executeTest(method, body, done) {
         var interval = setInterval(function() {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
+          options.headers = { 'X-Relayer-Traceid' : traceID };
 
           function checkResponse(err, data, res) {
 
@@ -56,7 +57,7 @@ function executeTest(method, body, done) {
               var JSONres = JSON.parse(data);
               JSONres.body.should.be.equal(body);
               JSONres.headers.should.have.property(TEST_HEADER_NAME, TEST_HEADER_VALUE);
-              JSONres.should.have.property('topic', TOPIC);
+              JSONres.should.have.property('traceID', traceID);
 
               checked = true;
               done();
