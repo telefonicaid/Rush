@@ -47,11 +47,11 @@ function _validScenario(data, i){
 									expect(res.statusCode).to.equal(CREATED);
 									res2.text.should.include('id');
 									//res2.text.should.not.include('exception');
-									if (data.headers['x-relayer-topic']) {
-										res2.body['topic'].should.eql('TEST');
+									if (data.headers['x-relayer-traceid']) {
+										res2.body['traceID'].should.eql('TEST');
 									}
 									else{
-										res2.body['topic'].should.eql('undefined');
+										res2.body['traceID'].should.eql('undefined');
 									}
 									if (vm) {
 										console.log(i+1);
@@ -100,8 +100,8 @@ function _invalidScenario(data, i) {
 									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-proxy');
 									console.log("\n+++++Issue Resolved++++++++\n");
 								}
-								if (data.headers['x-relayer-topic']) {  //checks for invalid topic
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-topic'); // It is possible to have a invalid topic?
+								if (data.headers['x-relayer-traceid']) {  //checks for invalid traceid
+									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-traceid'); // It is possible to have a invalid traceid?
 								}
 								if (data.headers['x-relayer-encoding']) {  //checks for invalid encoding
 									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-encoding');
@@ -281,9 +281,9 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(CREATED);
+									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['topic'].should.eql('undefined');
+                                    res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 					}, TIMEOUT);
@@ -316,9 +316,9 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(CREATED);
+									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['topic'].should.eql('undefined');
+									res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 					}, TIMEOUT);
@@ -351,9 +351,9 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(CREATED);
+									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['topic'].should.eql('undefined');
+									res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 
@@ -387,9 +387,9 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.should.have.status(CREATED);
+									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['topic'].should.eql('undefined');
+									res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 					}, TIMEOUT);
@@ -402,6 +402,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 	});
 
 });
+
 
 describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 	this.timeout(describeTimeout);
@@ -422,7 +423,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'GET', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
 			{method: 'GET', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'GET', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
-			{method: 'POST', headers: {'x-relayer-topic' : 'TEST'}, name : "TOPIC: Should accept the request and retrieve the topic and the completed task"}
+			{method: 'POST', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
 
 		for(i=0; i < dataSetGET.length; i++){
@@ -443,7 +444,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
 			{method: 'POST', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'POST', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
-			{method: 'POST', headers: {'x-relayer-topic' : 'TEST'}, name : "TOPIC: Should accept the request and retrieve the topic and the completed task"}
+			{method: 'POST', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
 
 		for(i=0; i < dataSetPOST.length; i++){
@@ -464,7 +465,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'PUT', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
 			{method: 'PUT', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
-			{method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "TOPIC: Should accept the request and retrieve the topic and the completed task"}
+			{method: 'PUT', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
 
 
@@ -485,7 +486,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'DEL', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
 			{method: 'DEL', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'DEL', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
-			{method: 'DEL', headers: {'x-relayer-topic' : 'TEST'}, name : "TOPIC: Should accept the request and retrieve the topic and the completed task"}
+			{method: 'DEL', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
 
 		for(i=0; i < dataSetDEL.length; i++){
@@ -505,8 +506,8 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'OPTIONS', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
 			{method: 'OPTIONS', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'OPTIONS', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
-			{method: 'OPTIONS', headers: {'x-relayer-topic' : 'TEST'}, name : "TOPIC: Should accept the request and retrieve the topic and the completed task"}
-			//{method: 'OPTIONS', headers: {'x-relayer-topic' : 'TEST2'}, name : "TO DO: CHECK why the last test is not validated..."}
+			{method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
+			//{method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST2'}, name : "TO DO: CHECK why the last test is not validated..."}
 		];
 
 		for(i=0; i < dataSetOPTIONS.length; i++){
@@ -514,4 +515,3 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 		}
 	});
 });
-
