@@ -126,8 +126,6 @@ function makeRequest(type, persistence, content, done) {
               options.headers['x-relayer-httpcallback'] = httpcallback;
 
               utils.makeRequest(options, content, function(e, data) {
-                console.log(e);
-                console.log(data);
                 id = JSON.parse(data).id;
               });
             },
