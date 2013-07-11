@@ -298,8 +298,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
                   testHeraders(JSONRes.headers);
 
                   JSONRes.should.have.property('statusCode', '200');
-	                JSONRes.should.have.property('callback_err','getaddrinfo ENOTFOUND') || JSONRes.should.have.property('callback_err','getaddrinfo EADDRINFO');
-
+	                JSONRes['callback_err'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
 	                checked = true;
                   done();
@@ -348,8 +347,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
           should.not.exist(parsedJSON.result);
 
           //Test content
-	        parsedJSON.should.have.property('error','getaddrinfo ENOTFOUND') || parsedJSON.should.have.property('error','getaddrinfo EADDRINFO');
-
+	        parsedJSON['error'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
 	        res.writeHead(200);
           res.end();
@@ -360,7 +358,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
           setTimeout(function() {
             utils.makeRequest(options, '', function(err, data) {
               var JSONparsed = JSON.parse(data);
-	            JSONparsed.should.have.property('error','getaddrinfo ENOTFOUND') || JSONparsed.should.have.property('error','getaddrinfo EADDRINFO');
+	            JSONparsed['error'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
 	            JSONparsed.should.have.property('callback_status', '200');
               done();

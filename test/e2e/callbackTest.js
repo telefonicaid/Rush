@@ -202,9 +202,9 @@ describe('Feature: HTTP_Callback', function() {
               var parsedJSON = JSON.parse(response);
               should.not.exist(parsedJSON.result);
 
-	            parsedJSON.should.have.property('error','getaddrinfo ENOTFOUND') || parsedJSON.should.have.property('error','getaddrinfo EADDRINFO');
+	            parsedJSON['error'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-              res.writeHead(200);
+	            res.writeHead(200);
               res.end();
               server_callback.close();
               done();

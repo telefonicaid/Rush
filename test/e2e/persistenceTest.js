@@ -144,7 +144,7 @@ describe('Feature: Persistence', function() {
     executeTest('POST', 'Body Example', 'STATUS', done);
   });
 
-  it('should return error headers (ENOTFOUND)', function(done) {
+  it('should return error headers (ENOTFOUND) OR (EADDRINFO)', function(done) {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
@@ -198,7 +198,7 @@ describe('Feature: Persistence', function() {
       }
     ], function(err, res) {
       var resGet = res[1];
-			resGet.should.have.property('error','getaddrinfo ENOTFOUND') || resGet.should.have.property('error','getaddrinfo EADDRINFO');
+	    resGet['error'].should.match(/(ENOTFOUND|EADDRINFO)/);
 	    done();
     });
   });
