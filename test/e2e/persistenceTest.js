@@ -198,8 +198,8 @@ describe('Feature: Persistence', function() {
       }
     ], function(err, res) {
       var resGet = res[1];
-      resGet.should.have.property('error', 'getaddrinfo ENOTFOUND');
-      done();
+			resGet.should.have.property('error','getaddrinfo ENOTFOUND') || resGet.should.have.property('error','getaddrinfo EADDRINFO');
+	    done();
     });
   });
 });
