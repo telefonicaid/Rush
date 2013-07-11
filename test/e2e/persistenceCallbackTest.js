@@ -145,15 +145,13 @@ function makeRequest(type, persistence, content, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Feature: Persistence HTTP_Callback', function() {
+describe.only('Feature: Persistence HTTP_Callback', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
 
   before(function (done) {
     listener.start(function() {
-      consumer.start(function(){
-              console.log('eeeeeeeeeeeeeeeeeeeeeee');
-      });
+      consumer.start(done);
     });
   });
 
