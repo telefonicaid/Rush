@@ -150,7 +150,7 @@ describe('Feature: Persistence', function() {
     executeTest('POST', 'Body Example', 'STATUS', done);
   });
 
-  it('should return error headers (ENOTFOUND)', function(done) {
+  it('should return error headers (ENOTFOUND) OR (EADDRINFO)', function(done) {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
@@ -207,9 +207,10 @@ describe('Feature: Persistence', function() {
 
       resGet.should.have.property('exception');
       resGet['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
-      resGet['exception'].should.have.property('exceptionText', 'getaddrinfo ENOTFOUND');
+      resGet['exception'].should.have.property('exceptionText');
+      resGet['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-      done();
+	    done();
     });
   });
 });
