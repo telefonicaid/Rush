@@ -1,5 +1,4 @@
 var async = require('async');
-var http = require('http');
 var should = require('should');
 var config = require('./config.js')
 var server = require('./simpleServer.js');
@@ -217,4 +216,3 @@ describe('Feature: Persistence', function() {
     });
   });
 });
-
