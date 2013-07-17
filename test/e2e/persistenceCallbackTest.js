@@ -69,13 +69,14 @@ function makeRequest(type, persistence, content, done) {
 
         function checkResponse(err, data, res) {
 
-          if (!checked && res.statusCode !== 404) {
+          var JSONRes = JSON.parse(data);
+
+          if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed') {
 
             clearInterval(interval);
 
             should.not.exist(err);
             should.exist(data);
-            var JSONRes = JSON.parse(data);
 
             if (persistence === 'BODY') {
 
@@ -292,11 +293,12 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
               function checkResponse(err, data, res) {
 
-                if (!checked && res.statusCode !== 404 &&  data.indexOf('callback_err') !== -1) {
+                var JSONRes = JSON.parse(data);
+
+                if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed'
+                    &&  data.indexOf('callback_err') !== -1) {
 
                   clearInterval(interval);
-
-                  var JSONRes = JSON.parse(data);
 
                   JSONRes.body.should.be.equal(content);
                   testHeraders(JSONRes.headers);
