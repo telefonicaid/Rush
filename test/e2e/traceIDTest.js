@@ -50,11 +50,12 @@ function executeTest(method, body, done) {
 
           function checkResponse(err, data, res) {
 
-            if (!checked && res.statusCode !== 404) {
+            var JSONres = JSON.parse(data);
+
+            if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
 
               clearInterval(interval);
 
-              var JSONres = JSON.parse(data);
               JSONres.body.should.be.equal(body);
               JSONres.headers.should.have.property(TEST_HEADER_NAME, TEST_HEADER_VALUE);
               JSONres.should.have.property('traceID', traceID);

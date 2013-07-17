@@ -72,12 +72,14 @@ describe('Feature: ENCODING', function() {
           options.path = '/response/' + petitionID;
 
           function checkResponse(err, data, res) {
-            if (!checked && res.statusCode !== 404) {
+
+            var parsedJSON = JSON.parse(data);
+
+            if (!checked && res.statusCode !== 404 && parsedJSON.state === 'completed') {
               clearInterval(interval);
 
               should.not.exist(err);
 
-              var parsedJSON = JSON.parse(data);
               parsedJSON.should.have.property('body');
               parsedJSON.should.have.property('encoding', 'base64');
 

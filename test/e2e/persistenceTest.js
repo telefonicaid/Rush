@@ -51,11 +51,11 @@ function executeTest(method, content, persistence, done) {
 
           function checkResponse(err, data, res) {
 
-            if (!checked && res.statusCode !== 404) {
+            var JSONres = JSON.parse(data);
+
+            if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
 
               clearInterval(interval);
-
-              var JSONres = JSON.parse(data);
 
               if (persistence === 'BODY') {
 
@@ -184,7 +184,9 @@ describe('Feature: Persistence', function() {
 
           function checkResponse(err, data, res) {
 
-            if (!checked && res.statusCode !== 404) {
+            var JSONres = JSON.parse(data);
+
+            if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
 
               clearInterval(interval);
 
