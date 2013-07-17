@@ -50,9 +50,6 @@ function _validScenario(data, i){
 									if (data.headers['x-relayer-traceid']) {
 										res2.body['traceID'].should.eql('TEST');
 									}
-									else{
-										res2.body['traceID'].should.eql('undefined');
-									}
 									if (vm) {
 										console.log(i+1);
 										console.log(res2.body);
@@ -280,10 +277,11 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								.end(
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
-									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
+									if (vm){console.log("***BODY***",res2.body);}
+                  res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.should.have.status(200);
 									res2.text.should.include('id');
-                                    res2.body['traceID'].should.eql('undefined');
+                  ////res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 					}, TIMEOUT);
@@ -315,10 +313,11 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 								.end(
 								function onResponse2(err2, res2) {
 									//console.log("***CHECK POINT***",res2.body['id'])
+									if (vm){console.log("***BODY***",res2.body);}
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['traceID'].should.eql('undefined');
+									////res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 					}, TIMEOUT);
@@ -353,7 +352,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['traceID'].should.eql('undefined');
+									//res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 
@@ -389,7 +388,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.should.have.status(200);
 									res2.text.should.include('id');
-									res2.body['traceID'].should.eql('undefined');
+									//res2.body['traceID'].should.eql('undefined');
 									return done();
 								});
 					}, TIMEOUT);
