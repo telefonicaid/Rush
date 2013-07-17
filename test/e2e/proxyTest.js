@@ -98,12 +98,13 @@ describe('Feature: Proxy Server', function() {
 
         function checkResponse(err, data, res) {
 
-          if (!checked && res.statusCode !== 404) {
+          var parsedData = JSON.parse(data);
+
+          if (!checked && res.statusCode !== 404 && parsedData.state === 'completed') {
 
             clearInterval(interval);
             should.not.exist(err);
 
-            var parsedData = JSON.parse(data);
 
             parsedData.should.have.property('headers');
             var parsedHeaders = parsedData.headers;
