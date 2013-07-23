@@ -44,7 +44,7 @@ function _validScenario(data, i){
 								.get(RUSHENDPOINT +'/response/' + res.body['id'])
 								.end(function onResponse2(err2, res2) {
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									expect(res.statusCode).to.equal(CREATED);
+									expect(res2.statusCode).to.equal(200);
 									res2.text.should.include('id');
 									//res2.text.should.not.include('exception');
 									if (data.headers['x-relayer-traceid']) {
