@@ -257,8 +257,6 @@ describe('Feature: Protocol', function() {
 			{method: 'GET', path: '', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 2 Should accept the request using HTTPS /GET"},
 			{method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 3 Should accept the request using HTTP /POST"},
 			{method: 'GET', path: '', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 4 Should accept the request using HTTPS /POST"},
-
-
 		];
 
 		for(i=0; i < dataSetPOST.length; i++){
