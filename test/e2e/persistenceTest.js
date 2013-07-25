@@ -6,6 +6,9 @@ var utils = require('./utils.js');
 
 var serversToShutDown = [];
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
@@ -13,25 +16,32 @@ function executeTest(method, content, persistence, done) {
   'use strict';
 
   var id, options = {};
+  var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d';
+
   options.host = HOST;
   options.port = PORT;
+  options.path = PATH;
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
-  options.headers['X-Relayer-Host'] = 'http://localhost:8014';
+  options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
   options.headers['X-relayer-persistence'] = persistence;
-  options.headers['test-header'] = 'test header';
-
+  options.headers[HEADER_NAME] = HEADER_VALUE;
 
   var simpleServer = server.serverListener(
 
       function() {
         utils.makeRequest(options, content, function(err, res) {
+          should.not.exist(err);
           id = JSON.parse(res).id;
         });
       },
 
-      function(method, headers, body) {
+      function(methodUsed, headersReceived, urlUsed, bodyReceived) {
+
+        methodUsed.should.be.equal(method);
+        headersReceived.should.have.property(HEADER_NAME, HEADER_VALUE);
+        urlUsed.should.be.equal(PATH);
 
         var checked = false;
         var interval = setInterval(function() {
@@ -39,20 +49,19 @@ function executeTest(method, content, persistence, done) {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
-          function checkResponse(err, data) {
+          function checkResponse(err, data, res) {
 
-            if (data !== '{}' && ! checked) {
+            var JSONres = JSON.parse(data);
+
+            if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
 
               clearInterval(interval);
-
-              var JSONres = JSON.parse(data);
 
               if (persistence === 'BODY') {
 
                 JSONres.should.have.property('body');
                 JSONres.body.should.be.equal(content);
-                JSONres.headers.should.have.property('test-header',
-                    'test header');
+                JSONres.headers.should.have.property(HEADER_NAME, HEADER_VALUE);
                 JSONres.should.have.property('statusCode', '200');
 
               } else if (persistence === 'HEADER') {
@@ -60,8 +69,7 @@ function executeTest(method, content, persistence, done) {
 
                 JSONres.should.not.have.property('body');
                 JSONres.should.have.property('headers');
-                JSONres.headers.should.have.property('test-header',
-                    'test header');
+                JSONres.headers.should.have.property(HEADER_NAME, HEADER_VALUE);
                 JSONres.should.have.property('statusCode', '200');
 
               } else if (persistence === 'STATUS') {
@@ -89,6 +97,18 @@ function executeTest(method, content, persistence, done) {
 
 describe('Feature: Persistence', function() {
 
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
+
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
@@ -102,6 +122,17 @@ describe('Feature: Persistence', function() {
   });
 
 
+  it('should return 404 if the persistence doesn\'t exist', function(done){
+    var id = 'not_an_id';
+    utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, '', function(err, data, res) {
+      should.not.exist(err);
+      res.should.have.property('statusCode', 404);
+      var JSONres = JSON.parse(data);
+      JSONres.should.have.property('exceptionId','SVC1006');
+      JSONres.should.have.property('exceptionText', 'Resource not_an_id does not exist');
+      done();
+    });
+  });
 
   it('should return empty body and test-header', function(done) {
     executeTest('GET', '', 'BODY', done);
@@ -119,13 +150,13 @@ describe('Feature: Persistence', function() {
     executeTest('POST', 'Body Example', 'STATUS', done);
   });
 
-  it('should return error headers (ENOTFOUND)', function(done) {
+  it('should return error headers (ENOTFOUND) OR (EADDRINFO)', function(done) {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
     options.headers = {};
     options.method = 'POST';
-    options.headers['X-Relayer-Host'] = 'http://notAServer:8014';
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-relayer-persistence'] = 'BODY';
     options.headers['test-header'] = 'test header';
 
@@ -151,9 +182,11 @@ describe('Feature: Persistence', function() {
           var options = { port: PORT, host: HOST,
             path: '/response/' + id, method: 'GET'};
 
-          function checkResponse(err, data) {
+          function checkResponse(err, data, res) {
 
-            if (data !== '{}' && ! checked) {
+            var JSONres = JSON.parse(data);
+
+            if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
 
               clearInterval(interval);
 
@@ -173,8 +206,13 @@ describe('Feature: Persistence', function() {
       }
     ], function(err, res) {
       var resGet = res[1];
-      resGet.should.have.property('error', 'ENOTFOUND(getaddrinfo)');
-      done();
+
+      resGet.should.have.property('exception');
+      resGet['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+      resGet['exception'].should.have.property('exceptionText');
+      resGet['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
+
+	    done();
     });
   });
 });

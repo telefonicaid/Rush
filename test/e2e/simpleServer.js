@@ -4,7 +4,7 @@ var config = require('./config');
 var serverListener = function(connectedCallback, dataCallback) {
 
   var srv = http.createServer(function(req, res) {
-    var content = '', headers = req.headers, method = req.method;
+    var content = '', headers = req.headers, method = req.method, url = req.url;
 
     req.on('data', function(chunk) {
       content += chunk;
@@ -18,7 +18,7 @@ var serverListener = function(connectedCallback, dataCallback) {
       res.writeHead(200, headers);
       res.end(content);
 
-      dataCallback(method, headers, content);
+      dataCallback(method, headers, url, content);
 
       //req.destroy();
       srv.close();
