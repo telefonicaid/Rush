@@ -252,6 +252,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.post(RUSHENDPOINT)
 						.set('X-Relayer-Host', 'ENDPOINT')
 						.set('X-Relayer-Protocol', 'http')
+						.send({})
 						.end(onResponse);
 
 				function onResponse(err, res) {
@@ -270,6 +271,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.post(RUSHENDPOINT)
 						.set('X-Relayer-Host', 'ENDPOINT')
 						.set('X-Relayer-Protocol', 'https')
+						.send({})
 						.end(onResponse);
 
 				function onResponse(err, res) {
@@ -288,6 +290,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.post(RUSHENDPOINT)
 						.set('X-Relayer-Host', 'ENDPOINT')
 						.set('X-Relayer-Protocol', 'ftp')
+						.send({})
 						.end(onResponse);
 
 				function onResponse(err, res) {
