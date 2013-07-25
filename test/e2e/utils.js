@@ -62,44 +62,5 @@ var makeRequestHttps = function(options, content, cb) {
   req.end();
 };
 
-var serverListener = function(port, responseParameters, connectedCallback, dataCallback) {
-
-  var srv = http.createServer(function(req, res) {
-
-    var content = "";
-    var request = {};
-
-      request.headers = req.headers;
-      request.method = req.method;
-      request.url = req.url;
-
-    var response = {};
-
-      response.body = responseParameters.body || null;
-      response.statusCode = responseParameters.statusCode || 200;
-      response.headers = responseParameters.headers || {};
-
-    req.on('data', function(chunk) {
-      content += chunk;
-    });
-
-    srv.on('error', function() {
-      dataCallback(null);
-    });
-
-    req.on('end', function() {
-      res.writeHead(response.statusCode, response.headers);
-      res.end(response.body);
-
-      request.body = content;
-      dataCallback(request);
-    });
-
-  }).listen(port, connectedCallback);
-
-  return srv;
-
-};
-
 exports.makeRequest = makeRequest;
 exports.makeRequestHttps = makeRequestHttps;
