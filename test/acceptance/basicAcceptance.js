@@ -23,7 +23,6 @@ var describeTimeout = 60000;
 
 function _validScenario(data, i){
 	it(data.name, function(done){
-
 		var agent = superagent.agent();
 		agent
 				[data.method.toLowerCase()](RUSHENDPOINT )
@@ -63,57 +62,52 @@ function _validScenario(data, i){
 
 
 function _invalidScenario(data, i) {
-	async.series([
-		function() {
-			it(data.name, function (done) {
-				var agent = superagent.agent();
-				agent
-						[data.method.toLowerCase()](RUSHENDPOINT)
-						.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
-						.set(data.headers)
-						.end(function (err, res) {
-							should.not.exist(err);
-							res.should.have.status(400);
-							res.text.should.not.include("ok");
-							should.exist(res.body['exceptionId']);
+	it(data.name, function (done) {
+		var agent = superagent.agent();
+		agent
+				[data.method.toLowerCase()](RUSHENDPOINT)
+				.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
+				.set(data.headers)
+				.end(function (err, res) {
+					should.not.exist(err);
+					res.should.have.status(400);
+					res.text.should.not.include("ok");
+					should.exist(res.body['exceptionId']);
 
-							if (data.headers['x-relayer-persistence']) {  //checks for invalid persistance
-								res.body['exceptionId'].should.eql('SVC0003');
-								res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-persistence. Possible values are: BODY, STATUS, HEADER');
-							}
-							else {
-								res.body['exceptionId'].should.eql('SVC0002');
-								res.body['exceptionText'].should.exist;
-								if (data.headers['x-relayer-httpcallback']) {  //checks for invalid callback
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-httpcallback');
-								}
-								if (data.headers['x-relayer-httpcallback-error']) {  //checks for invalid callback
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-httpcallback-error');
-								}
-								if (data.headers['x-relayer-retry']) {  //checks for invalid retry
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-retry');
-								}
-								if (data.headers['x-relayer-proxy']) {  //checks for invalid proxy
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-proxy');
-									console.log("\n+++++Issue Resolved++++++++\n");
-								}
-								if (data.headers['x-relayer-traceid']) {  //checks for invalid traceid
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-traceid'); // It is possible to have a invalid traceid?
-								}
-								if (data.headers['x-relayer-encoding']) {  //checks for invalid encoding
-									res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-encoding');
-									console.log("\n+++++Issue Resolved++++++++\n");
-								}
-							}
-
-
-							if (vm) {
-								console.log(res.body);
-							}
-							done();
-						});
-			});
-		}]);
+					if (data.headers['x-relayer-persistence']) {  //checks for invalid persistance
+						res.body['exceptionId'].should.eql('SVC0003');
+						res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-persistence. Possible values are: BODY, STATUS, HEADER');
+					}
+					else {
+						res.body['exceptionId'].should.eql('SVC0002');
+						res.body['exceptionText'].should.exist;
+						if (data.headers['x-relayer-httpcallback']) {  //checks for invalid callback
+							res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-httpcallback');
+						}
+						if (data.headers['x-relayer-httpcallback-error']) {  //checks for invalid callback
+							res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-httpcallback-error');
+						}
+						if (data.headers['x-relayer-retry']) {  //checks for invalid retry
+							res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-retry');
+						}
+						if (data.headers['x-relayer-proxy']) {  //checks for invalid proxy
+							res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-proxy');
+							console.log("\n+++++Issue Resolved++++++++\n");
+						}
+						if (data.headers['x-relayer-traceid']) {  //checks for invalid traceid
+							res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-traceid'); // It is possible to have a invalid traceid?
+						}
+						if (data.headers['x-relayer-encoding']) {  //checks for invalid encoding
+							res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-encoding');
+							console.log("\n+++++Issue Resolved++++++++\n");
+						}
+					}
+					if (vm) {
+						console.log(res.body);
+					}
+					done();
+				});
+	});
 }
 
 
@@ -247,6 +241,67 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 
 		});
 
+	});
+
+	describe('Protocol acceptance', function(){
+		this.timeout(5000);
+		var agent = superagent.agent();
+
+		it('should accept HTTP requests', function (done) {
+				agent
+						.post(RUSHENDPOINT)
+						.set('X-Relayer-Host', 'ENDPOINT')
+						.set('X-Relayer-Protocol', 'http')
+						.end(onResponse);
+
+				function onResponse(err, res) {
+					//console.log(agent);
+					should.not.exist(err);
+					res.headers['x-powered-by'].should.eql('Express');
+					res.headers['content-type'].should.eql('application/json; charset=utf-8');
+					ids.push(res.body['id']);
+					res.should.have.status(CREATED);
+					return done();
+				}
+		});
+
+		it('should accept HTTPS requests', function (done) {
+				agent
+						.post(RUSHENDPOINT)
+						.set('X-Relayer-Host', 'ENDPOINT')
+						.set('X-Relayer-Protocol', 'https')
+						.end(onResponse);
+
+				function onResponse(err, res) {
+					//console.log(agent);
+					should.not.exist(err);
+					res.headers['x-powered-by'].should.eql('Express');
+					res.headers['content-type'].should.eql('application/json; charset=utf-8');
+					ids.push(res.body['id']);
+					res.should.have.status(CREATED);
+					return done();
+				}
+		});
+
+		it('should NOT accept FTP requests', function (done) {
+				agent
+						.post(RUSHENDPOINT)
+						.set('X-Relayer-Host', 'ENDPOINT')
+						.set('X-Relayer-Protocol', 'ftp')
+						.end(onResponse);
+
+				function onResponse(err, res) {
+					//console.log(agent);
+
+					should.not.exist(err);
+					res.should.have.status(400);
+					res.text.should.not.include("ok");
+					should.exist(res.body['exceptionId']);
+					res.body['exceptionId'].should.eql('SVC0003');
+					res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-protocol. Possible values are: http, https');
+					return done();
+				}
+		});
 	});
 
 
