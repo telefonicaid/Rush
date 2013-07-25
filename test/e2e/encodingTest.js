@@ -230,6 +230,8 @@ it('should return the image coded in base 64', function(done) {
 
 
 	}).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
+	
+	serversToShutDown.push(simpleserver);
 });
 
 });
