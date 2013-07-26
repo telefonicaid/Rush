@@ -11,6 +11,7 @@ var options = {
 
 var serverListener = function(portProtocol, responseParameters, connectedCallback, dataCallback) {
 
+
   var protocol = portProtocol.protocol || 'http';
   var srv;
 
