@@ -17,7 +17,7 @@ var RUSHENDPOINT = 'http://' + HOST + ':' + PORT;
 
 //Final host endpoint
 var fhHOST = config.simpleServerHostname;
-var fhPORT = 6005 || config.simpleServerPort;
+var fhPORT = config.simpleServerPort;
 
 ENDPOINT = fhHOST + ':' + fhPORT;
 
@@ -54,7 +54,9 @@ function _validScenario(data){
 						.set('x-relayer-persistence','BODY')
 						.set('content-type','application/json')
 						.set(data.headers)
-						if(data.method.toLowerCase() === 'POST' || data.method.toLowerCase() === 'PUT')  req = req.send(data.body);
+						if(data.method === 'POST' || data.method === 'PUT'){
+							req = req.send(data.body);
+						}
 						req.end(function(err, res) {
 							expect(err).to.not.exist;
 							expect(res.statusCode).to.eql(CREATED);
@@ -67,7 +69,6 @@ function _validScenario(data){
 						 });
 			},
 			function(dataReceived) {
-console.log('\nChekpoint3!\n');
 				expect(dataReceived).to.exist;
 				dataReceived.method.should.be.equal(data.method);
 				dataReceived.url.should.be.equal(data.path);

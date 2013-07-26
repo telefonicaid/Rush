@@ -1,16 +1,13 @@
 var https = require('https');
 var http = require('http');
+var path = require('path');
 
 var fs = require('fs');
 var config = require('./config.js');
 
 var options = {
-	key: fs.readFileSync('utils/server.key'),
-	cert: fs.readFileSync('utils/server.crt')
-	/*
-	 key: fs.readFileSync('../../utils/server.key'),
-	 cert: fs.readFileSync('../../utils/server.crt')
-	 */
+	key: fs.readFileSync(path.resolve(__dirname, '../../utils/server.key')),
+	cert: fs.readFileSync(path.resolve(__dirname, '../../utils/server.crt'))
 };
 
 var serverListener = function(portProtocol, responseParameters, connectedCallback, dataCallback) {
