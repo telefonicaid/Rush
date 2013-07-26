@@ -10,7 +10,7 @@ var listener = require('../../lib/listener.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Feature: Oneway Response errors ', function() {
+describe('Feature: Oneway Response errors #FOW', function() {
 
   var options;
 

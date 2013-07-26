@@ -39,7 +39,7 @@ var DIR_MODULE = path.dirname(module.filename);
 
 
 function _invalidScenario(data){
-	it(data.name, function(done){
+	it(data.name + ' #F3', function(done){
 
 		var agent = superagent.agent();
 		agent
@@ -78,8 +78,8 @@ function _invalidScenario(data){
 	});
 }
 
-describe('Feature: Persistence', function() {
-
+describe('Feature: Encoding #FEN', function() {
+	 this.timeout(describeTimeout);
 
 	var serversToShutDown = [];
   var simpleserver, petitionID;
@@ -109,7 +109,7 @@ describe('Feature: Persistence', function() {
 	});
 
 
-	describe('\nEncoding: Rush should accept enconding request bypassed to the Target direcly (UTF-8 by default)', function () {
+	describe('Encoding: Rush should accept encoding request bypassed to the Target direcly (UTF-8 by default)', function () {
 		var dataSet = [
 			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : " 1 Should accept the request with a real protocol UTF-8 /GET"},
 			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : " 2 Should accept the request with a real protocol UTF8 /GET"},
@@ -127,7 +127,7 @@ describe('Feature: Persistence', function() {
 	});
 
 
-	describe('\nEncoding: Rush should accept enconding request bypassed to the Target direcly (UTF-8 by default)', function () {
+	describe('Encoding: Rush should accept encoding request bypassed to the Target direcly (UTF-8 by default)', function () {
 		var dataSet = [
 			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : " 1 Should accept the request with a real protocol UTF-8 /POST"},
 			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : " 2 Should accept the request with a real protocol UTF8 /POST"},
@@ -145,7 +145,7 @@ describe('Feature: Persistence', function() {
 	});
 
 
-	describe('\nEncoding: Rush should accept enconding request bypassed to the Target direcly (UTF-8 by default)', function () {
+	describe('Encoding: Rush should accept encoding request bypassed to the Target direcly (UTF-8 by default)', function () {
 		var dataSet = [
 			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : " 1 Should accept the request with a real protocol UTF-8 /PUT"},
 			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : " 2 Should accept the request with a real protocol UTF8 /PUT"},
@@ -163,9 +163,9 @@ describe('Feature: Persistence', function() {
 	});
 
 
-describe('\nEncoding: Retrive an image encoded in BASE64', function () {
+describe('Encoding: Retrive an image encoded in BASE64', function () {
 
-it('should return the image coded in base 64', function(done) {
+it('should return the image coded in base 64 #F3', function(done) {
 
 	function makeRequest() {
 		var options = {};
@@ -232,6 +232,7 @@ it('should return the image coded in base 64', function(done) {
 	}).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
 	
 	serversToShutDown.push(simpleserver);
+
 });
 
 });
