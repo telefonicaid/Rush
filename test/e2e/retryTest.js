@@ -79,7 +79,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   serversToShutDown.push(srv);
 }
 
-describe('Feature: Retry', function() {
+describe('Feature: Retry #FRT', function() {
 
   before(function (done) {
     listener.start(function() {

@@ -104,7 +104,7 @@ function makeRequest(type, content, done) {
   serversToShutDown.push(server_callback);
 }
 
-describe('Feature: HTTP_Callback', function() {
+describe('Feature: Callback #FCB', function() {
   'use strict';
   var content = 'HTTP_Callback Test';
 

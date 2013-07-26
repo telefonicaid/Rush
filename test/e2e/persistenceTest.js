@@ -95,7 +95,7 @@ function executeTest(method, content, persistence, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Feature: Persistence', function() {
+describe('Feature: Persistence #FPT', function() {
 
   before(function (done) {
     listener.start(function() {
