@@ -10,7 +10,7 @@ var listener = require('../../lib/listener.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Feature: Proxy Server', function() {
+describe('Feature: Proxy Server #FPX', function() {
   'use strict';
 
   var proxyServer;
