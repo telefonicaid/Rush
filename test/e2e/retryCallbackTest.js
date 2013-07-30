@@ -138,7 +138,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Feature: Retry and Callback', function() {
+describe('Feature: Retry and Callback #FRT #FCB', function() {
 
   before(function (done) {
     listener.start(function() {
