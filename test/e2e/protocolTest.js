@@ -23,12 +23,11 @@ ENDPOINT = fhHOST + ':' + fhPORT;
 
 var serversToShutDown = [];
 
-// Verbose MODE
-var vm = true;
 // Time to wait to check the status of the task
 var TIMEOUT = 1000;
 var CREATED = 201;
-var describeTimeout = 6000;
+var describeTimeout = 5000;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
 
 function _validScenario(data){
 
@@ -64,7 +63,6 @@ function _validScenario(data){
 							expect(res.body.id).to.exist;
 							id=res.body.id;
 							res.text.should.not.include('exception');
-							if (vm) {console.log(res.body.id);}
 						//	done();
 						 });
 			},
@@ -87,7 +85,6 @@ function _validScenario(data){
 								res.text.should.include('id');
 								res.text.should.include('state');
 
-								if (vm) {console.log(res.body);}
 								done();
 							});
 				}, TIMEOUT);
@@ -131,7 +128,7 @@ describe('Feature: Protocol '  + '#FPT', function() {
 			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 5 Should accept the request using HTTPS /PUT"},
 			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 6 Should accept the request using HTTPS /PUT"},
 			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 7 Should accept the request using HTTPS /DELETE"},
-			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 7 Should accept the request using HTTPS /DELETE"}
+			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 8 Should accept the request using HTTPS /DELETE"}
 		];
 
 		for(i=0; i < dataSetPOST.length; i++){
