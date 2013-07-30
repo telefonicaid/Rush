@@ -118,23 +118,35 @@ describe('Feature: Protocol '  + '#FPT', function() {
 		serversToShutDown = [];
 	});
 
-	describe('Check single feature: accepting request with a valid header policy request using', function () {
+
+	describe('Retrieve request with a valid header policy request using HTTPS #FPT', function () {
 
 		var dataSetPOST = [
-			{protocol : 'http', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 1 Should accept the request using HTTP /GET"},
-			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 2 Should accept the request using HTTPS /GET"},
-			{protocol : 'http', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 3 Should accept the request using HTTP /POST"},
-			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 4 Should accept the request using HTTPS /POST"},
-			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 5 Should accept the request using HTTPS /PUT"},
-			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 6 Should accept the request using HTTPS /PUT"},
-			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 7 Should accept the request using HTTPS /DELETE"},
-			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 8 Should accept the request using HTTPS /DELETE"}
+			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 1 Should accept the request using HTTPS /GET"},
+			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 2 Should accept the request using HTTPS /POST"},
+			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 3 Should accept the request using HTTPS /PUT"},
+			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "PROTOCOL: 4 Should accept the request using HTTPS /DELETE"},
 		];
 
 		for(i=0; i < dataSetPOST.length; i++){
 			_validScenario(dataSetPOST[i]);  //Launch every test in data set
 		}
 	});
+
+	describe('Retrieve request with a valid header policy request using HTTP #FPT', function () {
+
+		var dataSetPOST = [
+			{protocol : 'http', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 1 Should accept the request using HTTP /GET"},
+			{protocol : 'http', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 2 Should accept the request using HTTP /POST"},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 3 Should accept the request using HTTP /PUT"},
+			{protocol : 'http', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "PROTOCOL: 4 Should accept the request using HTTP /DELETE"}
+		];
+
+		for(i=0; i < dataSetPOST.length; i++){
+			_validScenario(dataSetPOST[i]);  //Launch every test in data set
+		}
+	});
+
 
 });
 
