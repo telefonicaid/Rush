@@ -24,7 +24,7 @@ ENDPOINT = fhHOST + ':' + fhPORT;
 var serversToShutDown = [];
 
 // Time to wait to check the status of the task
-var TIMEOUT = 1000;
+var TIMEOUT = 600;
 var CREATED = 201;
 var describeTimeout = 5000;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
