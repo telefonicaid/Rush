@@ -3,7 +3,7 @@
 # Launch this script from path /test/acceptance/
 # Accepted parameters: RushServer RushPort RelayerEndpoint
 # ./checkDeploy.sh
-# example: ./checkDeploy.sh 176.34.66.250 80 http://www.google.es
+# example: ./checkDeploy.sh 176.34.66.250 80 www.google.es
 # +++++++++++++++++++++++++++++++++++++++++++++++
 
 # Rush Endpoint is provided
@@ -20,7 +20,7 @@ if [[ $1 &&  $3 ]] ; then
      echo "exports.externalEndpoint = '$3';"  >> config.js
      else
      echo "Info TARGET: Default"
-     echo "exports.externalEndpoint = 'http://www.google.es';"  >> config.js
+     echo "exports.externalEndpoint = 'www.google.es';"  >> config.js
 fi
 
 echo "_________ Test execution : _________"
