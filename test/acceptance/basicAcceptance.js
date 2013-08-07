@@ -20,7 +20,6 @@ var TIMEOUT = 1000;
 var CREATED = 201; // 200 for older versions
 var describeTimeout = 60000;
 
-
 function _validScenario(data, i){
 	it(data.name, function(done){
 		var agent = superagent.agent();
@@ -33,25 +32,24 @@ function _validScenario(data, i){
 				.end(function(err, res) {
 					expect(err).to.not.exist;
 					expect(res.statusCode).to.equal(CREATED); //Status code 200
+					if (vm) {console.log(res.body.id);}
 					expect(res.body).to.exist;
 					expect(res.body.id).to.exist;
 					res.text.should.not.include('exception');
-					if (vm) {console.log(res.body.id);}
 					var transId = res.body.id;
 					setTimeout(function () {
 						agent
 								.get(RUSHENDPOINT +'/response/' + res.body['id'])
 								.end(function onResponse2(err2, res2) {
+									if (vm) {console.log(res2.body);}
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									expect(res2.statusCode).to.equal(200);
 									res2.text.should.include('id');
+									res2.text.should.include('state');
+									res2.body['state'].should.eql('completed');
 									//res2.text.should.not.include('exception');
 									if (data.headers['x-relayer-traceid']) {
 										res2.body['traceID'].should.eql('TEST');
-									}
-									if (vm) {
-										console.log(i+1);
-										console.log(res2.body);
 									}
 									done();
 								});
@@ -59,7 +57,6 @@ function _validScenario(data, i){
 				});
 	});
 }
-
 
 function _invalidScenario(data, i) {
 	it(data.name, function (done) {
