@@ -1,9 +1,11 @@
 #!/bin/bash
 # +++++++++++++++++++++++++++++++++++++++++++++++
 # Launch this script from path /test/acceptance/
-# Accepted parameters: RushServer RushPort RelayerEndpoint
+# Accepted parameters: RushServer RushPort RelayerEndpoint [TOKEN]
 # ./checkDeploy.sh
-# example: ./checkDeploy.sh 176.34.66.250 80 www.google.es
+# examples:
+# (Old clusters) ./checkDeploy.sh 176.34.66.250 80 www.google.es
+# (Apigee clusters) ./checkDeploy.sh telefonicaspain-test.apigee.net/rush/v1 443 www.google.com jqv1vOp1qzscJ0NNh4sTn3l3AlEG
 # +++++++++++++++++++++++++++++++++++++++++++++++
 
 # Rush Endpoint is provided
@@ -21,6 +23,15 @@ if [[ $1 &&  $3 ]] ; then
      else
      echo "Info TARGET: Default"
      echo "exports.externalEndpoint = 'www.google.es';"  >> config.js
+fi
+
+if [[ $1 &&  $4 ]] ; then
+     echo "Info TOKEN: " $4
+     echo "exports.token = '$4';"  >> config.js
+     #echo "exports.https = 'true';"  >> config.js
+     else
+     echo "Info TOKEN: NONE"
+     echo "exports.token = '';"  >> config.js
 fi
 
 echo "_________ Test execution : _________"
