@@ -8,3 +8,4 @@ report
 *.key
 *.key.org
 *.rdb
+test/acceptance/config.js
