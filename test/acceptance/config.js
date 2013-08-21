@@ -1,2 +1,2 @@
-exports.rushServer = {hostname: '127.0.0.1', port: 5001};
-exports.externalEndpoint = 'www.google.es';
+exports.rushServer = {hostname: '54.246.236.119', port: 80};
+exports.externalEndpoint = 'www.google.com';
