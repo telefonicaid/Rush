@@ -31,7 +31,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
 
 function _validScenario(data){
 
-	it(data.name, function(done){
+	it(data.name +  ' #FPT', function(done){
 		var agent = superagent.agent();
 		var id;
 
