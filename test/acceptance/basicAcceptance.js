@@ -11,14 +11,15 @@ var PORT = config.rushServer.port;
 var secure= 'http://';
 var RUSHENDPOINT = secure + HOST
 
+// Verbose MODE
+var vm = false;
+// extra verbose MODE
+var vm2 = false;
 
-if (PORT==443){
-	secure= 'https://';
-	RUSHENDPOINT = secure + HOST
-	}
-else
-	RUSHENDPOINT = secure + HOST+ ':' + PORT;
+//Accept self signed certs
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
+//TOKEN CONFIG
 var TOKEN = config.token;
 if   (!TOKEN){
 	TOKEN='';
@@ -28,13 +29,38 @@ else{
 	console.log(TOKEN);
 }
 
+//USER CONFIG
+var USER= config.user;
+var Pass;
+if   (!USER){
+	USER='';
+	Pass='';
+}
+else{
+	var tmp= USER;
+	var re = /(\w+)\:(\w+)/;
+	//var Pass = tmp.replace(re, "$2, $1");
+	var USER= tmp.replace(re, "$1");
+	var Pass = tmp.replace(re, "$2");
+
+	if (vm)
+		console.log( "\n User and Pass " + USER + ' and ' + Pass );
+}
+
+//SECURE URL CONFIG
+if (PORT==443){
+	secure= 'https://';
+	RUSHENDPOINT = secure + HOST
+}
+else
+	RUSHENDPOINT = secure + HOST+ ':' + PORT;
 
 var ENDPOINT = config.externalEndpoint;
 if (!ENDPOINT){
 	ENDPOINT = 'www.google.es';
 }
-// Verbose MODE
-var vm = false;
+
+
 // Time to wait to check the status of the task
 var TIMEOUT = 1000;
 var CREATED = 201; // 200 for older versions
@@ -52,8 +78,9 @@ function _validScenario(data, i){
 				.set('Authorization', TOKEN)
 				.set(data.headers)
 				.send({})
+				.auth(USER,Pass)
 				.end(function(err, res) {
-					//if (vm) {console.log(res);}
+					if (vm2) {console.log(res);}
 					expect(err).to.not.exist;
 					expect(res.statusCode).to.equal(CREATED); //Status code 200
 					if (vm) {console.log(res.body.id);}
@@ -65,11 +92,12 @@ function _validScenario(data, i){
 						agent
 								.get(RUSHENDPOINT +'/response/' + res.body['id'])
 								.set('Authorization', TOKEN)
+								.auth(USER,Pass)
 								.end(function onResponse2(err2, res2) {
-									//if (vm) {console.log(res2);}
+									if (vm2) {console.log(res2);}
 									if (vm) {console.log(res2.body);}
-									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									expect(res2.statusCode).to.equal(200);
+									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.text.should.include('id');
 									res2.text.should.include('state');
 									res2.body['state'].should.eql('completed');
@@ -90,7 +118,7 @@ function _invalidScenario(data, i) {
 		agent
 				[data.method.toLowerCase()](RUSHENDPOINT)
 				.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
-				.set(data.headers)
+									.set(data.headers)			.auth(USER,Pass)
 				.end(function (err, res) {
 					should.not.exist(err);
 					res.should.have.status(400);
@@ -153,6 +181,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.post(RUSHENDPOINT)
 						.set('X-relayer-host', ENDPOINT)
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -172,6 +201,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.get(RUSHENDPOINT )
 						.set('X-relayer-host', ENDPOINT)
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -191,6 +221,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.put(RUSHENDPOINT)
 						.set('X-relayer-host', ENDPOINT)
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -211,6 +242,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.options(RUSHENDPOINT)
 						.set('X-relayer-host', ENDPOINT)
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -231,6 +263,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.trace(RUSHENDPOINT)
 						.set('X-relayer-host', ENDPOINT)
 						.set('Authorization', TOKEN)
+											.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -252,6 +285,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.head(RUSHENDPOINT)
 						.set('X-relayer-host', ENDPOINT)
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.end(onResponse);
 
 				function onResponse(err, res) {
@@ -279,6 +313,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-Relayer-Host', 'ENDPOINT')
 						.set('X-Relayer-Protocol', 'http')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -298,6 +333,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-Relayer-Host', 'ENDPOINT')
 						.set('X-Relayer-Protocol', 'https')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -317,6 +353,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-Relayer-Host', 'ENDPOINT')
 						.set('X-Relayer-Protocol', 'ftp')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -346,6 +383,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-relayer-host', ENDPOINT)
 						.set('X-relayer-persistence', 'BODY')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -362,6 +400,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						agent
 								.get(RUSHENDPOINT +'/response/' + ids[0])
 								.set('Authorization', TOKEN)
+								.auth(USER,Pass)
 								.end(
 								function onResponse2(err2, res2) {
 									//console.log("/n/n",res2)
@@ -382,6 +421,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-relayer-host', ENDPOINT)
 						.set('X-relayer-persistence', 'BODY')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -397,6 +437,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						agent
 								.get(RUSHENDPOINT +'/response/' + ids[0])
 								.set('Authorization', TOKEN)
+								.auth(USER,Pass)
 								.send({})
 								.end(
 								function onResponse2(err2, res2) {
@@ -419,6 +460,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-relayer-host', ENDPOINT)
 						.set('X-relayer-persistence', 'BODY')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -434,6 +476,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						agent
 								.get(RUSHENDPOINT +'/response/' + ids[0])
 								.set('Authorization', TOKEN)
+								.auth(USER,Pass)
 								.send({})
 								.end(
 								function onResponse2(err2, res2) {
@@ -456,6 +499,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						.set('X-relayer-host', ENDPOINT)
 						.set('X-relayer-persistence', 'BODY')
 						.set('Authorization', TOKEN)
+						.auth(USER,Pass)
 						.send({})
 						.end(onResponse);
 
@@ -471,6 +515,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 						agent
 								.get(RUSHENDPOINT +'/response/' + ids[0])
 								.set('Authorization', TOKEN)
+								.auth(USER,Pass)
 								.send({})
 								.end(
 								function onResponse2(err2, res2) {
