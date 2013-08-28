@@ -262,7 +262,7 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
       ' first callback is incorrect', function() {
 
     it('CallBack Incorrect', function(done) {
-
+	    this.timeout(3000)
       var id, type = 'POST', httpCallBack = 'http://noexiste:2222';
 
       var simpleServer = server.serverListener(
@@ -277,6 +277,7 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
             utils.makeRequest(options, content, function(e, data) {
               id = JSON.parse(data).id;
+	           // console.log(id);
             });
           },
 
@@ -314,7 +315,7 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
               utils.makeRequest(options, '', checkResponse);
 
-            }, 10);
+            }, 30);
           }
       );
 
