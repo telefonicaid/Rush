@@ -9,13 +9,14 @@ LOG=Rush_listener_$HOSTNAME.log
 RUSH_HOST=http://localhost:5001
 
 function before {
+  rm -rf mongo
   mkdir mongo
   rm -rf $LOG
   redis-server & > /dev/null
   redis_pid=$!
   mongod --dbpath ./mongo --quiet &
   mongo_pid=$!
-  until nc -z localhost 27017
+  until nc -z localhost 27017 && nc -z localhost 6379
     do
       sleep 1
     done
@@ -66,10 +67,13 @@ function redis_unavailable {
   kill $redis_pid
   beforeEach
   $LISTENER &
-  sleep 10
   afterEach
   redis-server & > /dev/null
   redis_pid=$!
+  until nc -z localhost 6379
+  do
+    sleep 1
+  done
 }
 
 function mongo_unavailable {
@@ -94,7 +98,34 @@ mongo_unavailable
 
 after
 
+return_value=0
+
 grep -q -e '| lvl=WARNING | op=LISTENER START UP | msg=Certs Not Found |' $LOG
-echo $?
+if [  $? -ne 0 ]; then
+  echo "Scenario 1: Should log Certs not found error"
+  return_value=1
+fi
+grep -q -e '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error |' $LOG
+if [  $? -ne 0 ]; then
+  echo "Scenario 1: Should log Request Error"
+  return_value=1
+fi
+grep -q -e '| lvl=ERROR | op=REDIS CONNECTION | msg=Redis Error |' $LOG
+if [  $? -ne 0 ]; then
+  echo "Scenario 1: Should log Redis Error"
+  return_value=1
+fi
+grep -q -e '| lvl=WARNING | op=INIT EVENT LISTENER | msg=Could not connect with MongoDB |' $LOG
+if [  $? -ne 0 ]; then
+  echo "Scenario 1: Should log Could not connect with MongoDB"
+  return_value=1
+fi
+grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
+if [  $? -ne 0 ]; then
+  echo "Scenario 1: Should log Error subscribing event listener"
+  return_value=1
+fi
+
+exit $return_value
 
 
