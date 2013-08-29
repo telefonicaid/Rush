@@ -15,7 +15,7 @@ var vm = false;
 if(vm){console.log('VERBOSE MODE: ON \n Feature to test EXTRA_HEADER #FEH');}
 
 // Time to wait to check the status of the task
-var TIMEOUT = 1000;
+var TIMEOUT = 100;
 var CREATED = 201; // 200 for older versions
 var describeTimeout = 5000;
 DEFAULT_PERSISTENCE = 'BODY';
@@ -82,7 +82,7 @@ function _validScenario(data){
           Object.keys(data.responseHeaders).forEach(
 		          function(rhk){
 		            expect(dataReceived.headers[rhk.toLowerCase()]).to.exist;
-			          if(vm){console.log('DATA RECEIVED: ' + dataReceived.headers[rhk.toLowerCase()]);}
+			          if(vm){console.log('// DATA RECEIVED: ', rhk.toLowerCase(),  dataReceived.headers[rhk.toLowerCase()]);}
                 dataReceived.headers[rhk.toLowerCase()].trim().should.eql(data.responseHeaders[rhk].trim());
               })
         }
@@ -98,7 +98,7 @@ function _validScenario(data){
 								expect(res2.statusCode).to.exist;
 								expect(res2.statusCode).to.equal(200);
 								expect(res2.body).to.exist;
-								if(vm){console.log('RUSH RESPONSE: ', res2.body);}
+								if(vm){console.log('// RUSH RESPONSE: ', res2.body);}
 								expect(res2.body['body']).to.equal('Request Accepted');
 								res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 								res2.text.should.include('id');
@@ -113,8 +113,6 @@ function _validScenario(data){
 }
 
 function _invalidScenario(data){
-	var vm = true;
-
 	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
@@ -160,7 +158,7 @@ function _invalidScenario(data){
 						Object.keys(data.responseHeaders).forEach(
 								function(rhk){
 									expect(dataReceived.headers[rhk.toLowerCase()]).to.exist;
-									if(vm){console.log('DATA RECEIVED: ' + dataReceived.headers[rhk.toLowerCase()]);}
+									if(vm){console.log('// DATA RECEIVED: ', rhk.toLowerCase(), dataReceived.headers[rhk.toLowerCase()]);}
 									dataReceived.headers[rhk.toLowerCase()].trim().should.eql(data.responseHeaders[rhk].trim());
 								})
 					}
@@ -176,7 +174,7 @@ function _invalidScenario(data){
 									expect(res2.statusCode).to.exist;
 									expect(res2.statusCode).to.equal(200);
 									expect(res2.body).to.exist;
-									if(vm){console.log('RUSH RESPONSE: ', res2.body);}
+									if(vm){console.log('// RUSH RESPONSE: ', res2.body);}
 									expect(res2.body['body']).to.equal('Request Accepted');
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.text.should.include('id');
@@ -281,12 +279,13 @@ describe('Feature: Extra header '  + '#FEH', function() {
 	});
 
 
-	describe.skip('Retrieve request with a INvalid header policy request #FEH', function () {
+	describe('Retrieve request with an ExtraHeader inside another ExtraHeader request #FEH', function () {
 		var responseHeaders = {
 			'header_uno': 'header_1',
 			'header_dos': 'header_2',
 			'header_tres': 'header_3',
 			'x': 'X-relayer-NoHost:localhost:8000',
+      'garbled' :' Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku or Nihon-koku, literally [the] State of Japan) ',
 			'X-Relayer-Header': 'test:test'
 		};
 
@@ -297,19 +296,38 @@ describe('Feature: Extra header '  + '#FEH', function() {
 				encodeURIComponent('header_uno: header_1'),
 				encodeURIComponent('header_dos: header_2'),
 				encodeURIComponent('header_tres: header_3'),
-				encodeURIComponent('gabled:es-ES,es;q=0.8'),
+				encodeURIComponent('garbled:Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku or Nihon-koku, literally [the] State of Japan) '),
+				encodeURIComponent('X-Relayer-Header: test:test')
+			].join(', ')};
+
+		var extraHeaders2 = {
+			'X-Relayer-Protocol':'https',
+			'X-Relayer-Header': [
+				encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
+				encodeURIComponent('header_uno: header_1'),
+				encodeURIComponent('header_dos: header_2'),
+				encodeURIComponent('header_tres: header_3'),
+				encodeURIComponent('garbled:Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku or Nihon-koku, literally [the] State of Japan) '),
 				encodeURIComponent('X-Relayer-Header: test:test')
 			].join(', ')};
 
 		var dataSetHTTP = [
 			{protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 1 Should NOT be sent as a extra header ', responseHeaders: responseHeaders},
+				name : 'EXTRAHEADER: 1 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'POST', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 2 Should NOT accept the request using ', responseHeaders: responseHeaders},
+				name : 'EXTRAHEADER: 2 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 3 Should NOT accept the request using ', responseHeaders: responseHeaders},
+				name : 'EXTRAHEADER: 3 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'DELETE', path: '/', headers:extraHeaders, body: {},
-				name : 'EXTRAHEADER: 4 Should NOT accept the request using ', responseHeaders: responseHeaders}
+				name : 'EXTRAHEADER: 4 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+			{protocol : 'https', method: 'GET', path: '/', headers: extraHeaders2, body: {},
+				name : 'EXTRAHEADER: 5 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+			{protocol : 'https', method: 'POST', path: '/', headers: extraHeaders2, body: {},
+				name : 'EXTRAHEADER: 6 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+			{protocol : 'https', method: 'PUT', path: '/', headers: extraHeaders2, body: {},
+				name : 'EXTRAHEADER: 7 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+			{protocol : 'https', method: 'DELETE', path: '/', headers:extraHeaders2, body: {},
+				name : 'EXTRAHEADER: 8 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders}
 		];
 
 		for(i=0; i < dataSetHTTP.length; i++){
