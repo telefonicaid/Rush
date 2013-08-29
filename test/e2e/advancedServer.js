@@ -20,7 +20,7 @@ var serverListener = function(portProtocol, responseParameters, connectedCallbac
   var protocol = portProtocol.protocol || 'http';
   var srv;
 
-  if(protocol === 'http'){
+  if(protocol.toLowerCase() === 'http'){
     srv = http.createServer(requestHandler);
   } else {
           srv = https.createServer(options, requestHandler);
