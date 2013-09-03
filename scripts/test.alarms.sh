@@ -1,13 +1,12 @@
 #!/bin/bash
 
-CERT_PATH=../utils/server.crt
-KEY_PATH=../utils/server.key
-
 LISTENER=../bin/listener
+
 LOG=Rush_listener_$HOSTNAME.log
 
+. ../config/test.alarm.cfg
 
-RUSH_HOST=http://localhost:5001
+RUSH_HOST=http://localhost:$RUSH_PORT
 
 VERBOSE=false
 FORCE=false
@@ -21,14 +20,14 @@ red='\e[91m'
 endColor='\e[0m'
 
 function kill_servers {
-  if nc -z localhost 6379; then
+  if nc -z localhost $REDIS_PORT; then
     echo hola
     killall redis-server
   fi
-  if nc -z localhost 27017; then
+  if nc -z localhost $MONGO_PORT; then
     killall mongod
   fi
-  while nc -z localhost 6379 || nc -z localhost 27017;
+  while nc -z localhost $REDIS_PORT || nc -z localhost $MONGO_PORT;
     do
       sleep 1
     done
@@ -38,11 +37,11 @@ function before {
   rm -rf mongo
   mkdir mongo
   rm -rf $LOG ##Remove log file
-  redis-server & ##Start redis-server
+  $REDIS_PATH & ##Start redis-server
   redis_pid=$!
-  mongod --dbpath ./mongo --quiet & #Start mongodb
+  $MONGO_PATH --dbpath ./mongo --quiet & #Start mongodb
   mongo_pid=$!
-  until nc -z localhost 27017 && nc -z localhost 6379 ##Wait until they are both up
+  until nc -z localhost $MONGO_PORT && nc -z localhost $REDIS_PORT ##Wait until they are both up
     do
       sleep 1
     done
@@ -52,7 +51,7 @@ function after {
   kill $redis_pid #Stop redis
   kill $mongo_pid #Stop mongo
   rm -rf ./mongo #Remove db directories
-  while nc -z localhost 6379 || nc -z localhost 27017;
+  while nc -z localhost $REDIS_PORT || nc -z localhost $MONGO_PORT;
     do
       sleep 1
     done
@@ -111,9 +110,9 @@ function redis_unavailable {
   if [  $? -ne 0 ]; then
     TEST3=false;
   fi
-  redis-server & #Restart redis
+  $REDIS_PATH & #Restart redis
   redis_pid=$!
-  until nc -z localhost 6379 ##Wait until it is up
+  until nc -z localhost $REDIS_PORT ##Wait until it is up
   do
     sleep 1
   done
@@ -124,9 +123,9 @@ function mongo_unavailable {
   beforeEach
   $LISTENER &
   afterEach
-  mongod --dbpath ./mongo --quiet & #Restart mongo
+  $MONGO_PATH --dbpath ./mongo --quiet & #Restart mongo
   mongo_pid=$!
-  until nc -z localhost 27017 #Wait until it is up
+  until nc -z localhost $MONGO_PORT #Wait until it is up
     do
       sleep 1
     done
@@ -189,13 +188,13 @@ if [ $option == "S" ]
 then
   kill_servers
 else
-  if nc -z localhost 6379; then
+  if nc -z localhost $REDIS_PORT; then
     echo There is an active redis-server instance.
     echo Stop it or use --force
     exit 1
   fi
 
-  if nc -z localhost 27017; then
+  if nc -z localhost $MONGO_PORT; then
     echo There is an active mongod instance.
     echo Stop it or run this script with flag -f
     exit 1
