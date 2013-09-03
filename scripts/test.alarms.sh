@@ -12,9 +12,22 @@ RUSH_HOST=http://localhost:5001
 VERBOSE=false
 FORCE=false
 
-function killall {
-  killall redis-server
-  killall mongod
+TEST1=true
+TEST2=true
+TEST3=true
+TEST4=true
+
+red='\e[91m'
+endColor='\e[0m'
+
+function kill_servers {
+  if nc -z localhost 6379; then
+    echo hola
+    killall redis-server
+  fi
+  if nc -z localhost 27017; then
+    killall mongod
+  fi
   while nc -z localhost 6379 || nc -z localhost 27017;
     do
       sleep 1
@@ -39,6 +52,10 @@ function after {
   kill $redis_pid #Stop redis
   kill $mongo_pid #Stop mongo
   rm -rf ./mongo #Remove db directories
+  while nc -z localhost 6379 || nc -z localhost 27017;
+    do
+      sleep 1
+    done
 }
 
 function beforeEach {
@@ -69,7 +86,7 @@ function no_certs_found { #Throw no certs found error
   cert_recover
   grep -q -e '| lvl=WARNING | op=LISTENER START UP | msg=Certs Not Found |' $LOG
   if [  $? -ne 0 ]; then
-    echo "Scenario 1: Should log Certs not found error"
+    TEST1=false
   fi
 }
 
@@ -80,7 +97,7 @@ function invalid_request {
   afterEach
   grep -q -e '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error |' $LOG
   if [  $? -ne 0 ]; then
-    echo "Scenario 2: Should log Request Error"
+    TEST2=false
     return_value=1
   fi
 }
@@ -92,8 +109,7 @@ function redis_unavailable {
   afterEach
   grep -q -e '| lvl=ERROR | op=REDIS CONNECTION | msg=Redis Error |' $LOG
   if [  $? -ne 0 ]; then
-    echo "Scenario 3: Should log Redis Error"
-    return_value=1
+    TEST3=false;
   fi
   redis-server & #Restart redis
   redis_pid=$!
@@ -116,13 +132,11 @@ function mongo_unavailable {
     done
   grep -q -e '| lvl=WARNING | op=INIT EVENT LISTENER | msg=Could not connect with MongoDB |' $LOG
   if [  $? -ne 0 ]; then
-    echo "Scenario 4: Should log Could not connect with MongoDB"
-    return_value=1
+    TEST4=false
   fi
   grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
   if [  $? -ne 0 ]; then
-    echo "Scenario 5: Should log Error subscribing event listener"
-    return_value=1
+    TEST4=false
   fi
 }
 
@@ -152,6 +166,10 @@ function menu {
             ;;
   esac
   after
+  if ! $TEST1; then echo -e "${red}Scenario 1: Should log Certs not found error${endColor}"; fi
+  if ! $TEST2; then echo -e "${red}Scenario 2: Should log Request Error${endColor}"; fi
+  if ! $TEST3; then echo -e "${red}Scenario 3: Should log Redis Error${endColor}"; fi
+  if ! $TEST4; then echo -e "${red}Scenario 4: Should log Could not connect with MongoDB${endColor}"; fi
 }
 
 
@@ -169,7 +187,7 @@ read option
 
 if [ $option == "S" ]
 then
-  killall
+  kill_servers
 else
   if nc -z localhost 6379; then
     echo There is an active redis-server instance.
@@ -184,6 +202,8 @@ else
   fi
   menu
 fi
+
+
 
 
 
