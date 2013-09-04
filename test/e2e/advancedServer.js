@@ -16,17 +16,17 @@ var vm = false;
 
 var serverListener = function(portProtocol, responseParameters, connectedCallback, dataCallback) {
 
-
   var protocol = portProtocol.protocol || 'http';
   var srv;
 
   if(protocol.toLowerCase() === 'http'){
     srv = http.createServer(requestHandler);
   } else {
-          srv = https.createServer(options, requestHandler);
-         }
+    srv = https.createServer(options, requestHandler);
+  }
 
   srv.listen(portProtocol.port, connectedCallback);
+
 
   function requestHandler(req, res){
 
@@ -49,17 +49,22 @@ var serverListener = function(portProtocol, responseParameters, connectedCallbac
       content += chunk;
     });
 
-    srv.on('error', function(err) {
-      dataCallback(null);
-    });
-
     req.on('end', function() {
       res.writeHead(response.statusCode, response.headers);
       res.end(response.body);
       request.body = content;
-      dataCallback(request);
+      if(dataCallback){
+        dataCallback(request);
+      }
     });
   }
+
+  srv.on('error', function(err) {
+    if(dataCallback){
+      dataCallback(null);
+    }
+  });
+
   return srv;
 
 };

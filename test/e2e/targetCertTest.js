@@ -149,16 +149,14 @@ function _invalidScenario(data){
 									.end(function onResponse2(err2, res2) {
 										if(vm){
 										//	console.log(res2);
-										console.log(res2.body);
+											console.log(res2.body);
 										}
 										expect(err2).to.not.exist;
 										expect(res2).to.exist;
-										expect(res2.statusCode).to.equal(200);
 										expect(res2.body).to.exist;
 										res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-										res2.text.should.include('id');
-										res2.text.should.include('exception');
-										//console.log(res2.body.exception);
+										expect(res2.body.id).to.exist;
+										expect(res2.body.exception).to.exist;
 										expect(res2.body.exception['exceptionId']).to.equal('SVC Relayed Host Error');
 										if(vm){console.log(res2.body.exception.exceptionText);}
 										expect(res2.body.exception['exceptionText']).to.equal('DEPTH_ZERO_SELF_SIGNED_CERT');
@@ -166,9 +164,6 @@ function _invalidScenario(data){
 									});
 						}, TIMEOUT);
 					});
-				},
-				function(dataReceived) {
-					//Never gets here
 				});
 		serversToShutDown.push(simpleServer);
 	});
@@ -223,8 +218,11 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
 			{protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 5 Should reject the request using a fake Certificate of the HTTPS server adding path /GET"},
 			{protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 6 Should reject the request using a fake Certificate of the HTTPS server adding path /POST"}
 		];
-		for(i=0; i < dataSetInvalid.length; i++){
-			_invalidScenario(dataSetInvalid[i]);  //Launch every test in data set
+
+		if(/v0\.10.*/.test(process.version)){
+			for(i=0; i < dataSetInvalid.length; i++){
+				_invalidScenario(dataSetInvalid[i]);  //Launch every test in data set
+			}
 		}
 
 
