@@ -30,7 +30,7 @@ red='\e[91m'
 endColor='\e[0m'
 
 function stop_redis_wait {
-  echo -e "\n Now stop redis server at $REDIS_HOST:$REDIS_PORT"
+  echo -e "\n Now STOP Redis server at $REDIS_HOST:$REDIS_PORT"
   while nc -z $REDIS_HOST $REDIS_PORT ##Wait until they are both up
   do
     sleep 1
@@ -46,7 +46,7 @@ function start_redis_wait {
 }
 
 function stop_mongo_wait {
-  echo -e "\n Now stop mongo server at $MONGO_HOST:$MONGO_PORT"
+  echo -e "\n Now STOP Mongo server at $MONGO_HOST:$MONGO_PORT"
   while nc -z $MONGO_HOST $MONGO_PORT ##Wait until they are both up
   do
     sleep 1
