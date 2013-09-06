@@ -38,7 +38,7 @@ function stop_redis_wait {
 }
 
 function start_redis_wait {
-  echo -e "\n Now start redis server at $REDIS_HOST:$REDIS_PORT"
+  echo -e "\n Now START Redis server at $REDIS_HOST:$REDIS_PORT"
   until nc -z $REDIS_HOST $REDIS_PORT
   do
     sleep 1
@@ -54,7 +54,7 @@ function stop_mongo_wait {
 }
 
 function start_mongo_wait {
-  echo -e "\n Now start mongo server at $MONGO_HOST:$MONGO_PORT"
+  echo -e "\n Now START Mongo server at $MONGO_HOST:$MONGO_PORT"
   until nc -z $MONGO_HOST $MONGO_PORT
   do
     sleep 1
