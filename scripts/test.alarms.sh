@@ -243,10 +243,18 @@ function menu {
   if ! $TEST3; then echo -e "${red}Scenario 3: Should log Redis Error${endColor}"; fi
   if ! $TEST4; then echo -e "${red}Scenario 4: Should log Could not connect with MongoDB${endColor}"; fi
 }
-
-
-echo "----Alarm tests---"
-echo "Options:"
+echo "==================================================================="
+echo "               * ALARM TEST *"
+echo "==================================================================="
+echo ">> CONFIG <<                       "
+echo
+echo "Configure Rush and Rush components in the config file:"
+echo "     - RUSH/config/test.alarm.cfg"
+echo "Manual execution: "
+echo "     - For for manual steps execution launch the script using -m "
+echo "==================================================================="
+echo ">> OPTIONS <<                      "
+echo
 echo -e "\tS: Stop redis-server and mongodb"
 echo -e "\t1: Run Scenario 1. HTTPS certs not found"
 echo -e "\t2: Run Scenario 2. Invalid request"
@@ -254,7 +262,8 @@ echo -e "\t3: Run Scenario 3. Redis server unavailable"
 echo -e "\t4: Run Scenario 4. MongoDB unavailable"
 echo -e "\t0: Run ALL tests"
 echo
-
+echo "==================================================================="
+echo
 echo -n "Choose one of the previous options: "
 read option
 
@@ -269,11 +278,11 @@ else
     exit 1
   fi
 
-  if nc -z $MONGO_HOST $MONGO_PORT; then
-    echo There is an active mongod instance.
-    echo Stop it or run this script with flag -f
-    exit 1
-  fi
+#  if nc -z $MONGO_HOST $MONGO_PORT; then
+#    echo There is an active mongod instance.
+#    echo Stop it or run this script with flag -f
+#    exit 1
+#  fi
   menu
 fi
 
