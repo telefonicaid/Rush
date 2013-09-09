@@ -157,7 +157,7 @@ describe('Feature: Persistence #FPT', function() {
     options.headers = {};
     options.method = 'POST';
     options.headers['X-Relayer-Host'] = 'notAServer:8014';
-    options.headers['X-relayer-persistence'] = 'BODY';
+    options.headers['X-relayer-persistence'] = 'HEADER';
     options.headers['test-header'] = 'test header';
 
     async.series([
@@ -186,7 +186,7 @@ describe('Feature: Persistence #FPT', function() {
 
             var JSONres = JSON.parse(data);
 
-            if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
+            if (!checked && res.statusCode !== 400 && JSONres.state === 'error') {
 
               clearInterval(interval);
 
@@ -202,7 +202,7 @@ describe('Feature: Persistence #FPT', function() {
 
           utils.makeRequest(options, '', checkResponse);
 
-        }, 10);
+        }, 20);
       }
     ], function(err, res) {
       var resGet = res[1];

@@ -32,7 +32,7 @@ var vm = false;
 var TIMEOUT = 600;
 var CREATED = 201;
 var describeTimeout = 5000;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; //Accept self signed certs
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = true; //Do not Accept self signed certs
 
 var serversToShutDown = [];
 var certB64 = 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDS1RDQ0FaSUNDUUQ1TUV2QUNNdU0wREFOQmdrcWhraUc5dzBCQVFVRkFEQlpNUXN3Q1FZRFZRUUdFd0pCDQpWVEVUTUJFR0ExVUVDQXdLVTI5dFpTMVRkR0YwWlRFaE1COEdBMVVFQ2d3WVNXNTBaWEp1WlhRZ1YybGtaMmwwDQpjeUJRZEhrZ1RIUmtNUkl3RUFZRFZRUUREQWxzYjJOaGJHaHZjM1F3SGhjTk1UTXdPREl3TVRFd056UXpXaGNODQpNVFF3T0RJd01URXdOelF6V2pCWk1Rc3dDUVlEVlFRR0V3SkJWVEVUTUJFR0ExVUVDQXdLVTI5dFpTMVRkR0YwDQpaVEVoTUI4R0ExVUVDZ3dZU1c1MFpYSnVaWFFnVjJsa1oybDBjeUJRZEhrZ1RIUmtNUkl3RUFZRFZRUUREQWxzDQpiMk5oYkdodmMzUXdnWjh3RFFZSktvWklodmNOQVFFQkJRQURnWTBBTUlHSkFvR0JBTTQwR0VhVEQvQkRxZm12DQpPRUdaYW9SZTJheWM2OVFJU1hWQnRmTVNwaXoxZ01DZ2ttUXdiaVo4L2U2WDZJaWxtZGhwbkp6YTVFL0drM2xqDQpmbWFHZnhHY0tsUHJlMXNJSTNTMEwyRzhUakgyZ2NNY0xtcnJpQTh5Rng5clNrRHVnaEJJNkJoMkVMczdUQ1NIDQphWUFoRFZDTTREUkZ0dFMvMXBMSmxrQk9ueGVqQWdNQkFBRXdEUVlKS29aSWh2Y05BUUVGQlFBRGdZRUFrcWVHDQpxYncrVjFDSzM2M2s3c0ZhUlgzUEpsZ2VnOU5iSUUxMEhKc21UcUI4anVxaWk5MVBRRkRFWnRjOWp2VHRMVVNzDQpqR3Zyd0hTQlNiR2ZTNnRNdjJQdHNnRzg4ZW9zRFRLbzBkM2padkFEVVlVZ2QyT0FaaWY0YkJLdjFMOGtVVE9NDQpYN1FxUFFCZmUyZG84WEdOQ3V6RlpGa2RseFd1VW9OV3pjbXkwaEU9DQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0t';
@@ -143,40 +143,27 @@ function _invalidScenario(data){
 						id=res.body.id;
 						res.text.should.not.include('exception');
 						//	done();
+						setTimeout(function() {
+							agent
+									.get(RUSHENDPOINT +'/response/' + id)
+									.end(function onResponse2(err2, res2) {
+										if(vm){
+										//	console.log(res2);
+											console.log(res2.body);
+										}
+										expect(err2).to.not.exist;
+										expect(res2).to.exist;
+										expect(res2.body).to.exist;
+										res2.headers['content-type'].should.eql('application/json; charset=utf-8');
+										expect(res2.body.id).to.exist;
+										expect(res2.body.exception).to.exist;
+										expect(res2.body.exception['exceptionId']).to.equal('SVC Relayed Host Error');
+										if(vm){console.log(res2.body.exception.exceptionText);}
+										expect(res2.body.exception['exceptionText']).to.equal('DEPTH_ZERO_SELF_SIGNED_CERT');
+										done();
+									});
+						}, TIMEOUT);
 					});
-				},
-				function(dataReceived) {
-					expect(dataReceived).to.exist;
-					if(vm){console.log('\n SERVER PATH: ' + dataReceived.url);}
-					dataReceived.method.should.be.equal(data.method);
-					dataReceived.url.should.be.equal(data.path);
-
-					var checked = false;
-					setTimeout(function() {
-						agent
-								.get(RUSHENDPOINT +'/response/' + id)
-								.end(function onResponse2(err2, res2) {
-									if(vm){
-									//	console.log(res2);
-									console.log(res2.body);
-									}
-
-									expect(err2).to.not.exist;
-									expect(res2).to.exist;
-									expect(res2.statusCode).to.equal(200);
-									expect(res2.body).to.exist;
-									expect(res2.body['body']).to.equal('Request Accepted')
-									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
-									res2.text.should.include('id');
-									res2.text.should.include('state');
-									res2.text.should.include('exception');
-									//console.log(res2.body.exception);
-									expect(res2.body.exception['exceptionId']).to.equal('SVC Relayed Host Error');
-									if(vm){console.log(res2.body.exception.exceptionText);}
-									//expect(res2.body.exception['exceptionText']).to.equal('DEPTH_ZERO_SELF_SIGNED_CERT');
-									done();
-								});
-					}, TIMEOUT);
 				});
 		serversToShutDown.push(simpleServer);
 	});
@@ -208,6 +195,8 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
 	});
 
 
+
+
 	describe('Retrieve request with a valid header policy request using HTTPS #FTC', function () {
 
 		var dataSetPOST = [
@@ -231,8 +220,11 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
 			{protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 5 Should reject the request using a fake Certificate of the HTTPS server adding path /GET"},
 			{protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 6 Should reject the request using a fake Certificate of the HTTPS server adding path /POST"}
 		];
-		for(i=0; i < dataSetInvalid.length; i++){
-			_invalidScenario(dataSetInvalid[i]);  //Launch every test in data set
+
+		if(/v0\.10.*/.test(process.version)){
+			for(i=0; i < dataSetInvalid.length; i++){
+				_invalidScenario(dataSetInvalid[i]);  //Launch every test in data set
+			}
 		}
 
 

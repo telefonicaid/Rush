@@ -11,6 +11,14 @@
     {
       "name": "Marcos Reyes",
       "email": "mru@tid.es"
+    },
+    {
+      "name": "Daniel Moran",
+      "email": "dmj@tid.es"
+    },
+    {
+      "name": "Xavier Val",
+      "email": "sr.valcanto@gmail.com"
     }
   ],
   "repository": {
@@ -37,7 +45,7 @@
     "grunt": "~0.4.1",
     "grunt-plato": "0.2.0",
     "mocha": "~1.9.0",
-    "grunt-simple-mocha": "~0.4.0",
+    "grunt-mocha-hack": "~0.1.0",
     "chai": "~1.5.0",
     "sinon": "~1.6.0",
     "istanbul": "~0.1.34",
@@ -48,7 +56,7 @@
     "should": "1.2.0",
     "superagent": "0.14.9"
 
-	
+
   },
   "license": "AGPL",
   "engine": {

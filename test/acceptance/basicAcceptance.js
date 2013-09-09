@@ -60,6 +60,8 @@ if (!ENDPOINT){
 	ENDPOINT = 'www.google.es';
 }
 
+// Endpoint for smoke test or simulated
+var realEP = false;
 
 // Time to wait to check the status of the task
 var TIMEOUT = 1000;
@@ -100,8 +102,10 @@ function _validScenario(data, i){
 									res2.headers['content-type'].should.eql('application/json; charset=utf-8');
 									res2.text.should.include('id');
 									res2.text.should.include('state');
-									res2.body['state'].should.eql('completed');
-									//res2.text.should.not.include('exception');
+									if (realEP){
+										res2.body['state'].should.eql('completed');
+										res2.text.should.not.include('exception');
+									}
 									if (data.headers['x-relayer-traceid']) {
 										res2.body['traceID'].should.eql('TEST');
 									}
