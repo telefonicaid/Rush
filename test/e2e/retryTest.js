@@ -79,7 +79,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   serversToShutDown.push(srv);
 }
 
-describe('Feature: Retry #FRT', function() {
+describe('Single Feature: Retry #FRT', function() {
 
   before(function (done) {
     listener.start(function() {
@@ -105,7 +105,7 @@ describe('Feature: Retry #FRT', function() {
     serversToShutDown = [];
   });
 
-  it('The last retry will work', function(done) {
+  it('The last retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length + 1,
@@ -115,7 +115,7 @@ describe('Feature: Retry #FRT', function() {
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
-  it('The second retry will work', function(done) {
+  it('The second retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length,
@@ -125,7 +125,7 @@ describe('Feature: Retry #FRT', function() {
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
-  it('None retry will work', function(done) {
+  it('None retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length + 2,

@@ -1,6 +1,4 @@
 ############################ Metrics tests #######################################
-# 
-
 #!/bin/bash
 # sh file to execute the files based on configuration file
 

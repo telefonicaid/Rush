@@ -10,7 +10,7 @@ var listener = require('../../lib/listener.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Feature: Proxy Server #FPX', function() {
+describe('Single Feature: Proxy Server #FPX', function() {
   'use strict';
 
   var proxyServer;
@@ -128,19 +128,19 @@ describe('Feature: Proxy Server #FPX', function() {
     });
   }
 
-  it('Using method / GET', function(done) {
+  it('Using method / GET #FPX', function(done) {
     makeTest('locahost:56841', 'GET', headers, '', done);
   });
 
-  it('Using method / POST', function(done) {
+  it('Using method / POST #FPX', function(done) {
     makeTest('locahost:56841', 'POST', headers, 'this is a test', done);
   });
 
-  it('Using method / PUT', function(done) {
+  it('Using method / PUT #FPX', function(done) {
     makeTest('locahost:56841', 'PUT', headers, 'this is a test', done);
   });
 
-  it('Using method / DELETE', function(done) {
+  it('Using method / DELETE #FPX', function(done) {
     makeTest('locahost:56841', 'DELETE', headers, '', done);
   });
 });

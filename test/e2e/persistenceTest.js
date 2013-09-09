@@ -95,7 +95,7 @@ function executeTest(method, content, persistence, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Feature: Persistence #FPT', function() {
+describe('Single Feature: Persistence #FPE', function() {
 
   before(function (done) {
     listener.start(function() {
@@ -122,7 +122,7 @@ describe('Feature: Persistence #FPT', function() {
   });
 
 
-  it('should return 404 if the persistence doesn\'t exist', function(done){
+  it('should return 404 if the persistence doesn\'t exist  #FPE ', function(done){
     var id = 'not_an_id';
     utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, '', function(err, data, res) {
       should.not.exist(err);
@@ -134,23 +134,23 @@ describe('Feature: Persistence #FPT', function() {
     });
   });
 
-  it('should return empty body and test-header', function(done) {
+  it('should return empty body and test-header  #FPE ', function(done) {
     executeTest('GET', '', 'BODY', done);
   });
 
-  it('should return the same body', function(done) {
+  it('should return the same body  #FPE ', function(done) {
     executeTest('POST', 'Body Example', 'BODY', done);
   });
 
-  it ('should return status and header. should not return body', function(done) {
+  it ('should return status and header. should not return body  #FPE ', function(done) {
     executeTest('POST', 'Body Example', 'HEADER', done);
   });
 
-  it ('should not return body neither heraders', function(done) {
+  it ('should not return body neither heraders #FPE ', function(done) {
     executeTest('POST', 'Body Example', 'STATUS', done);
   });
 
-  it('should return error headers (ENOTFOUND) OR (EADDRINFO)', function(done) {
+  it('should return error headers (ENOTFOUND) OR (EADDRINFO)  #FPE ', function(done) {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;

@@ -190,7 +190,7 @@ function _invalidScenario(data){
 
 
 
-describe('Feature: Extra header '  + '#FEH', function() {
+describe('Single Feature: Extra header '  + '#FEH', function() {
 	this.timeout(describeTimeout);
 	//Start Rush before every test launch
 	before(function (done) {
@@ -233,13 +233,13 @@ describe('Feature: Extra header '  + '#FEH', function() {
 		
 		var dataSetHTTPS = [
 			{protocol : 'HTTPS', method: 'GET', path: '/', headers: extraHeaders, body: {},
-        name : 'EXTRAHEADER: 1 Should accept the request using ', responseHeaders: responseHeaders},
+        name : '1 Should accept the request using ', responseHeaders: responseHeaders},
 			{protocol : 'HTTPS', method: 'POST', path: '/', headers: extraHeaders, body: {},
-        name : 'EXTRAHEADER: 2 Should accept the request using ', responseHeaders: responseHeaders},
+        name : '2 Should accept the request using ', responseHeaders: responseHeaders},
 			{protocol : 'HTTPS', method: 'PUT', path: '/', headers: extraHeaders, body: {},
-        name : 'EXTRAHEADER: 3 Should accept the request using ', responseHeaders: responseHeaders},
+        name : '3 Should accept the request using ', responseHeaders: responseHeaders},
 			{protocol : 'HTTPS', method: 'DELETE', path: '/', headers: extraHeaders, body: {},
-        name : 'EXTRAHEADER: 4 Should accept the request using ', responseHeaders: responseHeaders}
+        name : '4 Should accept the request using ', responseHeaders: responseHeaders}
 		];
 
 		for(i=0; i < dataSetHTTPS.length; i++){
@@ -264,13 +264,13 @@ describe('Feature: Extra header '  + '#FEH', function() {
 		
 		var dataSetHTTP = [
       {protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
-        name : 'EXTRAHEADER: 1 Should accept the request using ', responseHeaders: responseHeaders},
+        name : '1 Should accept the request using ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'POST', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 2 Should accept the request using ', responseHeaders: responseHeaders},
+				name : '2 Should accept the request using ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 3 Should accept the request using ', responseHeaders: responseHeaders},
+				name : '3 Should accept the request using ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'DELETE', path: '/', headers:extraHeaders, body: {},
-				name : 'EXTRAHEADER: 4 Should accept the request using ', responseHeaders: responseHeaders}
+				name : '4 Should accept the request using ', responseHeaders: responseHeaders}
 		];
 
 		for(i=0; i < dataSetHTTP.length; i++){
@@ -313,21 +313,21 @@ describe('Feature: Extra header '  + '#FEH', function() {
 
 		var dataSetHTTP = [
 			{protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 1 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '1 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'POST', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 2 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '2 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
-				name : 'EXTRAHEADER: 3 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '3 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'DELETE', path: '/', headers:extraHeaders, body: {},
-				name : 'EXTRAHEADER: 4 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '4 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'GET', path: '/', headers: extraHeaders2, body: {},
-				name : 'EXTRAHEADER: 5 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '5 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'POST', path: '/', headers: extraHeaders2, body: {},
-				name : 'EXTRAHEADER: 6 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '6 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'PUT', path: '/', headers: extraHeaders2, body: {},
-				name : 'EXTRAHEADER: 7 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '7 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'DELETE', path: '/', headers:extraHeaders2, body: {},
-				name : 'EXTRAHEADER: 8 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders}
+				name : '8 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders}
 		];
 
 		for(i=0; i < dataSetHTTP.length; i++){

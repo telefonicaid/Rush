@@ -51,7 +51,7 @@ function executeTest(method, content, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Feature: ONEWAY with HTTP #FOW', function() {
+describe('Single Feature: Oneway with HTTP #FOW', function() {
 
   before(function (done) {
     listener.start(function() {
@@ -77,21 +77,21 @@ describe('Feature: ONEWAY with HTTP #FOW', function() {
     serversToShutDown = [];
   });
 
-  it('Should return the same headers and the same method / GET', function(done) {
+  it('Should return the same headers and the same method / GET #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Should return the same headers, method and body / POST', function(done) {
+  it('Should return the same headers, method and body / POST #FOW', function(done) {
     var content = 'Hello World'
     executeTest('POST', content, done);
   });
 
-  it('Should return the same headers, method and body / PUT ', function(done) {
+  it('Should return the same headers, method and body / PUT #FOW', function(done) {
     var content = 'Hello World'
     executeTest('PUT', content, done);
   });
 
-  it('Should return the same headers and the same method / DELETE', function(done) {
+  it('Should return the same headers and the same method / DELETE #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 });
