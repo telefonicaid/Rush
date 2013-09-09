@@ -21,12 +21,13 @@ while getopts ":m" opt; do
   esac
 done
 
-TEST1=true
-TEST2=true
-TEST3=true
-TEST4=true
+TEST1=0
+TEST2=0
+TEST3=0
+TEST4=0
 
-red='\e[91m'
+red='\e[1;91m'
+green='\e[1;32m'
 endColor='\e[0m'
 
 function stop_redis_wait {
@@ -109,6 +110,7 @@ function after {
         sleep 1
       done
   fi
+  mv $LOG RUSH_LOG_`date -u +%Y-%m-%d-%H:%M`.log
 }
 
 function beforeEach {
@@ -132,6 +134,7 @@ function cert_recover { #Recover certificates
 }
 
 function no_certs_found { #Throw no certs found error
+  TEST1=1
   cert_bak
   beforeEach
   $LISTENER &
@@ -139,23 +142,24 @@ function no_certs_found { #Throw no certs found error
   cert_recover
   grep -q -e '| lvl=WARNING | op=LISTENER START UP | msg=Certs Not Found |' $LOG
   if [  $? -ne 0 ]; then
-    TEST1=false
+    TEST1=2
   fi
 }
 
 function invalid_request {
+  TEST2=1
   $LISTENER &
   beforeEach
   curl -v -H "X-Relayer-Host:nodejs.org" -H "X-relayer-persistence: INVALID_PERSISTENCE" $RUSH_HOST #nvalid persistence, should be logged
   afterEach
   grep -q -e '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error |' $LOG
   if [  $? -ne 0 ]; then
-    TEST2=false
-    return_value=1
+    TEST2=2
   fi
 }
 
 function redis_unavailable {
+  TEST3=1
   if $MANUAL ; then
     stop_redis_wait
   else
@@ -167,7 +171,7 @@ function redis_unavailable {
   afterEach
   grep -q -e '| lvl=ERROR | op=REDIS CONNECTION | msg=Redis Error |' $LOG
   if [  $? -ne 0 ]; then
-    TEST3=false;
+    TEST3=2;
   fi
 
   if $MANUAL ; then
@@ -183,6 +187,7 @@ function redis_unavailable {
 }
 
 function mongo_unavailable {
+  TEST4=1
   if $MANUAL ; then
     stop_mongo_wait
   else
@@ -204,17 +209,21 @@ function mongo_unavailable {
 
   grep -q -e '| lvl=WARNING | op=INIT EVENT LISTENER | msg=Could not connect with MongoDB |' $LOG
   if [  $? -ne 0 ]; then
-    TEST4=false
+    TEST4=2
   fi
   grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
   if [  $? -ne 0 ]; then
-    TEST4=false
+    TEST4=2
   fi
 }
 
 
 function menu {
   before
+
+  exec 2>&1
+  exec > >(tee ALARMS_LOG_`date -u +%Y-%m-%d-%H:%M`.log) # Save stdout to a file
+
   case $option in
         1)
           no_certs_found
@@ -238,10 +247,19 @@ function menu {
             ;;
   esac
   after
-  if ! $TEST1; then echo -e "${red}Scenario 1: Should log Certs not found error${endColor}"; fi
-  if ! $TEST2; then echo -e "${red}Scenario 2: Should log Request Error${endColor}"; fi
-  if ! $TEST3; then echo -e "${red}Scenario 3: Should log Redis Error${endColor}"; fi
-  if ! $TEST4; then echo -e "${red}Scenario 4: Should log Could not connect with MongoDB${endColor}"; fi
+  echo
+  echo TEST RESULTS:
+  echo ===========================
+  echo
+  if [ $TEST1 -eq 1 ]; then echo -e "${green}Scenario 1: ALARM Certs not found generated${endColor}"; fi
+  if [ $TEST1 -eq 2 ]; then echo -e "${red}Scenario 1: Should log Certs not found error${endColor}"; fi
+  if [ $TEST2 -eq 1 ]; then echo -e "${green}Scenario 2: ALARM Request Error generated${endColor}"; fi
+  if [ $TEST2 -eq 2 ]; then echo -e "${red}Scenario 2: Should log Request Error${endColor}"; fi
+  if [ $TEST3 -eq 1 ]; then echo -e "${green}Scenario 3: ALARM Redis Error generated${endColor}"; fi
+  if [ $TEST3 -eq 2 ]; then echo -e "${red}Scenario 3: Should log Redis Error${endColor}"; fi
+  if [ $TEST4 -eq 1 ]; then echo -e "${green}Scenario 4: ALARM MongoDB Error generated${endColor}"; fi
+  if [ $TEST4 -eq 2 ]; then echo -e "${red}Scenario 4: Should log Could not connect with MongoDB${endColor}"; fi
+  echo
 }
 echo "==================================================================="
 echo "               * ALARM TEST *"
