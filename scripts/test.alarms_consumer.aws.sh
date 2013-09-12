@@ -88,11 +88,15 @@ function mongo_unavailable {
 
   grep -q -e '| lvl=WARNING | op=INIT EVENT LISTENER | msg=Could not connect with MongoDB |' $LOG
   if [  $? -ne 0 ]; then
-    TEST1=2
+    TEST4=2
   fi
   grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
   if [  $? -ne 0 ]; then
-    TEST1=2
+    TEST4=2
+  fi
+  grep -q -e '| lvl=ERROR | op=LISTENER START UP | msg=listener could not be started |' $LOG
+  if [  $? -ne 0 ]; then
+    TEST4=2
   fi
 }
 
