@@ -39,7 +39,7 @@ var DIR_MODULE = path.dirname(module.filename);
 
 
 function _invalidScenario(data){
-	it(data.name + ' #F3', function(done){
+	it(data.name + ' #FEN', function(done){
 
 		var agent = superagent.agent();
 		agent
@@ -78,7 +78,7 @@ function _invalidScenario(data){
 	});
 }
 
-describe('Feature: Encoding #FEN', function() {
+describe('Single Feature: Encoding #FEN', function() {
 	 this.timeout(describeTimeout);
 
 	var serversToShutDown = [];
@@ -165,7 +165,7 @@ describe('Feature: Encoding #FEN', function() {
 
 describe('Encoding: Retrive an image encoded in BASE64', function () {
 
-it('should return the image coded in base 64 #F3', function(done) {
+it('should return the image coded in base 64 #FEN', function(done) {
 
 	function makeRequest() {
 		var options = {};

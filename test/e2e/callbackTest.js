@@ -104,7 +104,7 @@ function makeRequest(type, content, done) {
   serversToShutDown.push(server_callback);
 }
 
-describe('Feature: Callback #FCB', function() {
+describe('Single Feature: Callback #FCB', function() {
   'use strict';
   var content = 'HTTP_Callback Test';
 
@@ -135,7 +135,7 @@ describe('Feature: Callback #FCB', function() {
   describe('Using method / POST', function() {
 
     it('Should receive a callback on a correct ' +
-        'POST petition', function(done) {
+        'POST petition #FCB', function(done) {
       makeRequest('POST', content, done);
     });
   });
@@ -143,7 +143,7 @@ describe('Feature: Callback #FCB', function() {
   describe('Using method / PUT', function() {
 
     it('Should receive a callback on a correct ' +
-        'PUT petition ', function(done) {
+        'PUT petition #FCB', function(done) {
       makeRequest('PUT', content, done);
     });
   });
@@ -151,7 +151,7 @@ describe('Feature: Callback #FCB', function() {
   describe('Using method / GET', function() {
 
     it('Should receive a callback on a correct ' +
-        'GET petition ', function(done) {
+        'GET petition #FCB', function(done) {
       makeRequest('GET', '', done);
     });
   });
@@ -159,7 +159,7 @@ describe('Feature: Callback #FCB', function() {
   describe('Using method / DELETE', function() {
 
     it('Should receive a callback on a correct ' +
-        'DELETE petition ', function(done) {
+        'DELETE petition #FCB', function(done) {
       makeRequest('DELETE', '', done);
     });
   });
@@ -168,20 +168,20 @@ describe('Feature: Callback #FCB', function() {
       'the first callback is incorrect', function() {
 
     it('Consumer should not die even if the ' +
-        'callback is not responding', function(done) {
+        'callback is not responding #FCB', function(done) {
       prepareServerAndSendPetition('POST',
           content, 'http://localhost:8888', done);
     });
 
     it('Should receive a callback even if the ' +
-        'callback of the last petition was incorrect', function(done) {
+        'callback of the last petition was incorrect #FCB', function(done) {
       makeRequest('POST', content, done);
     });
   });
 
   describe('Callback has to be called even ' +
       'if the Host is incorrect', function() {
-    it('Should receive a callback with an error', function(done) {
+    it('Should receive a callback with an error #FCB', function(done) {
 
       var portCallBack = config.callBackPort,
           server_callback,

@@ -10,7 +10,7 @@ var listener = require('../../lib/listener.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Feature: Oneway Response errors #FOW', function() {
+describe('Multiple Feature: ONEWAY Response errors #FOW', function() {
 
   var options;
 
@@ -37,7 +37,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     done();
   });
 
-  it('Should return protocol error (test 1)', function(done) {
+  it('Should return protocol error / FTP  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:3001';
     options.headers['X-Relayer-Protocol'] = 'ftp';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
@@ -52,7 +52,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
   });
 
 
-  it('Should return invalid host error (test 2)', function(done) {
+  it('Should return invalid host error / Invalid relayer host  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'http://localhost:2001';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
@@ -65,7 +65,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should return invalid host error (test 3)', function(done) {
+  it('Should return invalid host error / Invalid relayer port  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:65536';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
@@ -78,7 +78,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should return invalid host error (test 4)', function(done) {
+  it('Should return invalid host error / Missing x-relayer-host parameter  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = '';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
@@ -90,7 +90,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should return invalid host error (test 5)', function(done) {
+  it('Should return invalid host error / Invalid format  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = ':8888';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
@@ -103,7 +103,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should return invalid host error (test 6)', function(done) {
+  it('Should return invalid host error / Invalid relayer format  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:8888/test';
     utils.makeRequest(options, 'host error test', function(e, data) {
 
@@ -117,7 +117,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
   });
 
 
-  it('Should return X-Relayer-Host missing error', function(done) {
+  it('Should return X-Relayer-Host missing error  #FOW', function(done) {
     delete options.headers['X-Relayer-Host'];
     utils.makeRequest(options, 'X-Relayer-Host missing test', function(e, data) {
 
@@ -129,7 +129,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should not return an error. Should return and ID', function(done) {
+  it('Should not return an error. Should accept the request / protocol error http  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:3001';
     options.headers['X-Relayer-protocol'] = 'http';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
@@ -140,7 +140,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should not return an error. Should return and ID', function(done) {
+  it('Should not return an error. Should accept the request / protocol error https  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost:3001';
     options.headers['X-Relayer-protocol'] = 'https';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
@@ -151,7 +151,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should not return an error. Should return and ID', function(done) {
+  it('Should not return an error. Should accept the request / protocol error port  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
       var parsedJSON = JSON.parse(data);
@@ -161,7 +161,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should not return an error. Should return and ID', function(done) {
+  it('Should not return an error. Should accept the request / protocol error https port  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost';
     options.headers['X-Relayer-protocol'] = 'https';
     utils.makeRequest(options, 'Protocol error test', function(e, data) {
@@ -172,7 +172,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('Should return an ID when GET /response/:id and X-Relayer-Host header is defined', function(done) {
+  it('Should return an ID when GET /response/:id and X-Relayer-Host header is defined  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = 'localhost';
     options.headers['X-Relayer-protocol'] = 'https';
     utils.makeRequest(options, 'Protocol error test', function(e, data, res) {
@@ -184,7 +184,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('invalid persistence type should throw error', function(done) {
+  it('invalid persistence type should throw error  #FOW', function(done) {
     var id;
 
     var options2 = options;
@@ -202,7 +202,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('invalid retry parameter should throw error', function(done) {
+  it('invalid retry parameter should throw error  #FOW', function(done) {
     var id;
     options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-Retry'] = '5-7,4,8';
@@ -218,7 +218,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('invalid httpcallback should throw error', function(done) {
+  it('invalid httpcallback should throw error / callback url empty  #FOW', function(done) {
     var id;
     options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-httpcallback'] = 'http://';
@@ -232,7 +232,7 @@ describe('Feature: Oneway Response errors #FOW', function() {
     });
   });
 
-  it('invalid httpcallback should throw error', function(done) {
+  it('invalid httpcallback should throw error / invalid url #FOW', function(done) {
     var id;
     options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-httpcallback'] = 'localhost:8000';

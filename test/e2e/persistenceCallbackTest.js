@@ -148,7 +148,7 @@ function makeRequest(type, persistence, content, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Feature: Persistence Callback #FPT #FCB', function() {
+describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
 
@@ -188,17 +188,17 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
   describe('Using method / POST', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'BODY', content, done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'HEADER', content, done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'STATUS', content, done);
     });
@@ -206,17 +206,17 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
   describe('Using method / PUT', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('PUT', 'BODY', content, done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('PUT', 'HEADER', content, done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('PUT', 'STATUS', content, done);
     });
@@ -224,17 +224,17 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
   describe('Using method / GET', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('GET', 'BODY', '', done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('GET', 'HEADER', '', done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('GET', 'STATUS', '', done);
     });
@@ -242,17 +242,17 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
   describe('Using method / DELETE', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('DELETE', 'BODY', '', done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('DELETE', 'HEADER', '', done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('DELETE', 'STATUS', '', done);
     });
@@ -261,7 +261,7 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
   describe('Second petition should be completed even if the' +
       ' first callback is incorrect', function() {
 
-    it('CallBack Incorrect', function(done) {
+    it('CallBack Incorrect #FPT ', function(done) {
 	    this.timeout(3000)
       var id, type = 'POST', httpCallBack = 'http://noexiste:2222';
 
@@ -324,7 +324,7 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
     });
 
 
-    it('CallBack Correct', function(done) {
+    it('CallBack Correct #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'BODY', content, done);
     });
@@ -332,7 +332,7 @@ describe('Feature: Persistence Callback #FPT #FCB', function() {
 
   describe('Callback has to be called' +
       ' even if the Host is incorrect', function() {
-    it('Should receive a callback with an error', function(done) {
+    it('Should receive a callback with an error #FPT ', function(done) {
 
       var portCallBack = config.callBackPort,
           callbackServer,

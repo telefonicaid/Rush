@@ -9,7 +9,7 @@ var listener = require('../../lib/listener.js');
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Feature: Processing Status #FOW', function() {
+describe('Multiple Feature: Processing Status #FOW', function() {
 
   var serversToShutDown = [];
 
@@ -36,7 +36,7 @@ describe('Feature: Processing Status #FOW', function() {
     });
   });
 
-  it('Should return correct processing state', function(done) {
+  it('Should return correct processing state  #FPT ', function(done) {
 
     'use strict';
 
@@ -140,7 +140,7 @@ describe('Feature: Processing Status #FOW', function() {
     });
   });
 
-  it('Processing state is not returned if X-Relayer-Persistence is not defined', function(done) {
+  it('Processing state is not returned if X-Relayer-Persistence is not defined  #FPT ', function(done) {
 
     'use strict';
 

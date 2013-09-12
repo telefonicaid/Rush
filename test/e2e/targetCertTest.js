@@ -197,15 +197,15 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
 
 
 
-	describe('Retrieve request with a valid header policy request using HTTPS #FTC', function () {
+	describe('Retrieve request with a valid header policy request using HTTPS ', function () {
 
 		var dataSetPOST = [
-			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "Certificate: 1 Should accept the request using the target Certificate of the HTTPS server /GET"},
-			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "Certificate: 2 Should accept the request using the target Certificate of the HTTPS server /POST"},
-			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "Certificate: 3 Should accept the request using the target Certificate of the HTTPS server /PUT"},
-			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "Certificate: 4 Should accept the request using the target Certificate of the HTTPS server /DELETE"},
-			{protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "Certificate: 5 Should accept the request using the target Certificate of the HTTPS server adding a path /GET"},
-			{protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "Certificate: 6 Should accept the request using the target Certificate of the HTTPS server adding a path /POST"}
+			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "1 Should accept the request using the target Certificate of the HTTPS server /GET"},
+			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "2 Should accept the request using the target Certificate of the HTTPS server /POST"},
+			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "3 Should accept the request using the target Certificate of the HTTPS server /PUT"},
+			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "4 Should accept the request using the target Certificate of the HTTPS server /DELETE"},
+			{protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "5 Should accept the request using the target Certificate of the HTTPS server adding a path /GET"},
+			{protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {}, name : "6 Should accept the request using the target Certificate of the HTTPS server adding a path /POST"}
 		];
 
 		for(i=0; i < dataSetPOST.length; i++){
@@ -213,12 +213,12 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
 		}
 
 		var dataSetInvalid = [
-			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 1 Should reject the request using a fake Certificate of the HTTPS server /GET"},
-			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 2 Should reject the request using a fake Certificate of the HTTPS server /POST"},
-			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 3 Should reject the request using a fake Certificate of the HTTPS server /PUT"},
-			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 4 Should reject the request using a fake Certificate of the HTTPS server /DELETE"},
-			{protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 5 Should reject the request using a fake Certificate of the HTTPS server adding path /GET"},
-			{protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "Certificate: 6 Should reject the request using a fake Certificate of the HTTPS server adding path /POST"}
+			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "1 Should reject the request using a fake Certificate of the HTTPS server /GET"},
+			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "2 Should reject the request using a fake Certificate of the HTTPS server /POST"},
+			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "3 Should reject the request using a fake Certificate of the HTTPS server /PUT"},
+			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "4 Should reject the request using a fake Certificate of the HTTPS server /DELETE"},
+			{protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "5 Should reject the request using a fake Certificate of the HTTPS server adding path /GET"},
+			{protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {}, name : "6 Should reject the request using a fake Certificate of the HTTPS server adding path /POST"}
 		];
 
 		if(/v0\.10.*/.test(process.version)){
