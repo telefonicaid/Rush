@@ -90,10 +90,6 @@ function mongo_unavailable {
   if [  $? -ne 0 ]; then
     TEST4=2
   fi
-  grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
-  if [  $? -ne 0 ]; then
-    TEST4=2
-  fi
   grep -q -e '| lvl=ERROR | op=LISTENER START UP | msg=listener could not be started |' $LOG
   if [  $? -ne 0 ]; then
     TEST4=2
