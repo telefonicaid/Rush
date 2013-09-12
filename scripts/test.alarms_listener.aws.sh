@@ -84,6 +84,10 @@ function no_certs_found { #Throw no certs found error
   if [  $? -ne 0 ]; then
     TEST1=2
   fi
+  grep -q -e '| op=LISTENER START UP | msg=listener could not be started |' $LOG
+  if [  $? -ne 0 ]; then
+    TEST1=2
+  fi
 }
 
 function invalid_request {
@@ -130,6 +134,10 @@ function mongo_unavailable {
     TEST4=2
   fi
   grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
+  if [  $? -ne 0 ]; then
+    TEST4=2
+  fi
+  grep -q -e '| lvl=ERROR | op=LISTENER START UP | msg=listener could not be started |' $LOG
   if [  $? -ne 0 ]; then
     TEST4=2
   fi
