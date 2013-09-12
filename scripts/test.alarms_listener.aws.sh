@@ -80,11 +80,7 @@ function no_certs_found { #Throw no certs found error
   $LISTENER &
   afterEach
   cert_recover
-  grep -q -e '| lvl=WARNING | op=LISTENER START UP | msg=Certs Not Found |' $LOG
-  if [  $? -ne 0 ]; then
-    TEST1=2
-  fi
-  grep -q -e '| op=LISTENER START UP | msg=listener could not be started |' $LOG
+  grep -q -e "| lvl=ERROR | op=LISTENER START UP | msg=listener could not be started | corr=N/A | trans=N/A | hostname=$HOSTNAME | component=listener | additionalInfo='Certs not found'" $LOG
   if [  $? -ne 0 ]; then
     TEST1=2
   fi
@@ -130,10 +126,6 @@ function mongo_unavailable {
   start_mongo_wait
 
   grep -q -e '| lvl=WARNING | op=INIT EVENT LISTENER | msg=Could not connect with MongoDB |' $LOG
-  if [  $? -ne 0 ]; then
-    TEST4=2
-  fi
-  grep -q -e '| lvl=ERROR | op=ADD-ONS START UP | msg=Error subscribing event listener |' $LOG
   if [  $? -ne 0 ]; then
     TEST4=2
   fi
