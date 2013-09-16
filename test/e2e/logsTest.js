@@ -90,6 +90,7 @@ function _scenario(data){
                 var cLog = fs.readFileSync(consumerLog).toString();
 
                 console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
+                console.log(fs.readdirSync(__dirname));
                 console.log('\033[31m' + lLog);
                 console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
 
