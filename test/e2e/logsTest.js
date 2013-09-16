@@ -89,7 +89,9 @@ function _scenario(data){
                 var lLog = fs.readFileSync(listenerLog).toString();
                 var cLog = fs.readFileSync(consumerLog).toString();
 
+                console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
                 console.log('\033[31m' + lLog);
+                console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
 
                 for(var i=0; i < data.expected.length; i++){
                   var pattern=new RegExp(escape(data.expected[i]));
