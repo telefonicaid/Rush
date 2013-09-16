@@ -50,14 +50,14 @@ ENDPOINT = fhHOST + ':' + fhPORT;
 var serversToShutDown = [];
 
 // Time to wait to check the status of the task
-var TIMEOUT = 3000;
+var TIMEOUT = 1000;
 var CREATED = 201;
 var describeTimeout = 5000;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
 
 function _scenario(data){
 
-  it(data.name +  ' #FPT', function(done){
+  it(data.name +  ' #LOGS', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -98,7 +98,7 @@ function _scenario(data){
                 }
                 done();
 
-              }, 1000);
+              }, TIMEOUT);
             });
       },
       function(dataReceived) {});
@@ -107,8 +107,8 @@ function _scenario(data){
 }
 
 
-describe('Single Feature: Protocol '  + '#FPT', function() {
-  this.timeout(6000);
+describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
+  this.timeout(describeTimeout);
 
   var fdLLog, fdCLog;
 
