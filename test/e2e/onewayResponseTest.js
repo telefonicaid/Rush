@@ -78,6 +78,34 @@ describe('Multiple Feature: ONEWAY Response errors #FOW', function() {
     });
   });
 
+  it('Should return invalid proxy error / Invalid proxy host  #FOW', function(done) {
+    options.headers['X-Relayer-Host'] = 'localhost:2001';
+    options.headers['X-Relayer-Proxy'] = 'http://localhost:2001';
+    utils.makeRequest(options, 'proxy error test', function(e, data) {
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-proxy');
+      parsedData.should.have.property('userMessage', 'Valid format: host[:port]');
+
+      done();
+    });
+  });
+
+  it('Should return invalid proxy error / Invalid proxy port  #FOW', function(done) {
+    options.headers['X-Relayer-Host'] = 'localhost:2001';
+    options.headers['X-Relayer-Proxy'] = 'localhost:65536';
+    utils.makeRequest(options, 'proxy error test', function(e, data) {
+
+      var parsedData = JSON.parse(data);
+      parsedData.should.have.property('exceptionId', 'SVC0002');
+      parsedData.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-proxy');
+      parsedData.should.have.property('userMessage', 'Port should be a number between 0 and 65535');
+
+      done();
+    });
+  });
+
   it('Should return invalid host error / Missing x-relayer-host parameter  #FOW', function(done) {
     options.headers['X-Relayer-Host'] = '';
     utils.makeRequest(options, 'host error test', function(e, data) {
@@ -236,6 +264,20 @@ describe('Multiple Feature: ONEWAY Response errors #FOW', function() {
     var id;
     options.headers['X-Relayer-Host'] = 'notAServer:8014';
     options.headers['X-Relayer-httpcallback'] = 'localhost:8000';
+
+    utils.makeRequest(options, 'body request', function(err, res) {
+      should.not.exist(err);
+      var jsonRes = JSON.parse(res);
+      jsonRes.should.have.property('exceptionId', 'SVC0002');
+      jsonRes.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-httpcallback');
+      done();
+    });
+  });
+
+  it('invalid httpcallback should throw error / invalid protocol #FOW', function(done) {
+    var id;
+    options.headers['X-Relayer-Host'] = 'notAServer:8014';
+    options.headers['X-Relayer-httpcallback'] = 'https://localhost:8000';
 
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
