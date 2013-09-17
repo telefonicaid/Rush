@@ -23,8 +23,9 @@ var RUSHENDPOINT = 'http://' + HOST + ':' + PORT;
 var fhHOST = config.simpleServerHostname;
 var fhPORT = config.simpleServerPort;
 
-var listenerLog = __dirname + '/Rush_listener_' + os.hostname() + '.log';
-var consumerLog = __dirname + '/Rush_consumer_' + os.hostname() + '.log';
+var listenerLog = 'Rush_listener_' + os.hostname() + '.log';
+var consumerLog = '/Rush_consumer_' + os.hostname() + '.log';
+
 
 var RELAYREQUEST = "| lvl=INFO | op=RELAY REQUEST | msg=Relay Request received | corr=N/A | trans=.* | hostname=.* | component=listener | userID='.*' |",
     PERSISTENCE_QUEUED = "| lvl=INFO | op=PERSISTENCE | msg=Persistence Completed | corr=N/A | trans=.* | hostname=.* | component=evPersistence | userID='.*' | state='queued'",
@@ -88,11 +89,6 @@ function _scenario(data){
 
                 var lLog = fs.readFileSync(listenerLog).toString();
                 var cLog = fs.readFileSync(consumerLog).toString();
-
-                console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
-                console.log(fs.readdirSync(__dirname));
-                console.log('\033[31m' + lLog);
-                console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
 
                 for(var i=0; i < data.expected.length; i++){
                   var pattern=new RegExp(escape(data.expected[i]));
