@@ -24,7 +24,7 @@ var fhHOST = config.simpleServerHostname;
 var fhPORT = config.simpleServerPort;
 
 var listenerLog = 'Rush_listener_' + os.hostname() + '.log';
-var consumerLog = '/Rush_consumer_' + os.hostname() + '.log';
+var consumerLog = 'Rush_consumer_' + os.hostname() + '.log';
 
 
 var RELAYREQUEST = "| lvl=INFO | op=RELAY REQUEST | msg=Relay Request received | corr=N/A | trans=.* | hostname=.* | component=listener | userID='.*' |",
