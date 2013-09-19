@@ -91,7 +91,7 @@ function executeTest(method, content, headers, done) {
 
   setTimeout(function(){
     testResponses(responses)
-  }, 3000);
+  }, 1000);
 
 
 
