@@ -74,7 +74,7 @@ describe('TASK QUEUE', function () {
           .set(data.headers)
           .end(function(err, res) {
             expect(err).to.not.exist;
-            expect(res.statusCode).to.equal(200); //Status code 200
+            expect(res.statusCode).to.equal(201); //Status code 201
             expect(res.body).to.exist;
             expect(res.body.id).to.exist;
 

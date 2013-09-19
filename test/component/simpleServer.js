@@ -25,13 +25,8 @@ var serverListener = function(connectedCallback, dataCallback) {
 
       callbackIfExist(method, headers, content);
 
-      //req.destroy();
-      srv.close();
     });
 
-    //srv.on('close', function () {
-    //    console.log('Server closed...');
-    //});
   }).listen(config.simpleServerPort, connectedCallback);
 
   return srv;

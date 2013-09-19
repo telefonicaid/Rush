@@ -84,10 +84,11 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
   describe('Retrieve request with a valid header policy request using HTTPS ', function () {
 
     var dataSetPOST = [
-      {method: 'GET', headers: {'x-relayer-persistence':''}, not_expected : ['x-relayer-persistence'], body: {}, name : "1 Should accept the request using HTTPS /GET"},
-      {method: 'GET', headers: {'x-relayer-protocol':''}, not_expected : ['x-relayer-protocol'], body: {}, name : "1 Should accept the request using HTTPS /GET"},
-      {method: 'GET', headers: {'x-relayer-httpcallback' : ''}, not_expected : ['x-relayer-httpcallback'], body: {}, name : "1 Should accept the request using HTTPS /GET"}
-
+      {method: 'GET', headers: {'x-relayer-persistence':''}, not_expected : ['x-relayer-persistence'], body: {}, name : "1 Should not contain x-relayer-persistence"},
+      {method: 'GET', headers: {'x-relayer-protocol':''}, not_expected : ['x-relayer-protocol'], body: {}, name : "2 Should not contain x-relayer-protocol"},
+      {method: 'GET', headers: {'x-relayer-httpcallback' : ''}, not_expected : ['x-relayer-httpcallback'], body: {}, name : "3 Should not contain x-relayer-httpcallback"},
+      {method: 'GET', headers: {'x-relayer-topic' : ''}, not_expected : ['x-relayer-topic'], body: {}, name : "4 Should not contain x-relayer-topic"},
+      {method: 'GET', headers: {'x-relayer-retry' : ''}, not_expected : ['x-relayer-retry'], body: {}, name : "4 Should not contain x-relayer-retry"}
     ];
 
     for(i=0; i < dataSetPOST.length; i++){

@@ -15,11 +15,13 @@ var PORT = config.rushServer.port;
 var listener = require('../../lib/listener.js');
 var consumer = require('../../lib/consumer.js');
 
+var serversToShutDown = [];
+
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
 
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
-var ENDPOINT = 'http://' + config.simpleServerHostname + ':' + config.simpleServerPort;
+var ENDPOINT = config.simpleServerHostname + ':' + config.simpleServerPort;
 var FAKEENDPOINT = 'FAKEENDPOINT';
 
 var ALL_HEADERS = [
@@ -32,8 +34,28 @@ var ALL_HEADERS = [
   "x-relayer-encoding"
 ];
 
-function executeTest(method, content, newHeaders, persistence, done) {
+function keysToLowerCase(obj){
+    Object.keys(obj).forEach(function(key){
+        var k=key.toLowerCase();
+        if(k!= key){
+            obj[k]= obj[key];
+            delete obj[key];
+        }
+    });
+    return (obj);
+}
+
+function executeTest(method, content, headers, done) {
   'use strict';
+
+  var mymethod;
+  switch(method){
+    case "DELETE":
+      mymethod = 'del';
+      break;
+    default:
+      mymethod = method.toLowerCase()
+  }
 
   var subscriber = redis.createClient(REDIS_PORT, REDIS_HOST);
   subscriber.subscribe('STATE:processing')
@@ -41,20 +63,15 @@ function executeTest(method, content, newHeaders, persistence, done) {
   subscriber.subscribe('STATE:error')
   subscriber.subscribe('STATE:persistence_state');
 
-  var id, headers = {};
+  var id;
 
-  headers = {};
-  headers['content-type'] = 'application/json';
-  headers['X-Relayer-Host'] = ENDPOINT;
-  headers['X-relayer-persistence'] = persistence;
+  headers = keysToLowerCase(headers);
 
-  _.extend(headers, newHeaders);
-
-  console.log(headers);
-  server.serverListener(
+  var simpleServer = server.serverListener(
     function onConnected() {
       agent
-        [method.toLowerCase()](URL_RUSH)
+        [mymethod](URL_RUSH)
+        .set('content-type', 'application/json')
         .set(headers)
         .end(function(err, res) {
           expect(err).to.not.exist;
@@ -68,17 +85,15 @@ function executeTest(method, content, newHeaders, persistence, done) {
 
   var responses = {};
 
-  subscriber.on('message', function(channel, message){
+  subscriber.on('message', function newMessage(channel, message){
     responses[channel] = JSON.parse(message);
-    if((channel === 'STATE:completed') && !headers['X-relayer-persistence']){
-      testResponses(responses);
-      subscriber.unsubscribe();
-    }
-    if(channel == 'STATE:persistence_state'){
-      testResponses(responses);
-      subscriber.unsubscribe();
-    }
   });
+
+  setTimeout(function(){
+    testResponses(responses)
+  }, 3000);
+
+
 
   function testResponses (responses){
     expect(responses).to.have.property('STATE:processing');
@@ -102,21 +117,20 @@ function executeTest(method, content, newHeaders, persistence, done) {
       expect(task.headers).to.not.have.property(shouldNotExist[i]);
     }
 
-    console.log(headers['X-relayer-host'])
-
-    if(headers['X-relayer-host'] === ENDPOINT){
+    if(headers['x-relayer-host'] === ENDPOINT){
       expect(responses).to.have.property('STATE:completed');
       expect(responses).to.not.have.property('STATE:error');
-      if(!headers['X-relayer-persistence']){
+      if(!headers['x-relayer-persistence']){
         expect(responses).to.not.have.property('STATE:persistence_state');
       }
     }
-    else if(headers['X-relayer-host'] === FAKEENDPOINT){
-      console.log('semeteeeeee+++++++++++++++++++++++++++++');
+    else if(headers['x-relayer-host'] === FAKEENDPOINT){
       expect(responses).to.have.property('STATE:error');
       expect(responses).to.not.have.property('STATE:completed');
       expect(responses).to.have.property('STATE:persistence_state');
     }
+    serversToShutDown.push(simpleServer);
+    subscriber.unsubscribe('message');
     done();
   }
 }
@@ -137,8 +151,36 @@ describe('Feature: Persistence', function() {
     });
   });
 
-  it('should return empty body and test-header', function(done) {
-    executeTest('GET', '', {'X-Relayer-Host' : FAKEENDPOINT}, '', done);
+  afterEach(function() {
+    for (var i = 0; i < serversToShutDown.length; i++) {
+      try {
+        serversToShutDown[i].close();
+      } catch (e) {}
+    }
+    serversToShutDown = [];
+  });
+
+
+  it('1 should return empty body and test-header', function(done) {
+    executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT}, done);
+  });
+  it('2 should return body and x-relayer-persistence', function(done) {
+    executeTest('POST', 'payload', {'x-relayer-host' : ENDPOINT, 'x-relayer-persistence' : 'BODY'}, done);
+  });
+  it('3 should return empty body and x-relayer-httpcallback', function(done) {
+    executeTest('PUT', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-httpcallback' : "http://google.es"}, done);
+  });
+  it('4 should return empty body and x-relayer-encoding', function(done) {
+    executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-encoding' : "base64"}, done);
+  });
+  it('5 should return empty body and x-relayer-encoding', function(done) {
+    executeTest('POST', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-encoding' : "base64"}, done);
+  });
+  it('6 should return empty body and x-relayer-topic', function(done) {
+    executeTest('DELETE', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-topic' : "base64"}, done);
+  });
+  it('7 should return empty body and x-relayer-topic', function(done) {
+    executeTest('GET', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-topic' : "try"}, done);
   });
 });
 
