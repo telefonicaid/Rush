@@ -559,7 +559,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'GET', headers: {"x-relayer-httpcallback-error" : "http://noname.com"},
 				name : "Error Callback: Should accept the request and retrieve the completed task"},
 			{method: 'GET', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
-			{method: 'GET', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
+			{method: 'GET', headers: {'x-relayer-proxy' : 'proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'GET', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
 			{method: 'GET', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
@@ -580,7 +580,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'POST', headers: {"x-relayer-httpcallback-error" : "http://noname.com"},
 				name : "Error Callback: Should accept the request and retrieve the completed task"},
 			{method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
-			{method: 'POST', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
+			{method: 'POST', headers: {'x-relayer-proxy' : 'proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'POST', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
 			{method: 'POST', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
@@ -601,7 +601,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'PUT', headers: {"x-relayer-httpcallback-error" : "http://noname.com"},
 				name : "Error Callback: Should accept the request and retrieve the completed task"},
 			{method: 'PUT', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
-			{method: 'PUT', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
+			{method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
 			{method: 'PUT', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
@@ -622,7 +622,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'DEL', headers: {"x-relayer-httpcallback-error" : "http://noname.com"},
 				name : "Error Callback: Should accept the request and retrieve the completed task"},
 			{method: 'DEL', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
-			{method: 'DEL', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
+			{method: 'DEL', headers: {'x-relayer-proxy' : 'proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'DEL', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
 			{method: 'DEL', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 		];
@@ -642,7 +642,7 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
 			{method: 'OPTIONS', headers: {"x-relayer-httpcallback-error" : "http://noname.com"},
 				name : "Error Callback: Should accept the request and retrieve the completed task"},
 			{method: 'OPTIONS', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Retry: Should accept the request and retrieve the completed task"},
-			{method: 'OPTIONS', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
+			{method: 'OPTIONS', headers: {'x-relayer-proxy' : 'proxy.com'}, name : "Proxy: Should accept the request and retrieve the completed task"},
 			{method: 'OPTIONS', headers: {'x-relayer-encoding' : 'base64'}, name : "Encoding: Should accept the request and retrieve the completed task"},
 			{method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST'}, name : "TRACEID: Should accept the request and retrieve the traceid and the completed task"}
 			//{method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST2'}, name : "TO DO: CHECK why the last test is not validated..."}
