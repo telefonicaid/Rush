@@ -98,7 +98,11 @@ function executeTest(method, content, headers, done) {
 
   setTimeout(function(){
     testResponses(responses)
+<<<<<<< HEAD
   }, TIMEOUT);
+=======
+  }, 1000);
+>>>>>>> 9d40ea500ae5ed0a8cfcd623ce6c52b2bd9d1b8f
 
 
 

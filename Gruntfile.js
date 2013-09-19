@@ -17,7 +17,11 @@ module.exports = function (grunt) {
 				src: ['lib/**/*.js']
 			},
 			test: {
+<<<<<<< HEAD
 				src: ['test/e2  e/*Test.js']
+=======
+				src: ['test/e2e/*Test.js', 	'test/component/*Test.js']
+>>>>>>> 9d40ea500ae5ed0a8cfcd623ce6c52b2bd9d1b8f
 			}
 		},
 		watch: {
@@ -36,16 +40,31 @@ module.exports = function (grunt) {
 		},
 
 		'mocha-hack': {
-			options: {
-				ui: 'bdd',
-				reporter: 'spec',
-				ignoreLeaks: true
-			},
-			acceptance: {
+			test : {
+				options: {
+					ui: 'bdd',
+					reporter: 'spec',
+					ignoreLeaks: true
+				},
 				src: [
 					'mocha-globals.js',
-					'test/e2e/*Test.js'
-				]}
+					'test/e2e/*Test.js',
+					'test/component/*Test.js'
+				]
+			},
+			check : {
+				options: {
+					ui: 'bdd',
+					reporter: 'spec',
+					ignoreLeaks: true
+				},
+				src: [
+					'mocha-globals.js',
+					'test/e2e/*Check.js',
+					'test/component/*Check.js'
+				]
+			}
+
 		},
 
 		exec: {
@@ -74,13 +93,17 @@ module.exports = function (grunt) {
 	// These plugins provide necessary tasks.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
- grunt.loadNpmTasks('grunt-mocha-hack');
+  grunt.loadNpmTasks('grunt-mocha-hack');
 	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks('grunt-plato');
 
 	grunt.loadTasks('tools/tasks');
 
-	grunt.registerTask('test', ['mocha-hack']);
+	grunt.registerTask('test', ['mocha-hack:test']);
+
+	grunt.registerTask('check', ['mocha-hack:check']);
+
+	grunt.registerTask('testAll', ['mocha-hack:check']);
 
 	grunt.registerTask('init-dev-env', ['hook:pre-commit']);
 
