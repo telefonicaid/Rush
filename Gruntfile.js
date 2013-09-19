@@ -17,10 +17,7 @@ module.exports = function (grunt) {
 				src: ['lib/**/*.js']
 			},
 			test: {
-				src: ['test/e2e/*Test.js']
-			},
-			testAll : {
-				src: ['test/e2e/*Check.js']
+			src: ['test/e2e/*Test.js', 	'test/component/*Test.js']
 			}
 		},
 		watch: {
@@ -47,7 +44,8 @@ module.exports = function (grunt) {
 				},
 				src: [
 					'mocha-globals.js',
-					'test/e2e/*Test.js'
+					'test/e2e/*Test.js',
+					'test/component/*Test.js'
 				]
 			},
 			check : {
@@ -58,9 +56,10 @@ module.exports = function (grunt) {
 				},
 				src: [
 					'mocha-globals.js',
-					'test/e2e/*Check.js'
+					'test/e2e/*Check.js',
+					'test/component/*Check.js'
 				]
-			},
+			}
 
 		},
 
