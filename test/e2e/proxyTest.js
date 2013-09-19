@@ -4,10 +4,13 @@ var config = require('./config.js');
 var simpleServer = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Feature: Proxy Server', function() {
+describe('Single Feature: Proxy Server #FPX', function() {
   'use strict';
 
   var proxyServer;
@@ -16,6 +19,18 @@ describe('Feature: Proxy Server', function() {
     headerTest: 'b',
     myOwnHeader: 'c'
   }
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
 
   afterEach(function(done) {
     try {
@@ -28,17 +43,19 @@ describe('Feature: Proxy Server', function() {
   function makeTest(relayerHost, method, headers, content, done) {
 
     var id;
+    var PATH = '/test1/test2/test3?aaa=bbb&ccc=ddd';
 
     var makeRequest = function () {
 
       var options = {};
       options.host = HOST;
       options.port = PORT;
+      options.path = PATH;
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';
-      options.headers['x-relayer-proxy'] = 'localhost:8014';
-      options.headers['x-relayer-host'] = 'http://' + relayerHost;
+      options.headers['x-relayer-proxy'] = config.simpleServerHostname + ':' + config.simpleServerPort;;
+      options.headers['x-relayer-host'] = relayerHost;
 
       //Insert our headers
       for (var header in headers) {
@@ -54,8 +71,12 @@ describe('Feature: Proxy Server', function() {
       });
     }
 
-    proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders, receivedContent) {
+    proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders,
+        usedURL, receivedContent) {
+
       usedMethod.should.be.equal(method);
+      usedURL.should.be.equal('http://' + relayerHost + PATH);
+
 
       receivedHeaders.should.have.property('host', relayerHost);  //target host
       receivedHeaders.should.have.property('x-forwarded-for', '127.0.0.1');
@@ -75,14 +96,15 @@ describe('Feature: Proxy Server', function() {
         var options = { port: PORT, host: HOST,
           path: '/response/' + id, method: 'GET'};
 
-        function checkResponse(err, data) {
+        function checkResponse(err, data, res) {
 
-          if (data !== '{}' && ! checked) {
+          var parsedData = JSON.parse(data);
+
+          if (!checked && res.statusCode !== 404 && parsedData.state === 'completed') {
 
             clearInterval(interval);
             should.not.exist(err);
 
-            var parsedData = JSON.parse(data);
 
             parsedData.should.have.property('headers');
             var parsedHeaders = parsedData.headers;
@@ -106,19 +128,19 @@ describe('Feature: Proxy Server', function() {
     });
   }
 
-  it('Using method / GET', function(done) {
+  it('Using method / GET #FPX', function(done) {
     makeTest('locahost:56841', 'GET', headers, '', done);
   });
 
-  it('Using method / POST', function(done) {
+  it('Using method / POST #FPX', function(done) {
     makeTest('locahost:56841', 'POST', headers, 'this is a test', done);
   });
 
-  it('Using method / PUT', function(done) {
+  it('Using method / PUT #FPX', function(done) {
     makeTest('locahost:56841', 'PUT', headers, 'this is a test', done);
   });
 
-  it('Using method / DELETE', function(done) {
+  it('Using method / DELETE #FPX', function(done) {
     makeTest('locahost:56841', 'DELETE', headers, '', done);
   });
 });

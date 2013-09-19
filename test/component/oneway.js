@@ -10,6 +10,9 @@ var expect = chai.expect;
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
+var listener = require('../../lib/listener.js');
+var consumer = require('../../lib/consumer.js');
+
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
 
@@ -29,6 +32,17 @@ var ALL_HEADERS = [
 ];
 
 describe('TASK QUEUE', function () {
+
+  this.timeout(6000);
+
+  before(function (done) {
+    listener.start(done);
+  });
+
+  after(function (done) {
+    listener.stop(done);
+  });
+
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
   rc.flushall();

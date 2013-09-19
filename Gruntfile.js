@@ -17,7 +17,7 @@ module.exports = function (grunt) {
 				src: ['lib/**/*.js']
 			},
 			test: {
-				src: ['test/**/*.js']
+				src: ['test/e2e/*Test.js']
 			}
 		},
 		watch: {
@@ -35,15 +35,16 @@ module.exports = function (grunt) {
 			}
 		},
 
-		simplemocha: {
+		'mocha-hack': {
 			options: {
 				ui: 'bdd',
-				reporter: 'spec'
+				reporter: 'spec',
+				ignoreLeaks: true
 			},
 			acceptance: {
 				src: [
-					'tools/mocha-globals.js',
-					'test/e2e/*.js'
+					'mocha-globals.js',
+					'test/e2e/*Test.js'
 				]}
 		},
 
@@ -73,13 +74,13 @@ module.exports = function (grunt) {
 	// These plugins provide necessary tasks.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-simple-mocha');
+ grunt.loadNpmTasks('grunt-mocha-hack');
 	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks('grunt-plato');
 
 	grunt.loadTasks('tools/tasks');
 
-	grunt.registerTask('test', ['simplemocha']);
+	grunt.registerTask('test', ['mocha-hack']);
 
 	grunt.registerTask('init-dev-env', ['hook:pre-commit']);
 

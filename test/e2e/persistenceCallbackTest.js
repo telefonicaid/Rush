@@ -4,11 +4,14 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var applicationContent = 'application/json',
-    relayerHost = 'http://localhost:' + config.simpleServerPort,
+    relayerHost =  config.simpleServerHostname + ':' + config.simpleServerPort,
     personalHeader1name = 'personal-header-1',
     personalHeader1value = 'TEST1',
     personalHeader2name = 'personal-header-2',
@@ -64,15 +67,16 @@ function makeRequest(type, persistence, content, done) {
         var options = { port: PORT, host: HOST,
           path: '/response/' + id, method: 'GET'};
 
-        function checkResponse(err, data) {
+        function checkResponse(err, data, res) {
 
-          if (data !== '{}' && ! checked) {
+          var JSONRes = JSON.parse(data);
+
+          if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed') {
 
             clearInterval(interval);
 
             should.not.exist(err);
             should.exist(data);
-            var JSONRes = JSON.parse(data);
 
             if (persistence === 'BODY') {
 
@@ -111,6 +115,8 @@ function makeRequest(type, persistence, content, done) {
       //The petition will executed once the callback server and the target server are up
       function() {
 
+        var PATH = '/test1/test2?a=b&b=c';
+
         //Start up the server
         var simpleServer = server.serverListener(
 
@@ -118,6 +124,7 @@ function makeRequest(type, persistence, content, done) {
 
               //Make request
               options.method = type;
+              options.path = PATH;
               options.headers['x-relayer-persistence'] = persistence;
               options.headers['x-relayer-host'] = relayerHost;
               options.headers['x-relayer-httpcallback'] = httpcallback;
@@ -127,8 +134,9 @@ function makeRequest(type, persistence, content, done) {
               });
             },
 
-            function(method, headers, contentReceived) {
+            function(method, headers, url, contentReceived) {
               method.should.be.equal(type);
+              url.should.be.equal(PATH);
               testHeraders(headers);
               contentReceived.should.be.equal(content);
             }
@@ -140,9 +148,21 @@ function makeRequest(type, persistence, content, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Feature: Persistence HTTP_Callback', function() {
+describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
 
   beforeEach(function() {
     //Set initial headers
@@ -168,17 +188,17 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
   describe('Using method / POST', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'BODY', content, done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'HEADER', content, done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'STATUS', content, done);
     });
@@ -186,17 +206,17 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
   describe('Using method / PUT', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('PUT', 'BODY', content, done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('PUT', 'HEADER', content, done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('PUT', 'STATUS', content, done);
     });
@@ -204,17 +224,17 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
   describe('Using method / GET', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('GET', 'BODY', '', done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('GET', 'HEADER', '', done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('GET', 'STATUS', '', done);
     });
@@ -222,17 +242,17 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
   describe('Using method / DELETE', function() {
 
-    it('Persistence: BODY', function(done) {
+    it('Persistence: BODY #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('DELETE', 'BODY', '', done);
     });
 
-    it('Persistence: HEADER', function(done) {
+    it('Persistence: HEADER #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('DELETE', 'HEADER', '', done);
     });
 
-    it('Persistence: STATUS', function(done) {
+    it('Persistence: STATUS #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('DELETE', 'STATUS', '', done);
     });
@@ -241,8 +261,8 @@ describe('Feature: Persistence HTTP_Callback', function() {
   describe('Second petition should be completed even if the' +
       ' first callback is incorrect', function() {
 
-    it('CallBack Incorrect', function(done) {
-
+    it('CallBack Incorrect #FPT ', function(done) {
+	    this.timeout(3000)
       var id, type = 'POST', httpCallBack = 'http://noexiste:2222';
 
       var simpleServer = server.serverListener(
@@ -257,10 +277,11 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
             utils.makeRequest(options, content, function(e, data) {
               id = JSON.parse(data).id;
+	           // console.log(id);
             });
           },
 
-          function(method, headers, contentReceived) {
+          function(method, headers, url, contentReceived) {
             method.should.be.equal(type);
             testHeraders(headers);
             contentReceived.should.be.equal(content);
@@ -271,22 +292,22 @@ describe('Feature: Persistence HTTP_Callback', function() {
               var options = { port: PORT, host: HOST,
                 path: '/response/' + id, method: 'GET'};
 
-              function checkResponse(err, data) {
+              function checkResponse(err, data, res) {
 
-                if (data !== '{}' && data.indexOf('callback_err') !== -1 && ! checked) {
+                var JSONRes = JSON.parse(data);
+
+                if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed'
+                    &&  data.indexOf('callback_err') !== -1) {
 
                   clearInterval(interval);
-
-                  var JSONRes = JSON.parse(data);
 
                   JSONRes.body.should.be.equal(content);
                   testHeraders(JSONRes.headers);
 
                   JSONRes.should.have.property('statusCode', '200');
-                  JSONRes.should.have.property('callback_err',
-                      'ENOTFOUND(getaddrinfo)');
+	                JSONRes['callback_err'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-                  checked = true;
+	                checked = true;
                   done();
 
                 }
@@ -294,7 +315,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
               utils.makeRequest(options, '', checkResponse);
 
-            }, 10);
+            }, 30);
           }
       );
 
@@ -303,7 +324,7 @@ describe('Feature: Persistence HTTP_Callback', function() {
     });
 
 
-    it('CallBack Correct', function(done) {
+    it('CallBack Correct #FPT ', function(done) {
       this.timeout(3000);
       makeRequest('POST', 'BODY', content, done);
     });
@@ -311,11 +332,11 @@ describe('Feature: Persistence HTTP_Callback', function() {
 
   describe('Callback has to be called' +
       ' even if the Host is incorrect', function() {
-    it('Should receive a callback with an error', function(done) {
+    it('Should receive a callback with an error #FPT ', function(done) {
 
       var portCallBack = config.callBackPort,
           callbackServer,
-          relayerHost = 'http://noexiste:1234',
+          relayerHost = 'noexiste:1234',
           httpCallBack = 'http://localhost:' + portCallBack, id;
 
       //Callback Server
@@ -333,10 +354,11 @@ describe('Feature: Persistence HTTP_Callback', function() {
           should.not.exist(parsedJSON.result);
 
           //Test content
-          parsedJSON.should.have.property('error',
-              'ENOTFOUND(getaddrinfo)');
+          parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+          parsedJSON['exception'].should.have.property('exceptionText');
+          parsedJSON['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-          res.writeHead(200);
+	        res.writeHead(200);
           res.end();
           callbackServer.close();
 
@@ -345,9 +367,12 @@ describe('Feature: Persistence HTTP_Callback', function() {
           setTimeout(function() {
             utils.makeRequest(options, '', function(err, data) {
               var JSONparsed = JSON.parse(data);
-              JSONparsed.should.have.property(
-                  'error', 'ENOTFOUND(getaddrinfo)');
+
+              parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+              parsedJSON['exception'].should.have.property('exceptionText');
+              JSONparsed['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
               JSONparsed.should.have.property('callback_status', '200');
+
               done();
             });
           }, 30 );

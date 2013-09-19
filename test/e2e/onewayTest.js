@@ -4,22 +4,26 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-var HEADER_TEST_VALUE = 'valueTest';
+var HEADER_TEST_NAME = 'testheader', HEADER_TEST_VALUE = 'valueTest', PATH = '/test1?a=b&c=d';
 
 var serversToShutDown = [];
 
 function executeTest(method, content, done) {
-  var headers = {
-    'X-Relayer-Host': 'http://localhost:8014',
-    'testheader': HEADER_TEST_VALUE
-  };
+
+  var headers = {};
+  headers['X-Relayer-host'] = config.simpleServerHostname + ':' + config.simpleServerPort;
+  headers[HEADER_TEST_NAME] = HEADER_TEST_VALUE;
 
   var options = {
     host: HOST,
     port: PORT,
+    path: PATH,
     method: method,
     headers: headers
   };
@@ -29,11 +33,11 @@ function executeTest(method, content, done) {
         utils.makeRequest(options, content, function() {
         });
       },
-      function(method, headers, body) {
-        method.should.equal(method);
+      function(methodUsed, headers, url, body) {
 
-        headers.should.have.property('testheader',
-            HEADER_TEST_VALUE);
+        methodUsed.should.equal(method);
+        url.should.be.equal(PATH);
+        headers.should.have.property(HEADER_TEST_NAME, HEADER_TEST_VALUE);
 
         if (content) {
 
@@ -47,7 +51,19 @@ function executeTest(method, content, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Feature: ONEWAY with HTTP', function() {
+describe('Single Feature: Oneway with HTTP #FOW', function() {
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
 
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
@@ -61,21 +77,21 @@ describe('Feature: ONEWAY with HTTP', function() {
     serversToShutDown = [];
   });
 
-  it('Should return the same headers and the same method / GET', function(done) {
+  it('Should return the same headers and the same method / GET #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Should return the same headers, method and body / POST', function(done) {
+  it('Should return the same headers, method and body / POST #FOW', function(done) {
     var content = 'Hello World'
     executeTest('POST', content, done);
   });
 
-  it('Should return the same headers, method and body / PUT ', function(done) {
+  it('Should return the same headers, method and body / PUT #FOW', function(done) {
     var content = 'Hello World'
     executeTest('PUT', content, done);
   });
 
-  it('Should return the same headers and the same method / DELETE', function(done) {
+  it('Should return the same headers and the same method / DELETE #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 });

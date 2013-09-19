@@ -3,6 +3,9 @@ var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
 
+var consumer = require('../../lib/consumer.js');
+var listener = require('../../lib/listener.js');
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
@@ -12,7 +15,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 
   var CONTENT = 'Retry Test',
       APPLICATION_CONTENT = 'application/json',
-      RELAYER_HOST = 'http://localhost:' + config.simpleServerPort,
+      RELAYER_HOST =  config.simpleServerHostname + ':' + config.simpleServerPort,
       PERSONAL_HEADER_1_NAME = 'personal-header-1',
       PERSONAL_HEADER_1_VALUE = 'TEST1',
       PERSONAL_HEADER_2_NAME = 'personal-header-2',
@@ -94,8 +97,9 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
       if (petitionCorrect > serverTimes) {
         parsedJSON = JSON.parse(response);
 
-        parsedJSON.should.have.property('error', 'Not relayed request 500');
-        parsedJSON.should.have.property('statusCode', 500);
+        parsedJSON.should.have.property('exception');
+        parsedJSON['exception'].should.have.property('exceptionId', 'SVC Relayed Host Error');
+        parsedJSON['exception'].should.have.property('exceptionText', 'Not relayed request 500');
 
         parsedJSON.should.have.property('headers');
         parsedJSON.should.have.property('body');
@@ -134,7 +138,19 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Feature: Retry and Callback', function() {
+describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
+
+  before(function (done) {
+    listener.start(function() {
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function() {
+      consumer.stop(done);
+    });
+  });
 
   afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
@@ -148,7 +164,7 @@ describe('Feature: Retry and Callback', function() {
     serversToShutDown = [];
   });
 
-  it('The last retry will work', function(done) {
+  it('The last retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length + 1,
@@ -158,7 +174,7 @@ describe('Feature: Retry and Callback', function() {
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
-  it('The second retry will work', function(done) {
+  it('The second retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length,
@@ -168,7 +184,7 @@ describe('Feature: Retry and Callback', function() {
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
-  it('None retry will work', function(done) {
+  it('None retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length + 2,

@@ -1,5 +1,6 @@
 http = require('http');
 https = require('https');
+config = require('./config');
 
 var makeRequest = function(options, content, cb) {
   'use strict';
@@ -14,7 +15,7 @@ var makeRequest = function(options, content, cb) {
     });
 
     res.on('end', function() {
-      cb(null, data);
+      cb(null, data, res);
     });
   });
 

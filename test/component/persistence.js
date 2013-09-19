@@ -12,12 +12,15 @@ var expect = chai.expect;
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
+var listener = require('../../lib/listener.js');
+var consumer = require('../../lib/consumer.js');
+
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
 
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
 var ENDPOINT = 'http://' + config.simpleServerHostname + ':' + config.simpleServerPort;
-var FAKEENDPOINT = 'http://FAKEENDPOINT';
+var FAKEENDPOINT = 'FAKEENDPOINT';
 
 var ALL_HEADERS = [
   "x-relayer-persistence",
@@ -51,15 +54,15 @@ function executeTest(method, content, newHeaders, persistence, done) {
   server.serverListener(
     function onConnected() {
       agent
-          [method.toLowerCase()](URL_RUSH)
-          .set(headers)
-          .end(function(err, res) {
-        expect(err).to.not.exist;
-        expect(res.statusCode).to.equal(200); //Status code 200
-        expect(res.body).to.exist;
-        expect(res.body.id).to.exist;
-        id = res.body.id;
-      });
+        [method.toLowerCase()](URL_RUSH)
+        .set(headers)
+        .end(function(err, res) {
+          expect(err).to.not.exist;
+          expect(res.statusCode).to.equal(201); //Status code 201
+          expect(res.body).to.exist;
+          expect(res.body.id).to.exist;
+          id = res.body.id;
+        });
     }
   );
 
@@ -68,12 +71,12 @@ function executeTest(method, content, newHeaders, persistence, done) {
   subscriber.on('message', function(channel, message){
     responses[channel] = JSON.parse(message);
     if((channel === 'STATE:completed') && !headers['X-relayer-persistence']){
-      subscriber.unsubscribe();
       testResponses(responses);
+      subscriber.unsubscribe();
     }
     if(channel == 'STATE:persistence_state'){
-      subscriber.unsubscribe();
       testResponses(responses);
+      subscriber.unsubscribe();
     }
   });
 
@@ -95,9 +98,11 @@ function executeTest(method, content, newHeaders, persistence, done) {
     }
 
     var shouldNotExist = _.difference(ALL_HEADERS, Object.keys(headers)); //headers that aren't in the request
-    for(var i=0; i < shouldNotExist.length; i++){                              //there should not be headers in the task that are not in the request
+    for(var i=0; i < shouldNotExist.length; i++){                        //there should not be headers in the task that are not in the request
       expect(task.headers).to.not.have.property(shouldNotExist[i]);
     }
+
+    console.log(headers['X-relayer-host'])
 
     if(headers['X-relayer-host'] === ENDPOINT){
       expect(responses).to.have.property('STATE:completed');
@@ -107,22 +112,33 @@ function executeTest(method, content, newHeaders, persistence, done) {
       }
     }
     else if(headers['X-relayer-host'] === FAKEENDPOINT){
+      console.log('semeteeeeee+++++++++++++++++++++++++++++');
       expect(responses).to.have.property('STATE:error');
       expect(responses).to.not.have.property('STATE:completed');
       expect(responses).to.have.property('STATE:persistence_state');
     }
     done();
   }
-
-
-
 }
 
 describe('Feature: Persistence', function() {
+
+  this.timeout(6000);
+
+  before(function (done) {
+    listener.start(function(){
+      consumer.start(done);
+    });
+  });
+
+  after(function (done) {
+    listener.stop(function(){
+      consumer.start(done);
+    });
+  });
 
   it('should return empty body and test-header', function(done) {
     executeTest('GET', '', {'X-Relayer-Host' : FAKEENDPOINT}, '', done);
   });
 });
-
 
