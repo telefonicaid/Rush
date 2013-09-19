@@ -53,7 +53,6 @@ describe('Component Test: Task queue', function () {
   rc.flushall();
 
   var dataSet = [
-<<<<<<< HEAD
         {method: 'GET', headers: {}, name :
 		        "Case 1 Task should contain OneWay policy #FOW" },
         {method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name :
@@ -72,23 +71,10 @@ describe('Component Test: Task queue', function () {
 		        "Case 8 Task should be stored #FOW"},
         {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name :
 		        "Case 9 Task should have property x-relayer-topic  #FTP"},
-        {method: 'PUT', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name :
+        {method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'}, name :
 		        "Case 10 Task should have property x-relayer-proxy  #FPX"},
         {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name :
 		        "Case 11 Task should have property x-relayer-encoding  #FEN"}
-=======
-        {method: 'GET', headers: {}, name : "Case 1: Should return a valid task with OneWay policy and GET method"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name : "Case 2: Task should contain STATUS persistence"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "HEADER"}, name : "Case 3: Task should contain HEADER persistence"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "BODY"}, name : "Case 4: Task should contain BODY persistence"},
-        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com"}, name : "Case 5: Task should contain x-relayer-httpcallback atribute"},
-        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com", "x-relayer-httpcallback-error" : "http://noname.com"}, name : "Case 6: Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error"},
-        {method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Case 7: Task should have property x-relayer-retry"},
-        {method: 'PUT', headers: {}, name : "Case 8: Task should be valid with PUT method"},
-        {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "Case 9: Task should have property x-relayer-topic"},
-        {method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'}, name : "Case 10: Task should have property x-relayer-proxy"},
-        {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name : "Case 11: Task should have property x-relayer-encoding"}
->>>>>>> 9d40ea500ae5ed0a8cfcd623ce6c52b2bd9d1b8f
       ];
 
   for(var i=0; i < dataSet.length; i++){
