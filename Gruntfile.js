@@ -17,7 +17,7 @@ module.exports = function (grunt) {
 				src: ['lib/**/*.js']
 			},
 			test: {
-				src: ['test/e2e/*Test.js']
+				src: ['test/e2  e/*Test.js']
 			}
 		},
 		watch: {
