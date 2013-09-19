@@ -59,7 +59,7 @@ module.exports = function (grunt) {
 					'test/e2e/*Check.js',
 					'test/component/*Check.js'
 				]
-			},
+			}
 
 		},
 
