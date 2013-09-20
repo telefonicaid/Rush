@@ -24,6 +24,13 @@ var URL_RUSH = 'http://' + HOST + ':' + PORT;
 var ENDPOINT = config.simpleServerHostname + ':' + config.simpleServerPort;
 var FAKEENDPOINT = 'FAKEENDPOINT';
 
+
+// Verbose MODE
+var vm = false;
+// Time to wait to check the status of the task
+var TIMEOUT = 3000;
+var describeTimeout = 60000;
+
 var ALL_HEADERS = [
   "x-relayer-persistence",
   "x-relayer-httpcallback",
@@ -91,7 +98,8 @@ function executeTest(method, content, headers, done) {
 
   setTimeout(function(){
     testResponses(responses)
-  }, 1000);
+  }, TIMEOUT);
+
 
 
 
@@ -135,9 +143,8 @@ function executeTest(method, content, headers, done) {
   }
 }
 
-describe('Feature: Persistence', function() {
-
-  this.timeout(6000);
+describe('Component Test: Persistence ', function() {
+  this.timeout(describeTimeout);
 
   before(function (done) {
     listener.start(function(){
@@ -147,7 +154,7 @@ describe('Feature: Persistence', function() {
 
   after(function (done) {
     listener.stop(function(){
-      consumer.start(done);
+      consumer.stop(done);
     });
   });
 
@@ -161,25 +168,25 @@ describe('Feature: Persistence', function() {
   });
 
 
-  it('1 should return empty body and test-header', function(done) {
+  it('Case 1 should return empty body and test-header /GET #FOW', function(done) {
     executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT}, done);
   });
-  it('2 should return body and x-relayer-persistence', function(done) {
+  it('Case 2 should return body and x-relayer-persistence /POST #FPT', function(done) {
     executeTest('POST', 'payload', {'x-relayer-host' : ENDPOINT, 'x-relayer-persistence' : 'BODY'}, done);
   });
-  it('3 should return empty body and x-relayer-httpcallback', function(done) {
+  it('Case 3 should return empty body and x-relayer-httpcallback /PUT #FCB', function(done) {
     executeTest('PUT', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-httpcallback' : "http://google.es"}, done);
   });
-  it('4 should return empty body and x-relayer-encoding', function(done) {
+  it('Case 4 should return empty body and x-relayer-encoding /GET #FEN', function(done) {
     executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-encoding' : "base64"}, done);
   });
-  it('5 should return empty body and x-relayer-encoding', function(done) {
+  it('Case 5 should return empty body and x-relayer-encoding /POST #FEN', function(done) {
     executeTest('POST', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-encoding' : "base64"}, done);
   });
-  it('6 should return empty body and x-relayer-topic', function(done) {
+  it('Case 6 should return empty body and x-relayer-topic /DELETE #FTP', function(done) {
     executeTest('DELETE', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-topic' : "base64"}, done);
   });
-  it('7 should return empty body and x-relayer-topic', function(done) {
+  it('Case 7 should return empty body and x-relayer-topic /GET #FTP', function(done) {
     executeTest('GET', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-topic' : "try"}, done);
   });
 });

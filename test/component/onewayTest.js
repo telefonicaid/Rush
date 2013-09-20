@@ -18,7 +18,13 @@ var REDIS_PORT = config.redisServer.port;
 
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
 var ENDPOINT = config.externalEndpoint;
+
+
+// Verbose MODE
+var vm = false;
+// Time to wait to check the status of the task
 var TIMEOUT = 1000;
+var describeTimeout = 60000;
 var QUEUE = "wrL:hpri"; //Task
 
 var ALL_HEADERS = [
@@ -31,9 +37,8 @@ var ALL_HEADERS = [
   "x-relayer-encoding"
 ];
 
-describe('TASK QUEUE', function () {
-
-  this.timeout(6000);
+describe('Component Test: Task queue', function () {
+  this.timeout(describeTimeout);
 
   before(function (done) {
     listener.start(done);
@@ -48,17 +53,28 @@ describe('TASK QUEUE', function () {
   rc.flushall();
 
   var dataSet = [
-        {method: 'GET', headers: {}, name : "Case 1: Should return a valid task with OneWay policy and GET method"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name : "Case 2: Task should contain STATUS persistence"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "HEADER"}, name : "Case 3: Task should contain HEADER persistence"},
-        {method: 'GET', headers: {"x-relayer-persistence" : "BODY"}, name : "Case 4: Task should contain BODY persistence"},
-        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com"}, name : "Case 5: Task should contain x-relayer-httpcallback atribute"},
-        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com", "x-relayer-httpcallback-error" : "http://noname.com"}, name : "Case 6: Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error"},
-        {method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name : "Case 7: Task should have property x-relayer-retry"},
-        {method: 'PUT', headers: {}, name : "Case 8: Task should be valid with PUT method"},
-        {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name : "Case 9: Task should have property x-relayer-topic"},
-        {method: 'PUT', headers: {'x-relayer-proxy' : 'http://proxy.com'}, name : "Case 10: Task should have property x-relayer-proxy"},
-        {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name : "Case 11: Task should have property x-relayer-encoding"}
+        {method: 'GET', headers: {}, name :
+		        "Case 1 Task should contain OneWay policy #FOW" },
+        {method: 'GET', headers: {"x-relayer-persistence" : "STATUS"}, name :
+		        "Case 2 Task should contain STATUS persistence #FPT"},
+        {method: 'GET', headers: {"x-relayer-persistence" : "HEADER"}, name :
+		        "Case 3 Task should contain HEADER persistence  #FPT"},
+        {method: 'GET', headers: {"x-relayer-persistence" : "BODY"}, name :
+		        "Case 4 Task should contain BODY persistence #FPT"},
+        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com"}, name :
+		        "Case 5 Task should contain x-relayer-httpcallback atribute #FCB"},
+        {method: 'POST', headers: {"x-relayer-httpcallback" : "http://noname.com", "x-relayer-httpcallback-error" : "http://noname.com"}, name :
+		        "Case 6 Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error  #FCB"},
+        {method: 'POST', headers: {"x-relayer-retry" : "10, 20, 30"}, name :
+		        "Case 7 Task should have property x-relayer-retry  #FRT"},
+        {method: 'PUT', headers: {}, name :
+		        "Case 8 Task should be stored #FOW"},
+        {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name :
+		        "Case 9 Task should have property x-relayer-topic  #FTP"},
+        {method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'}, name :
+		        "Case 10 Task should have property x-relayer-proxy  #FPX"},
+        {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name :
+		        "Case 11 Task should have property x-relayer-encoding  #FEN"}
       ];
 
   for(var i=0; i < dataSet.length; i++){
@@ -67,7 +83,7 @@ describe('TASK QUEUE', function () {
 
   function _newScenario(data){
     return function(){
-      it(data.name, function(done){
+      it(data.name + " /" + data.method, function(done){
         agent
           [data.method.toLowerCase()](URL_RUSH)
           .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
