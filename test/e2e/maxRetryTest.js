@@ -5,6 +5,7 @@ var globalConfig = require('../../lib/configBase.js');
 var _ = require('underscore');
 var chai = require('chai');
 var expect = chai.expect;
+var redisModule = require('redis');
 
 var listener = require('../../lib/listener.js');
 
@@ -23,7 +24,6 @@ ENDPOINT = fhHOST + ':' + fhPORT;
 var TIMEOUT = 600;
 var CREATED = 201;
 var describeTimeout = 5000;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
 
 function _validScenario(data){
 
@@ -130,7 +130,11 @@ describe('Single Feature: Max Retry', function() {
   });
 
   after(function (done) {
-    listener.stop(done);
+    var rc = redisModule.createClient(globalConfig.queue.redisPort, globalConfig.queue.redisHost);
+    rc.flushall(function(){
+      listener.stop(done);
+    });
+    rc.quit();
   });
 
   describe('Max ', function () {
