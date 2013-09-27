@@ -36,6 +36,7 @@
     "hooker": "0.2.3",
     "winston": "0.6.2",
     "cycle": "1.0.x",
+    "memwatch" : "*",
     "stack-parser": "0.0.1",
     "performanceFramework": "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
   },
