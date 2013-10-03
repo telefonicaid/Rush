@@ -39,7 +39,8 @@ function _validScenario(data){
 
   var times = values.toString();
 
-  it(data.name, function(done){
+
+	it(data.name +' /'  +data.method +' #FRT', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -88,7 +89,9 @@ function _invalidScenario(data){
 
   var times = values.toString();
 
-  it(data.name +  ' #FPT', function(done){
+	//it(data.name, function(done){
+	//it(data.name + data.protocol.toUpperCase() + ' /' +data.method + ' #FRT', function(done){
+	it(data.name + ' /' +data.method + ' #FRT', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -122,8 +125,8 @@ function _invalidScenario(data){
   });
 }
 
-describe('Single Feature: Max Retry', function() {
-  this.timeout(6000);
+describe('Multiple Feature: Maximum Retry value', function() {
+  this.timeout(TIMEOUT);
 
   before(function (done) {
     listener.start(done);
@@ -137,17 +140,17 @@ describe('Single Feature: Max Retry', function() {
     rc.quit();
   });
 
-  describe('Max ', function () {
+  describe('Retrieve requests with a valid RETRY headers policy ', function () {
 
     var dataSet = [
-      {method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "1 Should accept the request using HTTP /GET"},
-      {method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "2 Should accept the request using HTTP /POST"},
-      {method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "3 Should accept the request using HTTP /PUT"},
-      {method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "4 Should accept the request using HTTP /DELETE"},
-      {method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "5 Should accept the request using HTTPS /GET"},
-      {method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "6 Should accept the request using HTTPS /POST"},
-      {method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "7 Should accept the request using HTTPS /PUT"},
-      {method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "8 Should accept the request using HTTPS /DELETE"}
+      {method: 'GET',     path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 1 Should accept the request using HTTP "},
+      {method: 'POST',    path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 2 Should accept the request using HTTP "},
+      {method: 'PUT',     path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 3 Should accept the request using HTTP "},
+      {method: 'DELETE',  path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 4 Should accept the request using HTTP "},
+      {method: 'GET',     path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 5 Should accept the request using HTTPS "},
+      {method: 'POST',    path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 6 Should accept the request using HTTPS "},
+      {method: 'PUT',     path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 7 Should accept the request using HTTPS "},
+      {method: 'DELETE',  path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 8 Should accept the request using HTTPS "}
     ];
 
     for(i=0; i < dataSet.length; i++){
@@ -155,17 +158,17 @@ describe('Single Feature: Max Retry', function() {
     }
   });
 
-  describe('Retrieve request with a valid header policy request using HTTP ', function () {
+  describe('Retrieve requests with a valid RETRY headers policy over the MAXIMUM set', function () {
 
     var dataSetPOST = [
-      {method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "1 Should NOTaccept the request using HTTP /GET"},
-      {method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "2 Should NOT accept the request using HTTP /POST"},
-      {method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "3 Should NOT accept the request using HTTP /PUT"},
-      {method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "4 Should NOT accept the request using HTTP /DELETE"},
-      {method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "5 Should NOT accept the request using HTTPS /GET"},
-      {method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "6 Should NOT accept the request using HTTPS /POST"},
-      {method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "7 Should NOT accept the request using HTTPS /PUT"},
-      {method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "8 Should NOT accept the request using HTTPS /DELETE"}
+      {method: 'GET',     path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 1 Should NOT accept the request using HTTP "},
+      {method: 'POST',    path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 2 Should NOT accept the request using HTTP "},
+      {method: 'PUT',     path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 3 Should NOT accept the request using HTTP "},
+      {method: 'DELETE',  path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 4 Should NOT accept the request using HTTP "},
+      {method: 'GET',     path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 5 Should NOT accept the request using HTTPS "},
+      {method: 'POST',    path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 6 Should NOT accept the request using HTTPS "},
+      {method: 'PUT',     path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 7 Should NOT accept the request using HTTPS "},
+      {method: 'DELETE',  path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 8 Should NOT accept the request using HTTPS "}
     ];
 
     for(i=0; i < dataSetPOST.length; i++){
