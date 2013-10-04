@@ -57,7 +57,9 @@ module.exports = function (grunt) {
 				src: [
 					'mocha-globals.js',
 					'test/e2e/*Check.js',
-					'test/component/*Check.js'
+					'test/e2e/*Test.js',
+					'test/component/*Check.js',
+					'test/component/*Test.js'
 				]
 			}
 

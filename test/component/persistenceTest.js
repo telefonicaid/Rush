@@ -183,10 +183,10 @@ describe('Component Test: Persistence ', function() {
   it('Case 5 should return empty body and x-relayer-encoding /POST #FEN', function(done) {
     executeTest('POST', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-encoding' : "base64"}, done);
   });
-  it('Case 6 should return empty body and x-relayer-topic /DELETE #FTP', function(done) {
+  it('Case 6 should return empty body and x-relayer-topic /DELETE #FTID', function(done) {
     executeTest('DELETE', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-topic' : "base64"}, done);
   });
-  it('Case 7 should return empty body and x-relayer-topic /GET #FTP', function(done) {
+  it('Case 7 should return empty body and x-relayer-topic /GET #FTID', function(done) {
     executeTest('GET', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-topic' : "try"}, done);
   });
 });
