@@ -50,6 +50,7 @@ describe('Component Test: Task queue', function () {
 
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
+  rc.select(config.redisServer.db);
   rc.flushall();
 
   var dataSet = [

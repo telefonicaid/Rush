@@ -21,7 +21,7 @@ module.exports = function (grunt) {
 			}
 		},
 		watch: {
-			gruntfile: {
+      gruntfile: {
 				files: '<%= jshint.gruntfile.src %>',
 				tasks: ['jshint:gruntfile']
 			},
@@ -36,7 +36,7 @@ module.exports = function (grunt) {
 		},
 
 		'mocha-hack': {
-			test : {
+      test : {
 				options: {
 					ui: 'bdd',
 					reporter: 'spec',
@@ -82,7 +82,16 @@ module.exports = function (grunt) {
 					'report': '<%= jshint.lib.src %>'
 				}
 			}
-		}
+		},
+
+    env : {
+      options : {
+        //Shared Options Hash
+      },
+      dev : {
+        RUSH_CONFIG_FILE : 'lib/configTest.js'
+      }
+    }
 
 	});
 
@@ -92,18 +101,19 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mocha-hack');
 	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks('grunt-plato');
+  grunt.loadNpmTasks('grunt-env');
 
-	grunt.loadTasks('tools/tasks');
+  grunt.loadTasks('tools/tasks');
 
-	grunt.registerTask('test', ['mocha-hack:test']);
+	grunt.registerTask('test', ['env', 'mocha-hack:test']);
 
-	grunt.registerTask('check', ['mocha-hack:check']);
+	grunt.registerTask('check', ['env', 'mocha-hack:check']);
 
-	grunt.registerTask('testAll', ['mocha-hack:check']);
+	grunt.registerTask('testAll', ['env', 'mocha-hack:check']);
 
 	grunt.registerTask('init-dev-env', ['hook:pre-commit']);
 
-	grunt.registerTask('coverage', ['exec:istanbul']);
+	grunt.registerTask('coverage', ['env', 'exec:istanbul']);
 
 	grunt.registerTask('complexity', ['plato']);
 

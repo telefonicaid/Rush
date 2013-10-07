@@ -28,7 +28,8 @@ function _validScenario(data){
 
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
- // rc.flushall();
+  rc.select(config.redisServer.db);
+  // rc.flushall();
 
   it(data.name + ' /' + data.method + ' #FOW ', function(done){
 
