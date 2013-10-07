@@ -1,3 +1,8 @@
+/*
+ * WARNING: IF YOU RUN THIS TEST ALONE, YOU MUST SET RUSH_CONFIG_FILE PROPERLY
+ * otherwise, it will fail
+ */
+
 var chai = require('chai');
 var superagent = require('superagent');
 var config = require('./config.js');

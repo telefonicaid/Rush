@@ -1,3 +1,8 @@
+/*
+ * WARNING: IF YOU RUN THIS TEST ALONE, YOU MUST SET RUSH_CONFIG_FILE PROPERLY
+ * otherwise, it will fail
+ */
+
 var should = require('should');
 var chai = require('chai');
 var superagent = require('superagent');
