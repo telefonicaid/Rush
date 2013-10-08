@@ -58,7 +58,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
 
 function _scenario(data){
 
-  it(data.name +  ' #LOGS', function(done){
+  it('Case ' + data.name +  ' #LOGS', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -156,7 +156,7 @@ describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
       {protocol : 'http', method: 'GET', path: '/', expected : [INVALID_RETRY], headers: {'x-relayer-retry' : 'INVALID'}, body: {}, name : "11 Should log Invalid x-relayer-retry hostname"},
       {protocol : 'http', method: 'GET', path: '/', expected : [INVALID_HEADER], headers: {'x-relayer-header' : "INVALID" }, body: {}, name : "12 Should log Invalid header"},
       {protocol : 'http', method: 'GET', path: '/', expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_ERROR, JOBERROR], headers: {'x-relayer-host' : "google.esssss" }, body: {}, name : "13 Should log ENOTFOUND"},
-      {protocol : 'http', method: 'GET', path: '/', expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, CALLBACKERROR], headers: {'x-relayer-httpcallback' : "http://google.esssss" }, body: {}, name : "13 Should log Callback ENOTFOUND"}
+      {protocol : 'http', method: 'GET', path: '/', expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, CALLBACKERROR], headers: {'x-relayer-httpcallback' : "http://google.esssss" }, body: {}, name : "14 Should log Callback ENOTFOUND"}
     ];
 
     for(i=0; i < dataSetPOST.length; i++){

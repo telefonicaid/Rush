@@ -38,7 +38,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var serversToShutDown = [];
 
 function _validScenario(data){
-	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
+	it('Case ' + data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
 
@@ -114,7 +114,7 @@ function _validScenario(data){
 }
 
 function _invalidScenario(data){
-	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
+	it('Case ' + data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
 
@@ -190,7 +190,7 @@ function _invalidScenario(data){
 }
 
 function _invalidHeadersValue(data) {
-  it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
+  it('Case ' + data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
     var agent = superagent.agent();
     var id;
 

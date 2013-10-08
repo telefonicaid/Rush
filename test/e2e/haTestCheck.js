@@ -35,7 +35,7 @@ var describeTimeout = 5000;
 var serversToShutDown = [];
 
 function _validScenario(data){
-	it.skip(data.name +  ' #FHA', function(done){
+	it.skip('Case ' + data.name +  ' #FHA', function(done){
 		var agent = superagent.agent();
 		var id;
     if (vm) {
@@ -46,7 +46,7 @@ function _validScenario(data){
 }
 
 function _invalidScenario(data){
-	it.skip(data.name +  ' #FHA', function(done){
+	it.skip('Case ' + data.name +  ' #FHA', function(done){
 		var agent = superagent.agent();
 		var id;
     if (vm) {

@@ -76,7 +76,7 @@ describe('Component Test: Task queue', function () {
         {method: 'PUT', headers: {}, name :
 		        "Case 8 Task should be stored #FOW"},
         {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'}, name :
-		        "Case 9 Task should have property x-relayer-topic  #FTP"},
+		        "Case 9 Task should have property x-relayer-topic  #FTID"},
         {method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'}, name :
 		        "Case 10 Task should have property x-relayer-proxy  #FPX"},
         {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'}, name :
@@ -89,7 +89,7 @@ describe('Component Test: Task queue', function () {
 
   function _newScenario(data){
     return function(){
-      it(data.name + " /" + data.method, function(done){
+      it(data.name + " /" + data.method + " #CT", function(done){
         agent
           [data.method.toLowerCase()](URL_RUSH)
           .set('x-relayer-host', ENDPOINT)  //Always the same endpoint

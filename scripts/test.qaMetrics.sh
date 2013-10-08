@@ -5,10 +5,10 @@
 echo "=========_______METRICS TESTS_______========="
 echo ""
 echo ">> Cleaning workspace"
-# rm -rf *.log
+ rm -rf *.log
 echo ""
 echo ">> Launching tests"
-# grunt test > testResults.log
+ grunt testAll > testResults.log
 
 if [ "$1" == "" ]
 then
@@ -20,50 +20,66 @@ cat testResults.log | grep "Single Feature" |  grep "#"
 echo ">> Test-Set size"
 #echo "________________"
 echo ">> Coverage"
-echo " - Coverage feature  Callback #FCB"
+# TAGS:	#FCB	#FEN	#FOW	#FPE	#FPT	#FPX	#FRT	#FTOP	#FTID	#FHA	#CheckD	#FTC	#FEH	#LOG
+echo " - Coverage feature:  Callback #FCB"
 cat testResults.log | grep "✓" | grep -c "#FCB"
 
-echo " - Coverage feature  Encoding #FEN"
+echo " - Coverage feature:  Encoding #FEN"
 cat testResults.log | grep "✓" | grep -c "#FEN"
 
-echo " - Coverage feature  Extra header #FEH"
-cat testResults.log | grep "✓" | grep -c "#FEH"
-
-echo " - Coverage feature  oneway with HTTP #FOW"
+echo " - Coverage feature:  Oneway with HTTP #FOW"
 cat testResults.log | grep "✓" | grep -c "#FOW"
 
-echo " - Coverage feature  Persistence #FPE"
+echo " - Coverage feature:  Persistence #FPE"
 cat testResults.log | grep "✓" | grep -c "#FPE"
 
-echo " - Coverage feature  Protocol #FPT"
+echo " - Coverage feature:  Protocol #FPT"
 cat testResults.log | grep "✓" | grep -c "#FPT"
 
-echo " - Coverage feature  Proxy Server #FPX"
+echo " - Coverage feature:  Proxy Server #FPX"
 cat testResults.log | grep "✓" | grep -c "#FPX"
 
-echo " - Coverage feature  Retry #FRT"
+echo " - Coverage feature:  Retry #FRT"
 cat testResults.log | grep "✓" | grep -c "#FRT"
 
-echo " - Coverage feature  TraceID #FTID"
+echo " - Coverage feature:  TraceID #FTID"
 cat testResults.log | grep "✓" | grep -c "#FTID"
 
-echo " - Coverage feature  Target Certificate #FTC"
+echo " - Coverage feature:  High Availability #FHA"
+cat testResults.log | grep "-" | grep -c "#FHA"
+
+echo " - Non Functional features like #CheckD"
+echo "62* estimated TCs"
+
+echo " - Coverage feature:  Target Certificate #FTC"
 cat testResults.log | grep "✓" | grep -c "#FTC"
 
-echo " - Coverage feature  new Features #F--resto"
-cat testResults.log | grep "✓" | grep -v "#FPE" | grep -v "#FPT" | grep -v "#FPX" | grep -v "#FEN" | grep -v "#FEH" | grep -v "#FOW" | grep -v "#FCB"| grep -v "#FRT"| grep -v "FTC" |grep -c -v "#FTID"
+echo " - Coverage feature:  Extra header #FEH"
+cat testResults.log | grep "✓" | grep -c "#FEH"
+
+echo " - Non Functional features like #LOGS"
+cat testResults.log | grep "✓" | grep -c "#LOGS"
+
+echo " - Untracked Features #FXX"
+cat testResults.log | grep "✓" | grep -v "#FPE" | grep -v "#FPT" | grep -v "#FPX" | grep -v "#FEN" | grep -v "#FEH" | grep -v "#FOW" | grep -v "#FCB"| grep -v "#FRT"| grep -v "#LOGS" |grep -v "#FTC" |grep -v "#FCT" |grep -c -v "#FTID"
 
 #echo "________________"
 echo ">> TC peer reviewed %"
-echo "80% (HA Scenarios are manual test)"
+echo "100%"
 #echo "________________"
 echo ">> TC automated %"
-echo "100%"
+echo "90% (HA Scenarios are manual test)"
+echo ">> TC Manual"
+cat testResults.log | grep "tests pending"
+echo ">> Component Test"
+cat testResults.log | grep -c "#CT"
+
 #echo "=======TOTAL======="
 echo ">>   Passed tests  ##"
 cat testResults.log | grep -c "✓"
 echo "##    Results ##"
 cat testResults.log | grep "tests complete"
+
 echo "_______________________________"
 fi
 
