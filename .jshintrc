@@ -11,7 +11,7 @@
   "latedef": true,
   "newcap": true,
   "noempty": true,
-  "unused": true,
+  "unused": false,
   "noarg": true,
   "sub": true,
   "undef": true,
