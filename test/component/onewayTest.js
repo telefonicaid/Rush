@@ -1,3 +1,8 @@
+/*
+ * WARNING: IF YOU RUN THIS TEST ALONE, YOU MUST SET RUSH_CONFIG_FILE PROPERLY
+ * otherwise, it will fail
+ */
+
 var should = require('should');
 var chai = require('chai');
 var superagent = require('superagent');
@@ -50,6 +55,7 @@ describe('Component Test: Task queue', function () {
 
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
+  rc.select(config.redisServer.db);
   rc.flushall();
 
   var dataSet = [

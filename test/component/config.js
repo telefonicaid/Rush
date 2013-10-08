@@ -8,4 +8,4 @@ exports.simpleServerPort = 8014;
 exports.externalEndpoint = 'www.google.es';
 exports.externalEndpointPort = 8080;
 
-exports.redisServer = {hostname: 'localhost', port: 6379};
+exports.redisServer = {hostname: 'localhost', port: 6379, db: 1};

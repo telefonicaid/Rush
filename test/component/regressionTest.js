@@ -1,3 +1,8 @@
+/*
+ * WARNING: IF YOU RUN THIS TEST ALONE, YOU MUST SET RUSH_CONFIG_FILE PROPERLY
+ * otherwise, it will fail
+ */
+
 var chai = require('chai');
 var superagent = require('superagent');
 var config = require('./config.js');
@@ -28,7 +33,8 @@ function _validScenario(data){
 
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
- // rc.flushall();
+  rc.select(config.redisServer.db);
+  // rc.flushall();
 
   it(data.name + ' /' + data.method + ' #FOW ', function(done){
 
