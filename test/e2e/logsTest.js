@@ -58,7 +58,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
 
 function _scenario(data){
 
-  it(data.name +  ' #LOGS', function(done){
+  it('Case ' + data.name +  ' #LOGS', function(done){
     var agent = superagent.agent();
     var id;
 

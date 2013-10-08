@@ -168,25 +168,25 @@ describe('Component Test: Persistence ', function() {
   });
 
 
-  it('Case 1 should return empty body and test-header /GET #FOW', function(done) {
+  it('Case 1 should return empty body and test-header /GET #FOW #CT', function(done) {
     executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT}, done);
   });
-  it('Case 2 should return body and x-relayer-persistence /POST #FPT', function(done) {
+  it('Case 2 should return body and x-relayer-persistence /POST #FPT #CT', function(done) {
     executeTest('POST', 'payload', {'x-relayer-host' : ENDPOINT, 'x-relayer-persistence' : 'BODY'}, done);
   });
-  it('Case 3 should return empty body and x-relayer-httpcallback /PUT #FCB', function(done) {
+  it('Case 3 should return empty body and x-relayer-httpcallback /PUT #FCB #CT', function(done) {
     executeTest('PUT', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-httpcallback' : "http://google.es"}, done);
   });
-  it('Case 4 should return empty body and x-relayer-encoding /GET #FEN', function(done) {
+  it('Case 4 should return empty body and x-relayer-encoding /GET #FEN #CT', function(done) {
     executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-encoding' : "base64"}, done);
   });
-  it('Case 5 should return empty body and x-relayer-encoding /POST #FEN', function(done) {
+  it('Case 5 should return empty body and x-relayer-encoding /POST #FEN #CT', function(done) {
     executeTest('POST', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-encoding' : "base64"}, done);
   });
-  it('Case 6 should return empty body and x-relayer-topic /DELETE #FTID', function(done) {
+  it('Case 6 should return empty body and x-relayer-topic /DELETE #FTID #CT', function(done) {
     executeTest('DELETE', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-topic' : "base64"}, done);
   });
-  it('Case 7 should return empty body and x-relayer-topic /GET #FTID', function(done) {
+  it('Case 7 should return empty body and x-relayer-topic /GET #FTID #CT', function(done) {
     executeTest('GET', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-topic' : "try"}, done);
   });
 });

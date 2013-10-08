@@ -39,7 +39,7 @@ var DIR_MODULE = path.dirname(module.filename);
 
 
 function _invalidScenario(data){
-	it(data.name + ' #FEN', function(done){
+	it('Case ' + data.name + ' #FEN', function(done){
 
 		var agent = superagent.agent();
 		agent
@@ -165,7 +165,7 @@ describe('Single Feature: Encoding #FEN', function() {
 
 describe('Encoding: Retrive an image encoded in BASE64', function () {
 
-it('should return the image coded in base 64 #FEN', function(done) {
+it('Case 1 should return the image coded in base 64 #FEN', function(done) {
 
 	function makeRequest() {
 		var options = {};

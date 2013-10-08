@@ -30,7 +30,7 @@ function _validScenario(data){
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
  // rc.flushall();
 
-  it(data.name + ' /' + data.method + ' #FOW ', function(done){
+  it(data.name + ' /' + data.method + ' #FOW #CT', function(done){
 
     var method;
       switch(data.method){

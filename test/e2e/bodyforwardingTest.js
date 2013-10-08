@@ -182,14 +182,14 @@ describe('Multiple Feature: Body '  + '#FEH', function() {
 
 
 		var dataSetHTTP = [
-			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body,  name : '1 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body1, name : '2 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body2, name : '3 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body3, name : '4 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body,  name : '5 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body1, name : '6 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body2, name : '7 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body3, name : '8 Should accept the request and maintain the Body '}
+			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body,  name : 'Case 1 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body1, name : 'Case 2 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body2, name : 'Case 3 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'POST', path: '/', headers: {}, body: body3, name : 'Case 4 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body,  name : 'Case 5 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body1, name : 'Case 6 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body2, name : 'Case 7 Should accept the request and maintain the Body '},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body3, name : 'Case 8 Should accept the request and maintain the Body '}
 		];
 
 		for(i=0; i < dataSetHTTP.length; i++){

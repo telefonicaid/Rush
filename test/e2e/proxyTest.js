@@ -128,19 +128,19 @@ describe('Single Feature: Proxy Server #FPX', function() {
     });
   }
 
-  it('Using method / GET #FPX', function(done) {
+  it('Case 1 Using method / GET #FPX', function(done) {
     makeTest('locahost:56841', 'GET', headers, '', done);
   });
 
-  it('Using method / POST #FPX', function(done) {
+  it('Case 2 Using method / POST #FPX', function(done) {
     makeTest('locahost:56841', 'POST', headers, 'this is a test', done);
   });
 
-  it('Using method / PUT #FPX', function(done) {
+  it('Case 3 Using method / PUT #FPX', function(done) {
     makeTest('locahost:56841', 'PUT', headers, 'this is a test', done);
   });
 
-  it('Using method / DELETE #FPX', function(done) {
+  it('Case 4 Using method / DELETE #FPX', function(done) {
     makeTest('locahost:56841', 'DELETE', headers, '', done);
   });
 });
