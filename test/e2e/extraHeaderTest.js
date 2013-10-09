@@ -39,7 +39,7 @@ var serversToShutDown = [];
 
 function _validScenario(data){
   'use strict';
-	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
+  it('Case ' + data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
 
@@ -118,7 +118,7 @@ function _validScenario(data){
 
 function _invalidScenario(data){
   'use strict';
-	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
+  it('Case ' + data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
 
@@ -195,7 +195,7 @@ function _invalidScenario(data){
 
 function _invalidHeadersValue(data) {
   'use strict';
-  it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
+  it('Case ' + data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
     var agent = superagent.agent();
     var id;
 

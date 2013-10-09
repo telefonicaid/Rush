@@ -125,14 +125,15 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
 	describe('Retrieve request with a valid header policy request using HTTPS ', function () {
 
 		var dataSetPOST = [
-			{protocol : 'https', method: 'GET', path: '/',    headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '1 Should accept the request using HTTPS /GET'},
-			{protocol : 'https', method: 'POST', path: '/',   headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '2 Should accept the request using HTTPS /POST'},
-			{protocol : 'https', method: 'PUT', path: '/',    headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '3 Should accept the request using HTTPS /PUT'},
+
+			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 1 Should accept the request using HTTPS /GET"},
+			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 2 Should accept the request using HTTPS /POST"},
+			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 3 Should accept the request using HTTPS /PUT"},
 			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '4 Should accept the request using HTTPS /DELETE'},
+        name : "Case 4 Should accept the request using HTTPS /DELETE"},
 		];
 
 		for(var i=0; i < dataSetPOST.length; i++){
@@ -143,14 +144,15 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
 	describe('Retrieve request with a valid header policy request using HTTP ', function () {
 
 		var dataSetPOST = [
-			{protocol : 'http', method: 'GET',    path: '/',  headers: {'X-Relayer-Protocol':'http'}, body: {},
-        name : '1 Should accept the request using HTTP /GET'},
-			{protocol : 'http', method: 'POST',   path: '/',  headers: {'X-Relayer-Protocol':'http'}, body: {},
-        name : '2 Should accept the request using HTTP /POST'},
-			{protocol : 'http', method: 'PUT',    path: '/',  headers: {'X-Relayer-Protocol':'http'}, body: {},
-        name : '3 Should accept the request using HTTP /PUT'},
-			{protocol : 'http', method: 'DELETE', path: '/',  headers: {'X-Relayer-Protocol':'http'}, body: {},
-        name : '4 Should accept the request using HTTP /DELETE'}
+
+			{protocol : 'http', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 1 Should accept the request using HTTP /GET"},
+			{protocol : 'http', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 2 Should accept the request using HTTP /POST"},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 3 Should accept the request using HTTP /PUT"},
+			{protocol : 'http', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 4 Should accept the request using HTTP /DELETE"}
 		];
 
 		for(var i=0; i < dataSetPOST.length; i++){

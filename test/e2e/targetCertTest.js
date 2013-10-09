@@ -49,8 +49,7 @@ var certB64 = 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDS1RDQ0FaSUNDUUQ1TUV2Q
 
 function _validScenario(data){
   'use strict';
-
-  it(data.name +  ' #FTC', function(done){
+  it('Case ' + data.name +  ' #FTC', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -62,12 +61,13 @@ function _validScenario(data){
     default:
       method = data.method.toLowerCase();
     }
+
     var simpleServer = server({port : fhPORT, protocol : data.protocol}, {statusCode : '201'},
         function() {
 
           var req = agent
               [method](RUSHENDPOINT + data.path )
-            //  .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
+            //	.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
               .set('x-relayer-host', 'localhost:8014')  //Hardcoded
               .set('x-relayer-persistence','BODY')
               .set('content-type','application/json')
@@ -76,6 +76,7 @@ function _validScenario(data){
           if(data.method === 'POST' || data.method === 'PUT'){
             req = req.send(data.body);
           }
+
           req.end(function(err, res) {
             if(vm){console.log(res.body);}
             expect(err).to.not.exist;
@@ -84,9 +85,10 @@ function _validScenario(data){
             expect(res.body.id).to.exist;
             id=res.body.id;
             res.text.should.not.include('exception');
-            //  done();
+            //	done();
           });
         },
+
         function(dataReceived) {
           expect(dataReceived).to.exist;
           if(vm){console.log('\n SERVER PATH: ' + dataReceived.url);}
@@ -123,8 +125,7 @@ function _validScenario(data){
 
 function _invalidScenario(data){
   'use strict';
-
-  it(data.name +  ' #FTC', function(done){
+  it('Case ' + data.name +  ' #FTC', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -136,21 +137,20 @@ function _invalidScenario(data){
     default:
       method = data.method.toLowerCase();
     }
+
     var simpleServer = server({port : fhPORT, protocol : data.protocol}, {statusCode : '501'},
         function() {
 
           var req = agent
               [method](RUSHENDPOINT + data.path )
-            //  .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
+            //	.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
               .set('x-relayer-host', 'localhost:8014')  //Hardcoded
               .set('x-relayer-persistence','BODY')
               .set('content-type','application/json')
               .set(data.headers);
-
           if(data.method === 'POST' || data.method === 'PUT'){
             req = req.send(data.body);
           }
-
           req.end(function(err, res) {
             if(vm){console.log(res.body);}
             expect(err).to.not.exist;
@@ -159,13 +159,13 @@ function _invalidScenario(data){
             expect(res.body.id).to.exist;
             id=res.body.id;
             res.text.should.not.include('exception');
-            //  done();
+            //	done();
             setTimeout(function() {
               agent
                   .get(RUSHENDPOINT +'/response/' + id)
                   .end(function onResponse2(err2, res2) {
                     if(vm){
-                    //  console.log(res2);
+                      //	console.log(res2);
                       console.log(res2.body);
                     }
                     expect(err2).to.not.exist;
@@ -189,7 +189,6 @@ function _invalidScenario(data){
 
 describe('Feature: Target Certificate '  + '#FTC', function() {
   'use strict';
-
   this.timeout(6000);
 
   before(function (done) {
@@ -219,23 +218,23 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
   describe('Retrieve request with a valid header policy request using HTTPS ', function () {
 
     var dataSetPOST = [
-      {protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':certB64}, body: {},
+      {protocol : 'https', method: 'GET', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {},
         name : '1 Should accept the request using the target Certificate of the HTTPS server /GET'},
-      {protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':certB64}, body: {},
+      {protocol : 'https', method: 'POST', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {},
         name : '2 Should accept the request using the target Certificate of the HTTPS server /POST'},
-      {protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':certB64}, body: {},
+      {protocol : 'https', method: 'PUT', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {},
         name : '3 Should accept the request using the target Certificate of the HTTPS server /PUT'},
-      {protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':certB64}, body: {},
+      {protocol : 'https', method: 'DELETE', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {},
         name : '4 Should accept the request using the target Certificate of the HTTPS server /DELETE'},
-      {protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':certB64}, body: {},
+      {protocol : 'https', method: 'GET', path: '/withpath',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {},
         name : '5 Should accept the request using the target Certificate of the HTTPS server adding a path /GET'},
-      {protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':certB64}, body: {},
+      {protocol : 'https', method: 'POST', path: '/withpath',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':certB64}, body: {},
         name : '6 Should accept the request using the target Certificate of the HTTPS server adding a path /POST'}
     ];
 
@@ -244,23 +243,23 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
     }
 
     var dataSetInvalid = [
-      {protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':'fakecert'}, body: {},
+      {protocol : 'https', method: 'GET', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {},
         name : '1 Should reject the request using a fake Certificate of the HTTPS server /GET'},
-      {protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':'fakecert'}, body: {},
+      {protocol : 'https', method: 'POST', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {},
         name : '2 Should reject the request using a fake Certificate of the HTTPS server /POST'},
-      {protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':'fakecert'}, body: {},
+      {protocol : 'https', method: 'PUT', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {},
         name : '3 Should reject the request using a fake Certificate of the HTTPS server /PUT'},
-      {protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':'fakecert'}, body: {},
+      {protocol : 'https', method: 'DELETE', path: '/',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {},
         name : '4 Should reject the request using a fake Certificate of the HTTPS server /DELETE'},
-      {protocol : 'https', method: 'GET', path: '/withpath', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':'fakecert'}, body: {},
+      {protocol : 'https', method: 'GET', path: '/withpath',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {},
         name : '5 Should reject the request using a fake Certificate of the HTTPS server adding path /GET'},
-      {protocol : 'https', method: 'POST', path: '/withpath', headers: {'X-Relayer-Protocol':'https',
-        'x-relayer-server-cert':'fakecert'}, body: {},
+      {protocol : 'https', method: 'POST', path: '/withpath',
+        headers: {'X-Relayer-Protocol':'https','x-relayer-server-cert':'fakecert'}, body: {},
         name : '6 Should reject the request using a fake Certificate of the HTTPS server adding path /POST'}
     ];
 

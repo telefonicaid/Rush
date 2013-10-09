@@ -37,7 +37,7 @@ function _validScenario(data){
   rc.select(config.redisServer.db);
   // rc.flushall();
 
-  it(data.name + ' /' + data.method + ' #FOW ', function(done){
+  it(data.name + ' /' + data.method + ' #FOW #CT', function(done){
 
     var method;
     switch(data.method){

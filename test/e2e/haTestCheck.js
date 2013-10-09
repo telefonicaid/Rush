@@ -36,9 +36,9 @@ var serversToShutDown = [];
 
 function _validScenario(data){
   'use strict';
-  it.skip(data.name +  ' #FHA', function(done){
-    var agent = superagent.agent();
-    var id;
+	it.skip('Case ' + data.name +  ' #FHA', function(done){
+		var agent = superagent.agent();
+		var id;
     if (vm) {
       //Steps input
     }
@@ -48,9 +48,9 @@ function _validScenario(data){
 
 function _invalidScenario(data){
   'use strict';
-  it.skip(data.name +  ' #FHA', function(done){
-    var agent = superagent.agent();
-    var id;
+	it.skip('Case ' + data.name +  ' #FHA', function(done){
+		var agent = superagent.agent();
+		var id;
     if (vm) {
       //Steps input
     }

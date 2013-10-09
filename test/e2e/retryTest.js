@@ -107,7 +107,7 @@ describe('Single Feature: Retry #FRT', function() {
     serversToShutDown = [];
   });
 
-  it('The last retry will work #FRT', function(done) {
+  it('Case 1 The last retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length + 1,
@@ -117,7 +117,7 @@ describe('Single Feature: Retry #FRT', function() {
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
-  it('The second retry will work #FRT', function(done) {
+  it('Case 2 The second retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length,
@@ -127,7 +127,7 @@ describe('Single Feature: Retry #FRT', function() {
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
-  it('None retry will work #FRT', function(done) {
+  it('Case 3 None retry will work #FRT', function(done) {
 
     var retryTimes = '1,25,100',
         petitionCorrect = retryTimes.split(',').length + 2,

@@ -61,38 +61,44 @@ describe('Component Test: Task queue', function () {
   rc.flushall();
 
   var dataSet = [
-      {method: 'GET', headers: {},
-        name :'Case 1 Task should contain OneWay policy #FOW' },
-      {method: 'GET', headers: {'x-relayer-persistence' : 'STATUS'},
+      {method: 'GET',
+        headers: {},
+        name : 'Case 1 Task should contain OneWay policy #FOW' },
+      {method: 'GET',
+        headers: {'x-relayer-persistence' : 'STATUS'},
         name : 'Case 2 Task should contain STATUS persistence #FPT'},
-      {method: 'GET', headers: {'x-relayer-persistence' : 'HEADER'},
-        name : 'Case 3 Task should contain HEADER persistence  #FPT'},
-      {method: 'GET', headers: {'x-relayer-persistence' : 'BODY'},
-        name :'Case 4 Task should contain BODY persistence #FPT'},
-      {method: 'POST', headers: {'x-relayer-httpcallback' : 'http://noname.com'},
-        name : 'Case 5 Task should contain x-relayer-httpcallback atribute #FCB'},
-      {method: 'POST', headers: {'x-relayer-httpcallback' : 'http://noname.com',
-        'x-relayer-httpcallback-error' : 'http://noname.com'},
-        name :'Case 6 Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error  #FCB'},
-      {method: 'POST', headers: {'x-relayer-retry' : '10, 20, 30'},
-        name : 'Case 7 Task should have property x-relayer-retry  #FRT'},
-      {method: 'PUT', headers: {},
-        name : 'Case 8 Task should be stored #FOW'},
-      {method: 'PUT', headers: {'x-relayer-topic' : 'TEST'},
-        name : 'Case 9 Task should have property x-relayer-topic  #FTP'},
-      {method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'},
+      {method: 'GET',
+        headers: {'x-relayer-persistence' : 'HEADER'},
+        name :  'Case 3 Task should contain HEADER persistence  #FPT'},
+      {method: 'GET',
+        headers: {'x-relayer-persistence' : 'BODY'},
+        name : 'Case 4 Task should contain BODY persistence #FPT'},
+      {method: 'POST',
+        headers: {'x-relayer-httpcallback' : 'http://noname.com'},
+        name :  'Case 5 Task should contain x-relayer-httpcallback atribute #FCB'},
+      {method: 'POST',
+        headers: {'x-relayer-httpcallback' : 'http://noname.com', 'x-relayer-httpcallback-error' : 'http://noname.com'},
+        name : 'Case 6 Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error  #FCB'},
+      {method: 'POST',
+        headers: {'x-relayer-retry' : '10, 20, 30'},
+        name :  'Case 7 Task should have property x-relayer-retry  #FRT'},
+      {method: 'PUT',
+        headers: {},
+        name :  'Case 8 Task should be stored #FOW'},
+      {method: 'PUT',
+        headers: {'x-relayer-topic' : 'TEST'},
+        name :  'Case 9 Task should have property x-relayer-topic  #FTID'},
+      {method: 'PUT',
+        headers: {'x-relayer-proxy' : 'proxy.com'},
         name : 'Case 10 Task should have property x-relayer-proxy  #FPX'},
-      {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'},
-        name : 'Case 11 Task should have property x-relayer-encoding  #FEN'}
+      {method: 'PUT',
+        headers: {'x-relayer-encoding' : 'base64'},
+        name :  'Case 11 Task should have property x-relayer-encoding  #FEN'}
     ];
-
-  for(var i=0; i < dataSet.length; i++){
-    _newScenario(dataSet[i])();  //Launch every test in data set
-  }
 
   function _newScenario(data){
     return function(){
-      it(data.name + ' /' + data.method, function(done){
+      it(data.name + ' /' + data.method + ' #CT', function(done){
         agent
           [data.method.toLowerCase()](URL_RUSH)
           .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
@@ -132,5 +138,9 @@ describe('Component Test: Task queue', function () {
           });
       });
     };
+  }
+
+  for(var i=0; i < dataSet.length; i++){
+    _newScenario(dataSet[i])();  //Launch every test in data set
   }
 });

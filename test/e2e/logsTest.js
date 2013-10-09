@@ -81,7 +81,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; //Accept self signed certs
 function _scenario(data){
   'use strict';
 
-  it(data.name +  ' #LOGS', function(done){
+  it('Case ' + data.name +  ' #LOGS', function(done){
     var agent = superagent.agent();
     var id;
 
@@ -170,51 +170,51 @@ describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
     var dataSetPOST = [
       {protocol : 'http', method: 'GET', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, JOBENDED], headers: {}, body: {},
-        name : '1 Should log GET Relay request, persistence, and job'},
+        name : "1 Should log GET Relay request, persistence, and job"},
       {protocol : 'http', method: 'POST', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, JOBENDED], headers: {}, body: {},
-        name : '2 Should log POST Relay request, persistence, and job'},
+        name : "2 Should log POST Relay request, persistence, and job"},
       {protocol : 'http', method: 'PUT', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, JOBENDED], headers: {}, body: {},
-        name : '3 Should log PUT Relay request, persistence, and job'},
+        name : "3 Should log PUT Relay request, persistence, and job"},
       {protocol : 'https', method: 'GET', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, JOBENDED],
         headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '4 HTTPS: Should log GET Relay request, persistence, and job'},
+        name : "4 HTTPS: Should log GET Relay request, persistence, and job"},
       {protocol : 'https', method: 'POST', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, JOBENDED],
         headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '5 HTTPS: Should log POST Relay request, persistence, and job'},
+        name : "5 HTTPS: Should log POST Relay request, persistence, and job"},
       {protocol : 'https', method: 'PUT', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, JOBENDED],
         headers: {'X-Relayer-Protocol':'https'}, body: {},
-        name : '6 HTTPS: Should log PUT Relay request, persistence, and job'},
+        name : "6 HTTPS: Should log PUT Relay request, persistence, and job"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [NOHOST], headers: {'x-relayer-host' : 'http://invalid'}, body: {},
-        name : '7 Should log x-relayer-host error'},
+        name : "7 Should log x-relayer-host error"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [INVALIDPERSISTENCE], headers: {'x-relayer-persistence' : 'INVALID'}, body: {},
-        name : '8 Should log Invalid Persistence Error'},
+        name : "8 Should log Invalid Persistence Error"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [INVALID_CALLBACK_PROTO], headers: {'x-relayer-httpcallback' : 'INVALID'}, body: {},
-        name : '9 Should log Invalid x-relayer-httpcallback protocol'},
+        name : "9 Should log Invalid x-relayer-httpcallback protocol"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [INVALID_CALLBACK_HOST], headers: {'x-relayer-httpcallback' : 'http://'}, body: {},
-        name : '10 Should log Invalid x-relayer-httpcallback hostname'},
+        name : "10 Should log Invalid x-relayer-httpcallback hostname"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [INVALID_RETRY], headers: {'x-relayer-retry' : 'INVALID'}, body: {},
-        name : '11 Should log Invalid x-relayer-retry hostname'},
+        name : "11 Should log Invalid x-relayer-retry hostname"},
       {protocol : 'http', method: 'GET', path: '/',
-        expected : [INVALID_HEADER], headers: {'x-relayer-header' : 'INVALID' }, body: {},
-        name : '12 Should log Invalid header'},
+        expected : [INVALID_HEADER], headers: {'x-relayer-header' : "INVALID" }, body: {},
+        name : "12 Should log Invalid header"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_ERROR, JOBERROR],
-        headers: {'x-relayer-host' : 'google.esssss' }, body: {},
-        name : '13 Should log ENOTFOUND'},
+        headers: {'x-relayer-host' : "google.esssss" }, body: {},
+        name : "13 Should log ENOTFOUND"},
       {protocol : 'http', method: 'GET', path: '/',
         expected : [PERSISTENCE_QUEUED, PERSISTENCE_PROCESSING, PERSISTENCE_COMPLETED, CALLBACKERROR],
-        headers: {'x-relayer-httpcallback' : 'http://google.esssss' }, body: {},
-        name : '13 Should log Callback ENOTFOUND'}
+        headers: {'x-relayer-httpcallback' : "http://google.esssss" }, body: {},
+        name : "14 Should log Callback ENOTFOUND"}
     ];
 
     for(var i=0; i < dataSetPOST.length; i++){

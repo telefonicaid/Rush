@@ -102,32 +102,31 @@ describe('Single Feature: TraceID #FTID', function() {
   });
 
 
-  it('Should return  the correct Traceid / GET #FTID', function(done) {
+  it('Case 1 Should return  the correct Traceid / GET #FTID', function(done) {
     executeTest('GET', '', done);
   });
 
 
-  it('Should return  the correct TraceId / POST #FTID', function(done) {
+  it('Case 2 Should return  the correct TraceId / POST #FTID', function(done) {
     executeTest('POST', 'TEST BODY 1', done);
 
   });
 
-  it('Should return  the correct TraceId / PUT #FTID', function(done) {
+  it('Case 3 Should return  the correct TraceId / PUT #FTID', function(done) {
     executeTest('PUT', 'TEST BODY 2', done);
   });
 
-
-  it('Should return  the invalid Traceid / GET #FTID', function(done) {
+  it('Case 4 Should return  the invalid Traceid / GET #FTID', function(done) {
     executeTest('GET', '', done);
   });
 
 
-  it('Should return  the invalid TraceId / POST #FTID', function(done) {
+  it('Case 5 Should return  the invalid TraceId / POST #FTID', function(done) {
     executeTest('POST', 'TEST BODY 1?=)(/&%$·\'', done);
 
   });
 
-  it('Should return  the invalid TraceId / PUT #FTID', function(done) {
+  it('Case 6 Should return  the invalid TraceId / PUT #FTID', function(done) {
     executeTest('PUT', 'TEST BODY 2 |||@#|@~@½@#', done);
   });
 
@@ -148,7 +147,7 @@ describe('Single Feature: TraceID #FTID', function() {
       {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {},
         name : ' 7 Should accept the request with a real protocol BINARY /GET #FTID'},
       {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {},
-        name : ' 8 Should accept the request using a fake encoding \'x\' /GET #FTID'}
+        name : ' 8 Should accept the request using a fake encoding  \'x\' /GET #FTID'}
     ];
 
     for(var i=0; i < dataSet.length; i++){

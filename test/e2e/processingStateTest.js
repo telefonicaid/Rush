@@ -37,7 +37,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     });
   });
 
-  it('Should return correct processing state  #FPT ', function(done) {
+  it('Case 1 Should return correct processing state  #FPT ', function(done) {
 
     var optionsRelay = {};
     var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d',
@@ -139,7 +139,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     });
   });
 
-  it('Processing state is not returned if X-Relayer-Persistence is not defined  #FPT ', function(done) {
+  it('Case 2 Processing state is not returned if X-Relayer-Persistence is not defined  #FPT ', function(done) {
 
     var optionsRelay = {};
     var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d',

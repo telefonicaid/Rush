@@ -86,21 +86,21 @@ describe('Multiple Feature: ONEWAY with HTTPS #FOW', function () {
     serversToShutDown = [];
   });
 
-  it('Should return the same headers and the same method / GET #FOW', function (done) {
+  it('Case 1 Should return the same headers and the same method / GET #FOW', function (done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Should return the same headers, method and body / POST #FOW', function (done) {
+  it('Case 2 Should return the same headers, method and body / POST #FOW', function (done) {
     var content = 'Hello World';
     executeTest('POST', content, done);
   });
 
-  it('Should return the same headers, method and body / PUT #FOW', function (done) {
+  it('Case 3 Should return the same headers, method and body / PUT #FOW', function (done) {
     var content = 'Hello World';
     executeTest('PUT', content, done);
   });
 
-  it('Should return the same headers and the same method / DELETE #FOW', function (done) {
+  it('Case 4 Should return the same headers and the same method / DELETE #FOW', function (done) {
     executeTest('GET', undefined, done);
   });
 });
@@ -144,27 +144,27 @@ describe('Multiple Feature: ONEWAY with HTTPS / Checking limits ', function () {
       '66666666666677777777777777777777777778888888888888888888888888888888889999999999999999999999999999999999999' +
       '99900000000000000000000000000';
 
-  it('Should return the response / POST #FOW', function (done) {
+  it('Case 1 Should return the response / POST #FOW', function (done) {
     executeTest('POST', contentLarge, done);
   });
 
-  it('Should return the response / PUT #FOW', function (done) {
+  it('Case 2 Should return the response / PUT #FOW', function (done) {
     executeTest('PUT', contentLarge, done);
   });
 
-  it('Should return the response / HEAD #FOW', function (done) {
+  it('Case 3 Should return the response / HEAD #FOW', function (done) {
     executeTest('HEAD', undefined, done);
   });
 
-  it('Should return the response / TRACE #FOW', function (done) {
+  it('Case 4 Should return the response / TRACE #FOW', function (done) {
     executeTest('TRACE', undefined, done);
   });
 
-  it('Should return the response / GET #FOW', function (done) {
+  it('Case 5 Should return the response / GET #FOW', function (done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Should return the response / DELETE #FOW', function (done) {
+  it('Case 6 Should return the response / DELETE #FOW', function (done) {
     executeTest('TRACE', undefined, done);
   });
 
