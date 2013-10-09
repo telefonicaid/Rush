@@ -12,6 +12,7 @@ var PORT = config.rushServer.port;
 var serversToShutDown = [];
 
 function runTest(retryTimes, petitionCorrect, serverTimes, done) {
+  'use strict';
 
   var CONTENT = 'Retry Test',
       APPLICATION_CONTENT = 'application/json',
@@ -139,6 +140,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 }
 
 describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
+  'use strict';
 
   before(function (done) {
     listener.start(function() {

@@ -19,7 +19,7 @@ var TIMEOUT = 100;
 var CREATED = 201; // 200 for older versions
 var INVALID_HEADERS = 400;
 var describeTimeout = 5000;
-DEFAULT_PERSISTENCE = 'BODY';
+var DEFAULT_PERSISTENCE = 'BODY';
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;
@@ -29,7 +29,7 @@ var RUSHENDPOINT = 'http://' + HOST + ':' + PORT;
 //Final host endpoint
 var fhHOST = config.simpleServerHostname;
 var fhPORT = config.simpleServerPort;
-ENDPOINT = fhHOST + ':' + fhPORT;
+var ENDPOINT = fhHOST + ':' + fhPORT;
 
 //Accept self signed certs
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -38,17 +38,19 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var serversToShutDown = [];
 
 function _validBody(data){
+  'use strict';
+
 	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FOW', function(done){
 		var agent = superagent.agent();
 		var id;
 
 		var method;
 		switch(data.method){
-			case 'DELETE':
-				method = 'del';
-				break;
-			default:
-				method = data.method.toLowerCase()
+    case 'DELETE':
+      method = 'del';
+      break;
+    default:
+      method = data.method.toLowerCase();
 		}
 
 		var simpleServer = server({port : fhPORT, protocol : data.protocol}, {},
@@ -60,7 +62,7 @@ function _validBody(data){
 							.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 							.set('x-relayer-persistence',DEFAULT_PERSISTENCE)
 							.set('content-type','application/json')
-							.set(data.headers)
+							.set(data.headers);
 					if(data.method.toUpperCase() === 'POST' || data.method.toUpperCase() === 'PUT'){
 						req = req.send(JSON.stringify(data.body));
 					}
@@ -118,6 +120,7 @@ function _validBody(data){
 
 
 describe('Multiple Feature: Body '  + '#FEH', function() {
+  'use strict';
 	this.timeout(describeTimeout);
 	//Start Rush before every test launch
 	before(function (done) {
@@ -149,36 +152,40 @@ describe('Multiple Feature: Body '  + '#FEH', function() {
 			'parameter1':'urls',
 			'parameter2': [
 				encodeURIComponent('field1: X-relayer-NoHost:localhost:8000'),
-				encodeURIComponent("field2: ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 "),
+				encodeURIComponent('field2: ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 '),
 				encodeURIComponent('field3')
-			].join(', ')};
+			].join(', ')
+    };
 
 
 		var body1 = {
 			'parameter1':'numbers',
 			'parameter2': [
 				encodeURIComponent('0,000000000000000000000000000000000000000000000000000000000001'),
-				encodeURIComponent("9'999999999999999999999999999999999999999999999999999999999999"),
+				encodeURIComponent('9\'999999999999999999999999999999999999999999999999999999999999'),
 				encodeURIComponent('5.555555555555555555555555555555555555555555555555555555555555')
-			].join(', ')};
+			].join(', ')
+    };
 
 
 		var body2 = {
 			'parameter1':'variables',
 			'parameter2': [
 				encodeURIComponent('field1: X-relayer-NoHost:localhost:8000'),
-				encodeURIComponent("field2: ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 "),
+				encodeURIComponent('field2: ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 '),
 				encodeURIComponent('field3')
-			].join(', ')};
+			].join(', ')
+    };
 
 
 		var body3 = {
 			'parameter1':'garble',
 			'parameter2': [
 				encodeURIComponent('qÃ®Ã¼Ã¶:Ã·Z<Ã˜Â¸ÂÃºSx6Ã\ÂÃ´'),
-				encodeURIComponent("Ã¼wÃ€nÃÃž.ËœÃÃ¨tÂ¨ÃŸ Â§ Â»#<!â€™;Ãƒ5	Ã£:=â€ºÃ 4V?Ã„u,Â¥j	Ã¯f&Ã*u\-h-^Å¾"),
+				encodeURIComponent('Ã¼wÃ€nÃÃž.ËœÃÃ¨tÂ¨ÃŸ Â§ Â»#<!â€™;Ãƒ5	Ã£:=â€ºÃ 4V?Ã„u,Â¥j	Ã¯f&Ã*u\-h-^Å¾'),
 				encodeURIComponent('     \n')
-			].join(', ')};
+			].join(', ')
+    };
 
 
 		var dataSetHTTP = [
@@ -192,7 +199,7 @@ describe('Multiple Feature: Body '  + '#FEH', function() {
 			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body3, name : '8 Should accept the request and maintain the Body '}
 		];
 
-		for(i=0; i < dataSetHTTP.length; i++){
+		for(var i=0; i < dataSetHTTP.length; i++){
 			_validBody(dataSetHTTP[i]);  //Launch every test in data set
 		}
 	});

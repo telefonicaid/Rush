@@ -18,7 +18,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
     testHeader: 'a',
     headerTest: 'b',
     myOwnHeader: 'c'
-  }
+  };
 
   before(function (done) {
     listener.start(function() {
@@ -38,7 +38,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
     } catch(e) {  }
 
     done();
-  })
+  });
 
   function makeTest(relayerHost, method, headers, content, done) {
 
@@ -54,7 +54,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
       options.headers = {};
       options.method = method;
       options.headers['x-relayer-persistence'] = 'BODY';
-      options.headers['x-relayer-proxy'] = config.simpleServerHostname + ':' + config.simpleServerPort;;
+      options.headers['x-relayer-proxy'] = config.simpleServerHostname + ':' + config.simpleServerPort;
       options.headers['x-relayer-host'] = relayerHost;
 
       //Insert our headers
@@ -69,7 +69,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
         parsedData.should.have.property('id');
         id = parsedData.id;
       });
-    }
+    };
 
     proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders,
         usedURL, receivedContent) {

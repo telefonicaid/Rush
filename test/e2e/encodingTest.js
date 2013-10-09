@@ -39,13 +39,14 @@ var DIR_MODULE = path.dirname(module.filename);
 
 
 function _invalidScenario(data){
+  'use strict';
 	it(data.name + ' #FEN', function(done){
 
 		var agent = superagent.agent();
 		agent
 				[data.method.toLowerCase()](RUSHENDPOINT )
 				.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
-				.set("x-relayer-persistence","BODY")
+				.set('x-relayer-persistence', 'BODY')
 				.set(data.headers)
 				.send({})
 				.end(function(err, res) {
@@ -79,6 +80,7 @@ function _invalidScenario(data){
 }
 
 describe('Single Feature: Encoding #FEN', function() {
+  'use strict';
 	 this.timeout(describeTimeout);
 
 	var serversToShutDown = [];
@@ -111,17 +113,17 @@ describe('Single Feature: Encoding #FEN', function() {
 
 	describe('Encoding: Rush should accept encoding request bypassed to the Target direcly (UTF-8 by default)', function () {
 		var dataSet = [
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : " 1 Should accept the request with a real protocol UTF-8 /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : " 2 Should accept the request with a real protocol UTF8 /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {}, name : " 3 Should accept the request with a real protocol utf8 /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {}, name : " 4 Should accept the request with a real protocol QUOTED-PRINTABLE /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {}, name : " 5 Should accept the request with a real protocol 8BIT /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {}, name : " 6 Should accept the request with a real protocol 7BIT /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {}, name : " 7 Should accept the request with a real protocol BINARY /GET"},
-			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {}, name : " 8 Should accept the request using a fake encoding 'x' /GET"}
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : ' 1 Should accept the request with a real protocol UTF-8 /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : ' 2 Should accept the request with a real protocol UTF8 /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {}, name : ' 3 Should accept the request with a real protocol utf8 /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {}, name : ' 4 Should accept the request with a real protocol QUOTED-PRINTABLE /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {}, name : ' 5 Should accept the request with a real protocol 8BIT /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {}, name : ' 6 Should accept the request with a real protocol 7BIT /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {}, name : ' 7 Should accept the request with a real protocol BINARY /GET'},
+			{method: 'GET', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {}, name : ' 8 Should accept the request using a fake encoding \'x\' /GET'}
 		];
 
-		for(i=0; i < dataSet.length; i++){
+		for(var i=0; i < dataSet.length; i++){
 			_invalidScenario(dataSet[i]);  //Launch every test in data set
 		}
 	});
@@ -129,17 +131,17 @@ describe('Single Feature: Encoding #FEN', function() {
 
 	describe('Encoding: Rush should accept encoding request bypassed to the Target direcly (UTF-8 by default)', function () {
 		var dataSet = [
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : " 1 Should accept the request with a real protocol UTF-8 /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : " 2 Should accept the request with a real protocol UTF8 /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {}, name : " 3 Should accept the request with a real protocol utf8 /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {}, name : " 4 Should accept the request with a real protocol QUOTED-PRINTABLE /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {}, name : " 5 Should accept the request with a real protocol 8BIT /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {}, name : " 6 Should accept the request with a real protocol 7BIT /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {}, name : " 7 Should accept the request with a real protocol BINARY /POST"},
-			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {}, name : " 8 Should accept the request using a fake encoding (x) /POST"}
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : ' 1 Should accept the request with a real protocol UTF-8 /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : ' 2 Should accept the request with a real protocol UTF8 /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {}, name : ' 3 Should accept the request with a real protocol utf8 /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {}, name : ' 4 Should accept the request with a real protocol QUOTED-PRINTABLE /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {}, name : ' 5 Should accept the request with a real protocol 8BIT /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {}, name : ' 6 Should accept the request with a real protocol 7BIT /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {}, name : ' 7 Should accept the request with a real protocol BINARY /POST'},
+			{method: 'POST', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {}, name : ' 8 Should accept the request using a fake encoding (x) /POST'}
 		];
 
-		for(i=0; i < dataSet.length; i++){
+		for(var i=0; i < dataSet.length; i++){
 			_invalidScenario(dataSet[i]);  //Launch every test in data set
 		}
 	});
@@ -147,95 +149,95 @@ describe('Single Feature: Encoding #FEN', function() {
 
 	describe('Encoding: Rush should accept encoding request bypassed to the Target direcly (UTF-8 by default)', function () {
 		var dataSet = [
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : " 1 Should accept the request with a real protocol UTF-8 /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : " 2 Should accept the request with a real protocol UTF8 /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {}, name : " 3 Should accept the request with a real protocol utf8 /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {}, name : " 4 Should accept the request with a real protocol QUOTED-PRINTABLE /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {}, name : " 5 Should accept the request with a real protocol 8BIT /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {}, name : " 6 Should accept the request with a real protocol 7BIT /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {}, name : " 7 Should accept the request with a real protocol BINARY /PUT"},
-			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {}, name : " 8 Should accept the request using a fake encoding (x) /PUT"}
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {}, name : ' 1 Should accept the request with a real protocol UTF-8 /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {}, name : ' 2 Should accept the request with a real protocol UTF8 /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {}, name : ' 3 Should accept the request with a real protocol utf8 /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {}, name : ' 4 Should accept the request with a real protocol QUOTED-PRINTABLE /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {}, name : ' 5 Should accept the request with a real protocol 8BIT /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {}, name : ' 6 Should accept the request with a real protocol 7BIT /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {}, name : ' 7 Should accept the request with a real protocol BINARY /PUT'},
+			{method: 'PUT', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {}, name : ' 8 Should accept the request using a fake encoding (x) /PUT'}
 		];
 
-		for(i=0; i < dataSet.length; i++){
+		for(var i=0; i < dataSet.length; i++){
 			_invalidScenario(dataSet[i]);  //Launch every test in data set
 		}
 	});
 
 
-describe('Encoding: Retrive an image encoded in BASE64', function () {
+  describe('Encoding: Retrive an image encoded in BASE64', function () {
 
-it('should return the image coded in base 64 #FEN', function(done) {
+    it('should return the image coded in base 64 #FEN', function(done) {
 
-	function makeRequest() {
-		var options = {};
+      function makeRequest() {
+        var options = {};
 
-		options.host = HOST;
-		options.port = PORT;
-		options.headers = {};
-		options.method = 'GET';
-		options.headers['content-type'] = 'application/json';
-		options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort,
-				options.headers['X-relayer-persistence'] = 'BODY';
-		options.headers['X-relayer-encoding'] = 'base64';
+        options.host = HOST;
+        options.port = PORT;
+        options.headers = {};
+        options.method = 'GET';
+        options.headers['content-type'] = 'application/json';
+        options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort,
+            options.headers['X-relayer-persistence'] = 'BODY';
+        options.headers['X-relayer-encoding'] = 'base64';
 
-		utils.makeRequest(options, '', function(err, res) {
-			petitionID = JSON.parse(res).id;
-		});
-	}
+        utils.makeRequest(options, '', function(err, res) {
+          petitionID = JSON.parse(res).id;
+        });
+      }
 
-	//Launch Server
-	simpleserver = http.createServer(function(req, res) {
+      //Launch Server
+      simpleserver = http.createServer(function(req, res) {
 
-		req.on('end', function() {
-			res.writeHead(200);
-			res.end(contentBinary);
+        req.on('end', function() {
+          res.writeHead(200);
+          res.end(contentBinary);
 
-			//Once the image has been written, polling is done until the image has been saved in redis or timeout.
-			var checked = false;
-			var interval = setInterval(function() {
-				var options = {};
+          //Once the image has been written, polling is done until the image has been saved in redis or timeout.
+          var checked = false;
+          var interval = setInterval(function() {
+            var options = {};
 
-				options.host = config.rushServer.host;
-				options.port = config.rushServer.port;
-				options.path = '/response/' + petitionID;
+            options.host = config.rushServer.host;
+            options.port = config.rushServer.port;
+            options.path = '/response/' + petitionID;
 
-				function checkResponse(err, data, res) {
+            function checkResponse(err, data, res) {
 
-					var parsedJSON = JSON.parse(data);
+              var parsedJSON = JSON.parse(data);
 
-					if (!checked && res.statusCode !== 404 && parsedJSON.state === 'completed') {
-						clearInterval(interval);
+              if (!checked && res.statusCode !== 404 && parsedJSON.state === 'completed') {
+                clearInterval(interval);
 
-						should.not.exist(err);
+                should.not.exist(err);
 
-						parsedJSON.should.have.property('body');
-						parsedJSON.should.have.property('encoding', 'base64');
+                parsedJSON.should.have.property('body');
+                parsedJSON.should.have.property('encoding', 'base64');
 
-						var body = parsedJSON.body;
-						var buf = new Buffer(contentBinary);
-						var base64 = buf.toString('base64');
-						body.should.be.equal(base64);
+                var body = parsedJSON.body;
+                var buf = new Buffer(contentBinary);
+                var base64 = buf.toString('base64');
+                body.should.be.equal(base64);
 
-						done();
-						checked = true;
-					}
-				}
+                done();
+                checked = true;
+              }
+            }
 
-				utils.makeRequest(options, '', checkResponse);
-			}, 1);
-		});
+            utils.makeRequest(options, '', checkResponse);
+          }, 1);
+        });
 
-		req.resume();
+        req.resume();
 
 
-	}).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
-	
-	serversToShutDown.push(simpleserver);
+      }).listen(config.simpleServerPort, makeRequest);    //The request is made when the server is running
 
-});
+      serversToShutDown.push(simpleserver);
 
-});
+    });
+
+  });
 
 
 });

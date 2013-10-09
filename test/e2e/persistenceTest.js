@@ -1,6 +1,6 @@
 var async = require('async');
 var should = require('should');
-var config = require('./config.js')
+var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 
@@ -96,6 +96,7 @@ function executeTest(method, content, persistence, done) {
 }
 
 describe('Single Feature: Persistence #FPE', function() {
+  'use strict';
 
   before(function (done) {
     listener.start(function() {
@@ -212,7 +213,7 @@ describe('Single Feature: Persistence #FPE', function() {
       resGet['exception'].should.have.property('exceptionText');
       resGet['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-	    done();
+      done();
     });
   });
 });

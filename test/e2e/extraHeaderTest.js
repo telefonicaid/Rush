@@ -38,18 +38,19 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var serversToShutDown = [];
 
 function _validScenario(data){
+  'use strict';
 	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
 
 		var method;
-			switch(data.method){
-				case 'DELETE':
-					method = 'del';
-					break;
-				default:
-					method = data.method.toLowerCase()
-			}
+    switch(data.method){
+    case 'DELETE':
+      method = 'del';
+      break;
+    default:
+      method = data.method.toLowerCase();
+    }
 
 		var simpleServer = server({port : fhPORT, protocol : data.protocol}, {},
 			function connectedCallback() {
@@ -60,19 +61,21 @@ function _validScenario(data){
 						.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 						.set('x-relayer-persistence',DEFAULT_PERSISTENCE)
 						.set('content-type','application/json')
-						.set(data.headers)
-						if(data.method.toUpperCase() === 'POST' || data.method.toUpperCase() === 'PUT'){
-							req = req.send(data.body);
-						}
-						req.end(function(err, res) {
-							expect(err).to.not.exist;
-							expect(res.statusCode).to.eql(CREATED);
-							expect(res.body).to.exist;
-							expect(res.body.id).to.exist;
-							if(vm){console.log(res.body.id);}
-							id=res.body.id;
-							res.text.should.not.include('exception');
-						 });
+						.set(data.headers);
+
+        if(data.method.toUpperCase() === 'POST' || data.method.toUpperCase() === 'PUT'){
+          req = req.send(data.body);
+        }
+
+        req.end(function(err, res) {
+          expect(err).to.not.exist;
+          expect(res.statusCode).to.eql(CREATED);
+          expect(res.body).to.exist;
+          expect(res.body.id).to.exist;
+          if(vm){console.log(res.body.id);}
+          id=res.body.id;
+          res.text.should.not.include('exception');
+        });
 			},
 				//DATA inside de advancedServer
 			function(dataReceived) {
@@ -81,11 +84,11 @@ function _validScenario(data){
 				dataReceived.url.should.be.equal(data.path);
         if(data.responseHeaders){
           Object.keys(data.responseHeaders).forEach(
-		          function(rhk){
-		            expect(dataReceived.headers[rhk.toLowerCase()]).to.exist;
-			          if(vm){console.log('// DATA RECEIVED: ', rhk.toLowerCase(),  dataReceived.headers[rhk.toLowerCase()]);}
+              function(rhk){
+                expect(dataReceived.headers[rhk.toLowerCase()]).to.exist;
+                if(vm){console.log('// DATA RECEIVED: ', rhk.toLowerCase(),  dataReceived.headers[rhk.toLowerCase()]);}
                 dataReceived.headers[rhk.toLowerCase()].trim().should.eql(data.responseHeaders[rhk].trim());
-              })
+              });
         }
 
 				//Checks in the retrieved task response from RUSH
@@ -114,17 +117,18 @@ function _validScenario(data){
 }
 
 function _invalidScenario(data){
+  'use strict';
 	it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
 		var agent = superagent.agent();
 		var id;
 
 		var method;
 		switch(data.method){
-			case 'DELETE':
-				method = 'del';
-				break;
-			default:
-				method = data.method.toLowerCase()
+    case 'DELETE':
+      method = 'del';
+      break;
+    default:
+      method = data.method.toLowerCase();
 		}
 
 		var simpleServer = server({port : fhPORT, protocol : data.protocol}, {},
@@ -136,7 +140,7 @@ function _invalidScenario(data){
 							.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 							.set('x-relayer-persistence',DEFAULT_PERSISTENCE)
 							.set('content-type','application/json')
-							.set(data.headers)
+							.set(data.headers);
 					if(data.method.toUpperCase() === 'POST' || data.method.toUpperCase() === 'PUT'){
 						req = req.send(data.body);
 					}
@@ -161,7 +165,7 @@ function _invalidScenario(data){
 									expect(dataReceived.headers[rhk.toLowerCase()]).to.exist;
 									if(vm){console.log('// DATA RECEIVED: ', rhk.toLowerCase(), dataReceived.headers[rhk.toLowerCase()]);}
 									dataReceived.headers[rhk.toLowerCase()].trim().should.eql(data.responseHeaders[rhk].trim());
-								})
+                });
 					}
 
 					//Checks in the retrieved task response from RUSH
@@ -190,17 +194,18 @@ function _invalidScenario(data){
 }
 
 function _invalidHeadersValue(data) {
+  'use strict';
   it(data.name + data.protocol.toUpperCase() +' /' +data.method +' #FEH', function(done){
     var agent = superagent.agent();
     var id;
 
     var method;
     switch(data.method){
-      case 'DELETE':
-        method = 'del';
-        break;
-      default:
-        method = data.method.toLowerCase()
+    case 'DELETE':
+      method = 'del';
+      break;
+    default:
+      method = data.method.toLowerCase();
     }
 
     //SET UP the request to the advancedServer
@@ -209,7 +214,7 @@ function _invalidHeadersValue(data) {
         .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
         .set('x-relayer-persistence',DEFAULT_PERSISTENCE)
         .set('content-type','application/json')
-        .set(data.headers)
+        .set(data.headers);
     if(data.method.toUpperCase() === 'POST' || data.method.toUpperCase() === 'PUT'){
       req = req.send(data.body);
     }
@@ -233,6 +238,7 @@ function _invalidHeadersValue(data) {
 
 
 describe('Single Feature: Extra header '  + '#FEH', function() {
+  'use strict';
 	this.timeout(describeTimeout);
 	//Start Rush before every test launch
 	before(function (done) {
@@ -261,19 +267,23 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 	describe('Retrieve request with a valid header policy request using HTTPS #FEH', function () {
 
     var responseHeaders1 = {
-	    'Fake-User-Agent':'Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 ',
-      'Accept-Language':'es-ES,es;q=0.8', 
-	    'x': 'X-relayer-NoHost:localhost:8000'
+      'Fake-User-Agent':'Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+          'Chrome/29.0.1547.57 ',
+      'Accept-Language':'es-ES,es;q=0.8',
+      'x': 'X-relayer-NoHost:localhost:8000'
     };
     var extraHeaders1 = {
-	    'X-Relayer-Protocol':'https',
-	    'X-Relayer-Header': [
-	      encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
-	      encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 '),
-	      encodeURIComponent('Accept-Language:es-ES,es;q=0.8')
-	    ].join(', ')};
+      'X-Relayer-Protocol':'https',
+      'X-Relayer-Header': [
+        encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
+        encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 ' +
+            '(KHTML, like Gecko) Chrome/29.0.1547.57 '),
+        encodeURIComponent('Accept-Language:es-ES,es;q=0.8')
+      ].join(', ')
+    };
     var responseHeaders2 = {
-      'Fake-User-Agent':'Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 ',
+      'Fake-User-Agent':'Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+          'Chrome/29.0.1547.57 ',
       'Accept-Language':'',
       'x': 'X-relayer-NoHost:localhost:8000'
     };
@@ -281,9 +291,11 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
       'X-Relayer-Protocol':'https',
       'X-Relayer-Header': [
         encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
-        encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 '),
+        encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 ' +
+            '(KHTML, like Gecko) Chrome/29.0.1547.57 '),
         encodeURIComponent('Accept-Language:')
-      ].join(', ')};
+      ].join(', ')
+    };
 		
 		var dataSetHTTPS = [
 			{protocol : 'HTTPS', method: 'GET', path: '/', headers: extraHeaders1, body: {},
@@ -304,25 +316,28 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
         name : '8 Should accept the request using ', responseHeaders: responseHeaders2}
 		];
 
-		for(i=0; i < dataSetHTTPS.length; i++){
+		for(var i=0; i < dataSetHTTPS.length; i++){
 			_validScenario(dataSetHTTPS[i]);  //Launch every test in data set
 		}
 	});
 
 	describe('Retrieve request with a valid header policy request using HTTP #FEH', function () {
     var responseHeaders = {
-	    'Fake-User-Agent':'Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 ',
+      'Fake-User-Agent':'Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+          'Chrome/29.0.1547.57 ',
       'Accept-Language':'es-ES,es;q=0.8',
-	    'x': 'X-relayer-NoHost:localhost:8000'
-       };
+      'x': 'X-relayer-NoHost:localhost:8000'
+    };
 
     var extraHeaders = {
-	    'X-Relayer-Protocol':'http',
-	    'X-Relayer-Header': [
-	      encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
-	      encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 '),
-	      encodeURIComponent('Accept-Language:es-ES,es;q=0.8')
-		    ].join(', ')};
+      'X-Relayer-Protocol':'http',
+      'X-Relayer-Header': [
+        encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
+        encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 ' +
+            '(KHTML, like Gecko) Chrome/29.0.1547.57 '),
+        encodeURIComponent('Accept-Language:es-ES,es;q=0.8')
+      ].join(', ')
+    };
 		
 		var dataSetHTTP = [
       {protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
@@ -335,7 +350,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 				name : '4 Should accept the request using ', responseHeaders: responseHeaders}
 		];
 
-		for(i=0; i < dataSetHTTP.length; i++){
+		for(var i=0; i < dataSetHTTP.length; i++){
 			_validScenario(dataSetHTTP[i]);  //Launch every test in data set
 		}
 	});
@@ -347,31 +362,36 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 			'header_dos': 'header_2',
 			'header_tres': 'header_3',
 			'x': 'X-relayer-NoHost:localhost:8000',
-      'garbled' :' Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku or Nihon-koku, literally [the] State of Japan) ',
+      'garbled' :' Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku ' +
+          'or Nihon-koku, literally [the] State of Japan) ',
 			'X-Relayer-Header': 'test:test'
 		};
 
 		var extraHeaders = {
-			'X-Relayer-Protocol':'http',
-			'X-Relayer-Header': [
-				encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
-				encodeURIComponent('header_uno: header_1'),
-				encodeURIComponent('header_dos: header_2'),
-				encodeURIComponent('header_tres: header_3'),
-				encodeURIComponent('garbled:Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku or Nihon-koku, literally [the] State of Japan) '),
-				encodeURIComponent('X-Relayer-Header: test:test')
-			].join(', ')};
+      'X-Relayer-Protocol':'http',
+      'X-Relayer-Header': [
+        encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
+        encodeURIComponent('header_uno: header_1'),
+        encodeURIComponent('header_dos: header_2'),
+        encodeURIComponent('header_tres: header_3'),
+        encodeURIComponent('garbled:Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this ' +
+            'sound Nippon-koku or Nihon-koku, literally [the] State of Japan) '),
+        encodeURIComponent('X-Relayer-Header: test:test')
+      ].join(', ')
+    };
 
 		var extraHeaders2 = {
-			'X-Relayer-Protocol':'https',
-			'X-Relayer-Header': [
-				encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
-				encodeURIComponent('header_uno: header_1'),
-				encodeURIComponent('header_dos: header_2'),
-				encodeURIComponent('header_tres: header_3'),
-				encodeURIComponent('garbled:Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku or Nihon-koku, literally [the] State of Japan) '),
-				encodeURIComponent('X-Relayer-Header: test:test')
-			].join(', ')};
+      'X-Relayer-Protocol':'https',
+      'X-Relayer-Header': [
+        encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
+        encodeURIComponent('header_uno: header_1'),
+        encodeURIComponent('header_dos: header_2'),
+        encodeURIComponent('header_tres: header_3'),
+        encodeURIComponent('garbled:Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this ' +
+            'sound Nippon-koku or Nihon-koku, literally [the] State of Japan) '),
+        encodeURIComponent('X-Relayer-Header: test:test')
+      ].join(', ')
+    };
 
 		var dataSetHTTP = [
 			{protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
@@ -392,7 +412,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 				name : '8 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders}
 		];
 
-		for(i=0; i < dataSetHTTP.length; i++){
+		for(var i=0; i < dataSetHTTP.length; i++){
 			_invalidScenario(dataSetHTTP[i]);  //Launch every test in data set
 		}
 	});
@@ -404,9 +424,11 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
     var extraHeaders = {
       'X-Relayer-Header': [
         encodeURIComponent('X: X-relayer-NoHost:localhost:8000'),
-        encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 '),
+        encodeURIComponent('Fake-User-Agent:Mozilla/5.0 (Macintosh++; Intel Mac OS X 10_8_4) AppleWebKit/537.36 ' +
+            '(KHTML, like Gecko) Chrome/29.0.1547.57 '),
         encodeURIComponent(INVALID_HEADER)
-      ].join(', ')};
+      ].join(', ')
+    };
 
     var dataSetHTTP = [
       {protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
@@ -419,7 +441,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
         name : '4 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ', invalidHeader: INVALID_HEADER }
     ];
 
-    for(i=0; i < dataSetHTTP.length; i++){
+    for(var i=0; i < dataSetHTTP.length; i++){
       _invalidHeadersValue(dataSetHTTP[i]);  //Launch every test in data set
     }
   });

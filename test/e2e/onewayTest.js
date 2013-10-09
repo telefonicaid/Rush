@@ -15,6 +15,7 @@ var HEADER_TEST_NAME = 'testheader', HEADER_TEST_VALUE = 'valueTest', PATH = '/t
 var serversToShutDown = [];
 
 function executeTest(method, content, done) {
+  'use strict';
 
   var headers = {};
   headers['X-Relayer-host'] = config.simpleServerHostname + ':' + config.simpleServerPort;
@@ -52,6 +53,7 @@ function executeTest(method, content, done) {
 }
 
 describe('Single Feature: Oneway with HTTP #FOW', function() {
+  'use strict';
 
   before(function (done) {
     listener.start(function() {
@@ -82,12 +84,12 @@ describe('Single Feature: Oneway with HTTP #FOW', function() {
   });
 
   it('Should return the same headers, method and body / POST #FOW', function(done) {
-    var content = 'Hello World'
+    var content = 'Hello World';
     executeTest('POST', content, done);
   });
 
   it('Should return the same headers, method and body / PUT #FOW', function(done) {
-    var content = 'Hello World'
+    var content = 'Hello World';
     executeTest('PUT', content, done);
   });
 

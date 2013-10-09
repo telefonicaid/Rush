@@ -12,6 +12,7 @@ var PORT = config.rushServer.port;
 var serversToShutDown = [];
 
 function runTest(retryTimes, petitionCorrect, serverTimes, done) {
+  'use strict';
 
   var CONTENT = 'Retry Test',
       APPLICATION_CONTENT = 'application/json',
@@ -41,7 +42,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
     });
   }
 
-  var srv = http.createServer(function(req, res) {
+  srv = http.createServer(function(req, res) {
 
     var headers = req.headers,
         method = req.method,
@@ -80,6 +81,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 }
 
 describe('Single Feature: Retry #FRT', function() {
+  'use strict';
 
   before(function (done) {
     listener.start(function() {

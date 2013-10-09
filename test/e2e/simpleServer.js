@@ -2,6 +2,7 @@ var http = require('http');
 var config = require('./config');
 
 var serverListener = function(connectedCallback, dataCallback) {
+  'use strict';
 
   var srv = http.createServer(function(req, res) {
     var content = '', headers = req.headers, method = req.method, url = req.url;
