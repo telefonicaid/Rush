@@ -36,7 +36,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     });
   });
 
-  it('Should return correct processing state  #FPT ', function(done) {
+  it('Case 1 Should return correct processing state  #FPT ', function(done) {
 
     'use strict';
 
@@ -140,7 +140,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     });
   });
 
-  it('Processing state is not returned if X-Relayer-Persistence is not defined  #FPT ', function(done) {
+  it('Case 2 Processing state is not returned if X-Relayer-Persistence is not defined  #FPT ', function(done) {
 
     'use strict';
 

@@ -134,7 +134,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Using method / POST', function() {
 
-    it('Should receive a callback on a correct ' +
+    it('Case 1 Should receive a callback on a correct ' +
         'POST petition #FCB', function(done) {
       makeRequest('POST', content, done);
     });
@@ -142,7 +142,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Using method / PUT', function() {
 
-    it('Should receive a callback on a correct ' +
+    it('Case 1 Should receive a callback on a correct ' +
         'PUT petition #FCB', function(done) {
       makeRequest('PUT', content, done);
     });
@@ -150,7 +150,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Using method / GET', function() {
 
-    it('Should receive a callback on a correct ' +
+    it('Case 1 Should receive a callback on a correct ' +
         'GET petition #FCB', function(done) {
       makeRequest('GET', '', done);
     });
@@ -158,7 +158,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Using method / DELETE', function() {
 
-    it('Should receive a callback on a correct ' +
+    it('Case 1 Should receive a callback on a correct ' +
         'DELETE petition #FCB', function(done) {
       makeRequest('DELETE', '', done);
     });
@@ -167,13 +167,13 @@ describe('Single Feature: Callback #FCB', function() {
   describe('Second petition should be completed even if ' +
       'the first callback is incorrect', function() {
 
-    it('Consumer should not die even if the ' +
+    it('Case 1 Consumer should not die even if the ' +
         'callback is not responding #FCB', function(done) {
       prepareServerAndSendPetition('POST',
           content, 'http://localhost:8888', done);
     });
 
-    it('Should receive a callback even if the ' +
+    it('Case 2 Should receive a callback even if the ' +
         'callback of the last petition was incorrect #FCB', function(done) {
       makeRequest('POST', content, done);
     });
@@ -181,7 +181,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Callback has to be called even ' +
       'if the Host is incorrect', function() {
-    it('Should receive a callback with an error #FCB', function(done) {
+    it('Case 1 Should receive a callback with an error #FCB', function(done) {
 
       var portCallBack = config.callBackPort,
           server_callback,

@@ -100,32 +100,32 @@ describe('Single Feature: TraceID #FTID', function() {
   });
 
 
-  it('Should return  the correct Traceid / GET #FTID', function(done) {
+  it('Case 1 Should return  the correct Traceid / GET #FTID', function(done) {
     executeTest('GET', '', done);
   });
 
 
-  it('Should return  the correct TraceId / POST #FTID', function(done) {
+  it('Case 2 Should return  the correct TraceId / POST #FTID', function(done) {
     executeTest('POST', 'TEST BODY 1', done);
 
   });
 
-  it('Should return  the correct TraceId / PUT #FTID', function(done) {
+  it('Case 3 Should return  the correct TraceId / PUT #FTID', function(done) {
     executeTest('PUT', 'TEST BODY 2', done);
   });
 
 
-	it('Should return  the invalid Traceid / GET #FTID', function(done) {
+	it('Case 4 Should return  the invalid Traceid / GET #FTID', function(done) {
 		executeTest('GET', '', done);
 	});
 
 
-	it('Should return  the invalid TraceId / POST #FTID', function(done) {
+	it('Case 5 Should return  the invalid TraceId / POST #FTID', function(done) {
 		executeTest('POST', 'TEST BODY 1?=)(/&%$·"', done);
 
 	});
 
-	it('Should return  the invalid TraceId / PUT #FTID', function(done) {
+	it('Case 6 Should return  the invalid TraceId / PUT #FTID', function(done) {
 		executeTest('PUT', 'TEST BODY 2 |||@#|@~@½@#', done);
 	});
 

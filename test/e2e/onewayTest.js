@@ -77,21 +77,21 @@ describe('Single Feature: Oneway with HTTP #FOW', function() {
     serversToShutDown = [];
   });
 
-  it('Should return the same headers and the same method / GET #FOW', function(done) {
+  it('Case 1 Should return the same headers and the same method / GET #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Should return the same headers, method and body / POST #FOW', function(done) {
+  it('Case 2 Should return the same headers, method and body / POST #FOW', function(done) {
     var content = 'Hello World'
     executeTest('POST', content, done);
   });
 
-  it('Should return the same headers, method and body / PUT #FOW', function(done) {
+  it('Case 3 Should return the same headers, method and body / PUT #FOW', function(done) {
     var content = 'Hello World'
     executeTest('PUT', content, done);
   });
 
-  it('Should return the same headers and the same method / DELETE #FOW', function(done) {
+  it('Case 4 Should return the same headers and the same method / DELETE #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 });
