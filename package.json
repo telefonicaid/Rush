@@ -50,7 +50,7 @@
     "chai": "~1.5.0",
     "sinon": "~1.6.0",
     "istanbul": "~0.1.34",
-    "grunt-exec": "~0.4.0",
+    "grunt-exec": "~0.4.2",
     "dox-foundation": "*",
     "grunt-cli": "0.1.8",
     "request": "2.21.0",

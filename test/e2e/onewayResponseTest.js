@@ -11,6 +11,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 describe('Multiple Feature: ONEWAY Response errors #FOW', function() {
+  'use strict';
 
   var options;
 

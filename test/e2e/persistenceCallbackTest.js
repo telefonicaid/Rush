@@ -24,6 +24,7 @@ options.port = PORT;
 var serversToShutDown = [];
 
 function testHeraders(headers) {
+  'use strict';
   headers.should.have.property('content-type', applicationContent);
   headers.should.have.property(personalHeader1name, personalHeader1value);
   headers.should.have.property(personalHeader2name, personalHeader2value);
@@ -170,7 +171,7 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
     options.headers['content-type'] = applicationContent;
     options.headers[personalHeader1name] = personalHeader1value;
     options.headers[personalHeader2name] = personalHeader2value;
-  })
+  });
 
   afterEach(function() {
 
@@ -262,7 +263,8 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
       ' first callback is incorrect', function() {
 
     it('Case 1 CallBack Incorrect #FPT ', function(done) {
-	    this.timeout(3000)
+      this.timeout(3000);
+
       var id, type = 'POST', httpCallBack = 'http://noexiste:2222';
 
       var simpleServer = server.serverListener(
@@ -277,7 +279,7 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
 
             utils.makeRequest(options, content, function(e, data) {
               id = JSON.parse(data).id;
-	           // console.log(id);
+             // console.log(id);
             });
           },
 
@@ -296,8 +298,8 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
 
                 var JSONRes = JSON.parse(data);
 
-                if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed'
-                    &&  data.indexOf('callback_err') !== -1) {
+                if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed'  &&
+                    data.indexOf('callback_err') !== -1) {
 
                   clearInterval(interval);
 
@@ -305,9 +307,9 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
                   testHeraders(JSONRes.headers);
 
                   JSONRes.should.have.property('statusCode', '200');
-	                JSONRes['callback_err'].should.match(/(ENOTFOUND|EADDRINFO)/);
+                  JSONRes['callback_err'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-	                checked = true;
+                  checked = true;
                   done();
 
                 }
@@ -340,7 +342,7 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
           httpCallBack = 'http://localhost:' + portCallBack, id;
 
       //Callback Server
-      var callbackServer = http.createServer(function(req, res) {
+      callbackServer = http.createServer(function(req, res) {
 
         var response = '';
 
@@ -358,7 +360,7 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
           parsedJSON['exception'].should.have.property('exceptionText');
           parsedJSON['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-	        res.writeHead(200);
+          res.writeHead(200);
           res.end();
           callbackServer.close();
 

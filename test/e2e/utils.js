@@ -1,6 +1,6 @@
-http = require('http');
-https = require('https');
-config = require('./config');
+var http = require('http');
+var https = require('https');
+var config = require('./config');
 
 var makeRequest = function(options, content, cb) {
   'use strict';
@@ -52,7 +52,7 @@ var makeRequestHttps = function(options, content, cb) {
   });
 
   req.on('error', function(e) {
-      cb(e, null);
+    cb(e, null);
   });
 
   if (options.method === 'POST' || options.method === 'PUT') {
