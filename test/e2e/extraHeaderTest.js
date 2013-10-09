@@ -362,8 +362,8 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 			'header_dos': 'header_2',
 			'header_tres': 'header_3',
 			'x': 'X-relayer-NoHost:localhost:8000',
-      'garbled' :' Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound Nippon-koku ' +
-          'or Nihon-koku, literally [the] State of Japan) ',
+      'garbled' :' Japan Listen/dʒəˈpæn/ (Japanese: 日本 Nippon or Nihon; formally 日本国 About this sound ' +
+          'Nippon-koku or Nihon-koku, literally [the] State of Japan) ',
 			'X-Relayer-Header': 'test:test'
 		};
 
@@ -395,21 +395,29 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 
 		var dataSetHTTP = [
 			{protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
-				name : '1 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '1 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'POST', path: '/', headers: extraHeaders, body: {},
-				name : '2 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '2 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
-				name : '3 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '3 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'http', method: 'DELETE', path: '/', headers:extraHeaders, body: {},
-				name : '4 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '4 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'GET', path: '/', headers: extraHeaders2, body: {},
-				name : '5 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '5 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'POST', path: '/', headers: extraHeaders2, body: {},
-				name : '6 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '6 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'PUT', path: '/', headers: extraHeaders2, body: {},
-				name : '7 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders},
+				name : '7 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'DELETE', path: '/', headers:extraHeaders2, body: {},
-				name : '8 Should sent the extra header without filter it as a valid extra header ', responseHeaders: responseHeaders}
+				name : '8 Should sent the extra header without filter it as a valid extra header ',
+        responseHeaders: responseHeaders}
 		];
 
 		for(var i=0; i < dataSetHTTP.length; i++){
@@ -432,13 +440,17 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 
     var dataSetHTTP = [
       {protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
-        name : '1 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ', invalidHeader: INVALID_HEADER },
+        name : '1 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ',
+        invalidHeader: INVALID_HEADER },
       {protocol : 'http', method: 'POST', path: '/', headers: extraHeaders, body: {},
-        name : '2 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ', invalidHeader: INVALID_HEADER },
+        name : '2 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ',
+        invalidHeader: INVALID_HEADER },
       {protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
-        name : '3 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ', invalidHeader: INVALID_HEADER },
+        name : '3 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ',
+        invalidHeader: INVALID_HEADER },
       {protocol : 'http', method: 'DELETE', path: '/', headers: extraHeaders, body: {},
-        name : '4 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ', invalidHeader: INVALID_HEADER }
+        name : '4 Should not accept the request: ' + INVALID_HEADER + ' has not a defined value using ',
+        invalidHeader: INVALID_HEADER }
     ];
 
     for(var i=0; i < dataSetHTTP.length; i++){
