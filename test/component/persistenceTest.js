@@ -32,24 +32,25 @@ var TIMEOUT = 3000;
 var describeTimeout = 60000;
 
 var ALL_HEADERS = [
-  "x-relayer-persistence",
-  "x-relayer-httpcallback",
-  "x-relayer-httpcallback-error",
-  "x-relayer-retry",
-  "x-relayer-topic",
-  "x-relayer-proxy",
-  "x-relayer-encoding"
+  'x-relayer-persistence',
+  'x-relayer-httpcallback',
+  'x-relayer-httpcallback-error',
+  'x-relayer-retry',
+  'x-relayer-topic',
+  'x-relayer-proxy',
+  'x-relayer-encoding'
 ];
 
 function keysToLowerCase(obj){
-    Object.keys(obj).forEach(function(key){
-        var k=key.toLowerCase();
-        if(k!= key){
-            obj[k]= obj[key];
-            delete obj[key];
-        }
-    });
-    return (obj);
+  'use strict';
+  Object.keys(obj).forEach(function(key){
+    var k=key.toLowerCase();
+    if(k !== key){
+      obj[k]= obj[key];
+      delete obj[key];
+    }
+  });
+  return (obj);
 }
 
 function executeTest(method, content, headers, done) {
@@ -57,17 +58,17 @@ function executeTest(method, content, headers, done) {
 
   var mymethod;
   switch(method){
-    case "DELETE":
-      mymethod = 'del';
-      break;
-    default:
-      mymethod = method.toLowerCase()
+  case 'DELETE':
+    mymethod = 'del';
+    break;
+  default:
+    mymethod = method.toLowerCase();
   }
 
   var subscriber = redis.createClient(REDIS_PORT, REDIS_HOST);
-  subscriber.subscribe('STATE:processing')
-  subscriber.subscribe('STATE:completed')
-  subscriber.subscribe('STATE:error')
+  subscriber.subscribe('STATE:processing');
+  subscriber.subscribe('STATE:completed');
+  subscriber.subscribe('STATE:error');
   subscriber.subscribe('STATE:persistence_state');
 
   var id;
@@ -97,7 +98,7 @@ function executeTest(method, content, headers, done) {
   });
 
   setTimeout(function(){
-    testResponses(responses)
+    testResponses(responses);
   }, TIMEOUT);
 
 
@@ -121,7 +122,7 @@ function executeTest(method, content, headers, done) {
     }
 
     var shouldNotExist = _.difference(ALL_HEADERS, Object.keys(headers)); //headers that aren't in the request
-    for(var i=0; i < shouldNotExist.length; i++){                        //there should not be headers in the task that are not in the request
+    for(var i=0; i < shouldNotExist.length; i++){ //there should not be headers in the task that are not in the request
       expect(task.headers).to.not.have.property(shouldNotExist[i]);
     }
 
@@ -144,6 +145,7 @@ function executeTest(method, content, headers, done) {
 }
 
 describe('Component Test: Persistence ', function() {
+  'use strict';
   this.timeout(describeTimeout);
 
   before(function (done) {
@@ -175,19 +177,19 @@ describe('Component Test: Persistence ', function() {
     executeTest('POST', 'payload', {'x-relayer-host' : ENDPOINT, 'x-relayer-persistence' : 'BODY'}, done);
   });
   it('Case 3 should return empty body and x-relayer-httpcallback /PUT #FCB', function(done) {
-    executeTest('PUT', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-httpcallback' : "http://google.es"}, done);
+    executeTest('PUT', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-httpcallback' : 'http://google.es'}, done);
   });
   it('Case 4 should return empty body and x-relayer-encoding /GET #FEN', function(done) {
-    executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-encoding' : "base64"}, done);
+    executeTest('GET', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-encoding' : 'base64'}, done);
   });
   it('Case 5 should return empty body and x-relayer-encoding /POST #FEN', function(done) {
-    executeTest('POST', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-encoding' : "base64"}, done);
+    executeTest('POST', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-encoding' : 'base64'}, done);
   });
   it('Case 6 should return empty body and x-relayer-topic /DELETE #FTP', function(done) {
-    executeTest('DELETE', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-topic' : "base64"}, done);
+    executeTest('DELETE', '', {'x-relayer-host' : FAKEENDPOINT, 'x-relayer-topic' : 'base64'}, done);
   });
   it('Case 7 should return empty body and x-relayer-topic /GET #FTP', function(done) {
-    executeTest('GET', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-topic' : "try"}, done);
+    executeTest('GET', '', {'x-relayer-host' : ENDPOINT, 'x-relayer-topic' : 'try'}, done);
   });
 });
 
