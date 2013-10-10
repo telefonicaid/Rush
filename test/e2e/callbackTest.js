@@ -73,10 +73,10 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
 function makeRequest(type, content, done) {
   'use strict';
   //Variables
-  var portCallBack = config.callBackPort, server_callback;
+  var portCallBack = config.callBackPort, serverCallback;
 
   //Callback Server
-  server_callback = http.createServer(function(req, res) {
+  serverCallback = http.createServer(function(req, res) {
 
     var response = '';
 
@@ -93,7 +93,7 @@ function makeRequest(type, content, done) {
 
           res.writeHead(200);
           res.end();
-          server_callback.close();
+          serverCallback.close();
 
           done();
         });
@@ -101,7 +101,7 @@ function makeRequest(type, content, done) {
   }).listen(portCallBack, prepareServerAndSendPetition.bind({},
       type, content, 'http://localhost:' + portCallBack));
 
-  serversToShutDown.push(server_callback);
+  serversToShutDown.push(serverCallback);
 }
 
 describe('Single Feature: Callback #FCB', function() {
@@ -184,12 +184,12 @@ describe('Single Feature: Callback #FCB', function() {
     it('Case 1 Should receive a callback with an error #FCB', function(done) {
 
       var portCallBack = config.callBackPort,
-          server_callback,
+          serverCallback,
           relayerHost = 'noexiste:1234',
           httpCallBack = 'http://localhost:' + portCallBack;
 
       //Callback Server
-      server_callback = http.createServer(function(req, res) {
+      serverCallback = http.createServer(function(req, res) {
 
         var response = '';
 
@@ -208,9 +208,9 @@ describe('Single Feature: Callback #FCB', function() {
               parsedJSON['exception'].should.have.property('exceptionText');
               parsedJSON['exception']['exceptionText'].should.match(/(ENOTFOUND|EADDRINFO)/);
 
-	            res.writeHead(200);
+              res.writeHead(200);
               res.end();
-              server_callback.close();
+              serverCallback.close();
               done();
             });
 
@@ -225,7 +225,7 @@ describe('Single Feature: Callback #FCB', function() {
           }
       );
 
-      serversToShutDown.push(server_callback);
+      serversToShutDown.push(serverCallback);
     });
   });
 });

@@ -15,35 +15,27 @@ var options = {
 var vm = false;
 
 var serverListener = function(portProtocol, responseParameters, connectedCallback, dataCallback) {
+  'use strict';
 
   var protocol = portProtocol.protocol || 'http';
   var srv;
 
-  if(protocol.toLowerCase() === 'http'){
-    srv = http.createServer(requestHandler);
-  } else {
-    srv = https.createServer(options, requestHandler);
-  }
-
-  srv.listen(portProtocol.port, connectedCallback);
-
-
   function requestHandler(req, res){
 
-    var content = "";
+    var content = '';
     var request = {};
 
-      request.headers = req.headers;
-      request.method = req.method;
-      request.url = req.url;
+    request.headers = req.headers;
+    request.method = req.method;
+    request.url = req.url;
 
     var response = {};
 
-      response.body = responseParameters.body || "Request Accepted";
-      response.statusCode = responseParameters.statusCode || 200;
-      response.headers = responseParameters.headers || {};
+    response.body = responseParameters.body || 'Request Accepted';
+    response.statusCode = responseParameters.statusCode || 200;
+    response.headers = responseParameters.headers || {};
 
-	  if(vm){console.log(response);}
+    if(vm){console.log(response);}
 
     req.on('data', function(chunk) {
       content += chunk;
@@ -58,6 +50,14 @@ var serverListener = function(portProtocol, responseParameters, connectedCallbac
       }
     });
   }
+
+  if(protocol.toLowerCase() === 'http'){
+    srv = http.createServer(requestHandler);
+  } else {
+    srv = https.createServer(options, requestHandler);
+  }
+
+  srv.listen(portProtocol.port, connectedCallback);
 
   srv.on('error', function(err) {
     if(dataCallback){

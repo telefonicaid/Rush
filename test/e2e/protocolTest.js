@@ -27,22 +27,23 @@ var serversToShutDown = [];
 var TIMEOUT = 600;
 var CREATED = 201;
 var describeTimeout = 5000;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //Accept self signed certs
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; //Accept self signed certs
 
 function _validScenario(data){
+  'use strict';
 
 	it(data.name +  ' #FPT', function(done){
 		var agent = superagent.agent();
 		var id;
 
 		var method;
-			switch(data.method){
-				case "DELETE":
-					method = 'del';
-					break;
-				default:
-					method = data.method.toLowerCase()
-			}
+    switch(data.method){
+    case 'DELETE':
+      method = 'del';
+      break;
+    default:
+      method = data.method.toLowerCase();
+    }
 		var simpleServer = server({port : fhPORT, protocol : data.protocol}, {},
 			function() {
 
@@ -51,19 +52,20 @@ function _validScenario(data){
 						.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 						.set('x-relayer-persistence','BODY')
 						.set('content-type','application/json')
-						.set(data.headers)
-						if(data.method === 'POST' || data.method === 'PUT'){
-							req = req.send(data.body);
-						}
-						req.end(function(err, res) {
-							expect(err).to.not.exist;
-							expect(res.statusCode).to.eql(CREATED);
-							expect(res.body).to.exist;
-							expect(res.body.id).to.exist;
-							id=res.body.id;
-							res.text.should.not.include('exception');
-						//	done();
-						 });
+						.set(data.headers);
+        
+        if(data.method === 'POST' || data.method === 'PUT'){
+          req = req.send(data.body);
+        }
+        req.end(function(err, res) {
+          expect(err).to.not.exist;
+          expect(res.statusCode).to.eql(CREATED);
+          expect(res.body).to.exist;
+          expect(res.body.id).to.exist;
+          id=res.body.id;
+          res.text.should.not.include('exception');
+        //	done();
+        });
 			},
 			function(dataReceived) {
 				expect(dataReceived).to.exist;
@@ -79,7 +81,7 @@ function _validScenario(data){
 								expect(res).to.exist;
 								expect(res.statusCode).to.equal(200);
 								expect(res.body).to.exist;
-								expect(res.body['body']).to.equal('Request Accepted')
+								expect(res.body['body']).to.equal('Request Accepted');
 								res.headers['content-type'].should.eql('application/json; charset=utf-8');
 								res.text.should.include('id');
 								res.text.should.include('state');
@@ -94,6 +96,8 @@ function _validScenario(data){
 
 
 describe('Single Feature: Protocol '  + '#FPT', function() {
+  'use strict';
+
 	this.timeout(6000);
 
 	before(function (done) {
@@ -121,13 +125,18 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
 	describe('Retrieve request with a valid header policy request using HTTPS ', function () {
 
 		var dataSetPOST = [
-			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 1 Should accept the request using HTTPS /GET"},
-			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 2 Should accept the request using HTTPS /POST"},
-			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 3 Should accept the request using HTTPS /PUT"},
-			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {}, name : "Case 4 Should accept the request using HTTPS /DELETE"},
+
+			{protocol : 'https', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 1 Should accept the request using HTTPS /GET"},
+			{protocol : 'https', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 2 Should accept the request using HTTPS /POST"},
+			{protocol : 'https', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 3 Should accept the request using HTTPS /PUT"},
+			{protocol : 'https', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'https'}, body: {},
+        name : "Case 4 Should accept the request using HTTPS /DELETE"},
 		];
 
-		for(i=0; i < dataSetPOST.length; i++){
+		for(var i=0; i < dataSetPOST.length; i++){
 			_validScenario(dataSetPOST[i]);  //Launch every test in data set
 		}
 	});
@@ -135,13 +144,18 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
 	describe('Retrieve request with a valid header policy request using HTTP ', function () {
 
 		var dataSetPOST = [
-			{protocol : 'http', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 1 Should accept the request using HTTP /GET"},
-			{protocol : 'http', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 2 Should accept the request using HTTP /POST"},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 3 Should accept the request using HTTP /PUT"},
-			{protocol : 'http', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {}, name : "Case 4 Should accept the request using HTTP /DELETE"}
+
+			{protocol : 'http', method: 'GET', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 1 Should accept the request using HTTP /GET"},
+			{protocol : 'http', method: 'POST', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 2 Should accept the request using HTTP /POST"},
+			{protocol : 'http', method: 'PUT', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 3 Should accept the request using HTTP /PUT"},
+			{protocol : 'http', method: 'DELETE', path: '/', headers: {'X-Relayer-Protocol':'http'}, body: {},
+        name : "Case 4 Should accept the request using HTTP /DELETE"}
 		];
 
-		for(i=0; i < dataSetPOST.length; i++){
+		for(var i=0; i < dataSetPOST.length; i++){
 			_validScenario(dataSetPOST[i]);  //Launch every test in data set
 		}
 	});

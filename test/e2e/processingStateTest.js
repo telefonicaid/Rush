@@ -10,6 +10,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 describe('Multiple Feature: Processing Status #FOW', function() {
+  'use strict';
 
   var serversToShutDown = [];
 
@@ -37,8 +38,6 @@ describe('Multiple Feature: Processing Status #FOW', function() {
   });
 
   it('Case 1 Should return correct processing state  #FPT ', function(done) {
-
-    'use strict';
 
     var optionsRelay = {};
     var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d',
@@ -141,8 +140,6 @@ describe('Multiple Feature: Processing Status #FOW', function() {
   });
 
   it('Case 2 Processing state is not returned if X-Relayer-Persistence is not defined  #FPT ', function(done) {
-
-    'use strict';
 
     var optionsRelay = {};
     var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d',

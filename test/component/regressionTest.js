@@ -30,6 +30,7 @@ var TIMEOUT = 1000;
 var describeTimeout = 60000;
 
 function _validScenario(data){
+  'use strict';
 
   var agent = superagent.agent();
   var rc = redis.createClient(REDIS_PORT, REDIS_HOST);
@@ -39,35 +40,35 @@ function _validScenario(data){
   it(data.name + ' /' + data.method + ' #FOW #CT', function(done){
 
     var method;
-      switch(data.method){
-        case 'DELETE':
-          method = 'del';
-          break;
-        default:
-          method = data.method.toLowerCase()
-      }
+    switch(data.method){
+    case 'DELETE':
+      method = 'del';
+      break;
+    default:
+      method = data.method.toLowerCase();
+    }
 
     agent[method](URL_RUSH)
       .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
       .set(data.headers)
-		  .send(data.body)
+      .send(data.body)
       .end(function(err, res) {
 
         expect(err).to.not.exist;
         expect(res.statusCode).to.equal(201); //Status code 201
         expect(res.body).to.exist;
         expect(res.body.id).to.exist;
-			  if (vm) {console.log(res.body.id);}
+        if (vm) {console.log(res.body.id);}
         var transId = res.body.id;
         rc.lpop(QUEUE, function(err, res){
           expect(err).to.not.exist;
           var task = JSON.parse(res);
-	        if (vm) {console.log(' Redis task: \n ',task);}
-	        expect(task.id).to.equal(transId);
+          if (vm) {console.log(' Redis task: \n ',task);}
+          expect(task.id).to.equal(transId);
           expect(task).to.have.property('headers');
 
-          for(var i = 0; i < data.not_expected.length; i++){
-            expect(task.headers).to.not.have.property(data.not_expected[i]);
+          for(var i = 0; i < data.notExpected.length; i++){
+            expect(task.headers).to.not.have.property(data.notExpected[i]);
           }
 
           done();
@@ -77,6 +78,7 @@ function _validScenario(data){
 }
 
 describe('Component Test: Regression ', function() {
+  'use strict';
   this.timeout(describeTimeout);
 
   before(function (done) {
@@ -91,47 +93,62 @@ describe('Component Test: Regression ', function() {
   describe('Retrieved request should not store the empty parameters sent in the header policy', function () {
 
     var dataSetGET = [
-      {method: 'GET', headers: {'x-relayer-persistence':''}, not_expected : ['x-relayer-persistence'], body: {}, name : 'Case 1 Should not contain x-relayer-persistence'},
-      {method: 'GET', headers: {'x-relayer-protocol':''}, not_expected : ['x-relayer-protocol'], body: {}, name : 'Case 2 Should not contain x-relayer-protocol'},
-      {method: 'GET', headers: {'x-relayer-httpcallback' : ''}, not_expected : ['x-relayer-httpcallback'], body: {}, name : 'Case 3 Should not contain x-relayer-httpcallback'},
-      {method: 'GET', headers: {'x-relayer-topic' : ''}, not_expected : ['x-relayer-topic'], body: {}, name : 'Case 4 Should not contain x-relayer-topic'},
-      {method: 'GET', headers: {'x-relayer-retry' : ''}, not_expected : ['x-relayer-retry'], body: {}, name : 'Case 5 Should not contain x-relayer-retry'},
-		    ];
+      {method: 'GET', headers: {'x-relayer-persistence':''}, notExpected : ['x-relayer-persistence'], body: {},
+        name : 'Case 1 Should not contain x-relayer-persistence'},
+      {method: 'GET', headers: {'x-relayer-protocol':''}, notExpected : ['x-relayer-protocol'], body: {},
+        name : 'Case 2 Should not contain x-relayer-protocol'},
+      {method: 'GET', headers: {'x-relayer-httpcallback' : ''}, notExpected : ['x-relayer-httpcallback'], body: {},
+        name : 'Case 3 Should not contain x-relayer-httpcallback'},
+      {method: 'GET', headers: {'x-relayer-topic' : ''}, notExpected : ['x-relayer-topic'], body: {},
+        name : 'Case 4 Should not contain x-relayer-topic'},
+      {method: 'GET', headers: {'x-relayer-retry' : ''}, notExpected : ['x-relayer-retry'], body: {},
+        name : 'Case 5 Should not contain x-relayer-retry'},
+    ];
 
-    for(i=0; i < dataSetGET.length; i++){
+    for(var i=0; i < dataSetGET.length; i++){
       _validScenario(dataSetGET[i]);  //Launch every test in data set
     }
   });
 
-	describe('Retrieved request should not store the empty parameters sent in the header policy', function () {
+  describe('Retrieved request should not store the empty parameters sent in the header policy', function () {
 
-		var dataSetPOST = [
-			{method: 'POST', headers: {'x-relayer-persistence':''}, not_expected : ['x-relayer-persistence'], body: {}, name : 'Case 1 Should not contain x-relayer-persistence'},
-			{method: 'POST', headers: {'x-relayer-protocol':''}, not_expected : ['x-relayer-protocol'], body: {}, name : 'Case 2 Should not contain x-relayer-protocol'},
-			{method: 'POST', headers: {'x-relayer-httpcallback' : ''}, not_expected : ['x-relayer-httpcallback'], body: {}, name : 'Case 3 Should not contain x-relayer-httpcallback'},
-			{method: 'POST', headers: {'x-relayer-topic' : ''}, not_expected : ['x-relayer-topic'], body: {}, name : 'Case 4 Should not contain x-relayer-topic'},
-			{method: 'POST', headers: {'x-relayer-retry' : ''}, not_expected : ['x-relayer-retry'], body: {}, name : 'Case 5 Should not contain x-relayer-retry'},
-		];
+    var dataSetPOST = [
+      {method: 'POST', headers: {'x-relayer-persistence':''}, notExpected : ['x-relayer-persistence'], body: {},
+        name : 'Case 1 Should not contain x-relayer-persistence'},
+      {method: 'POST', headers: {'x-relayer-protocol':''}, notExpected : ['x-relayer-protocol'], body: {},
+        name : 'Case 2 Should not contain x-relayer-protocol'},
+      {method: 'POST', headers: {'x-relayer-httpcallback' : ''}, notExpected : ['x-relayer-httpcallback'], body: {},
+        name : 'Case 3 Should not contain x-relayer-httpcallback'},
+      {method: 'POST', headers: {'x-relayer-topic' : ''}, notExpected : ['x-relayer-topic'], body: {},
+        name : 'Case 4 Should not contain x-relayer-topic'},
+      {method: 'POST', headers: {'x-relayer-retry' : ''}, notExpected : ['x-relayer-retry'], body: {},
+        name : 'Case 5 Should not contain x-relayer-retry'},
+    ];
 
-		for(i=0; i < dataSetPOST.length; i++){
-			_validScenario(dataSetPOST[i]);  //Launch every test in data set
-		}
-	});
+    for(var i=0; i < dataSetPOST.length; i++){
+      _validScenario(dataSetPOST[i]);  //Launch every test in data set
+    }
+  });
 
-	describe('Retrieved request should not store the empty parameters sent in the header policy', function () {
+  describe('Retrieved request should not store the empty parameters sent in the header policy', function () {
 
-		var dataSetPUT = [
-			{method: 'PUT', headers: {'x-relayer-persistence':''}, not_expected : ['x-relayer-persistence'], body: {}, name : 'Case 1 Should not contain x-relayer-persistence'},
-			{method: 'PUT', headers: {'x-relayer-protocol':''}, not_expected : ['x-relayer-protocol'], body: {}, name : 'Case 2 Should not contain x-relayer-protocol'},
-			{method: 'PUT', headers: {'x-relayer-httpcallback' : ''}, not_expected : ['x-relayer-httpcallback'], body: {}, name : 'Case 3 Should not contain x-relayer-httpcallback'},
-			{method: 'PUT', headers: {'x-relayer-topic' : ''}, not_expected : ['x-relayer-topic'], body: {}, name : 'Case 4 Should not contain x-relayer-topic'},
-			{method: 'PUT', headers: {'x-relayer-retry' : ''}, not_expected : ['x-relayer-retry'], body: {}, name : 'Case 5 Should not contain x-relayer-retry'},
-		];
+    var dataSetPUT = [
+      {method: 'PUT', headers: {'x-relayer-persistence':''}, notExpected : ['x-relayer-persistence'], body: {},
+        name : 'Case 1 Should not contain x-relayer-persistence'},
+      {method: 'PUT', headers: {'x-relayer-protocol':''}, notExpected : ['x-relayer-protocol'], body: {},
+        name : 'Case 2 Should not contain x-relayer-protocol'},
+      {method: 'PUT', headers: {'x-relayer-httpcallback' : ''}, notExpected : ['x-relayer-httpcallback'], body: {},
+        name : 'Case 3 Should not contain x-relayer-httpcallback'},
+      {method: 'PUT', headers: {'x-relayer-topic' : ''}, notExpected : ['x-relayer-topic'], body: {},
+        name : 'Case 4 Should not contain x-relayer-topic'},
+      {method: 'PUT', headers: {'x-relayer-retry' : ''}, notExpected : ['x-relayer-retry'], body: {},
+        name : 'Case 5 Should not contain x-relayer-retry'},
+    ];
 
-		for(i=0; i < dataSetPUT.length; i++){
-			_validScenario(dataSetPUT[i]);  //Launch every test in data set
-		}
-	});
+    for(var i=0; i < dataSetPUT.length; i++){
+      _validScenario(dataSetPUT[i]);  //Launch every test in data set
+    }
+  });
 
 
 });
