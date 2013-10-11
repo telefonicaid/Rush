@@ -6,9 +6,9 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 
-var HOST = config.rushServer.hostname;
-var PORT = config.rushServer.port;
-var secure= 'http://';
+var HOST = 'localhost'//config.rushServer.hostname;
+var PORT = 5001//config.rushServer.port;
+var secure = 'http://';
 var RUSHENDPOINT = secure + HOST;
 
 // Verbose MODE
@@ -23,9 +23,9 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var TOKEN = config.token;
 
 if (!TOKEN) {
-  TOKEN='';
+  TOKEN = '';
 } else {
-  TOKEN= 'Bearer ' + TOKEN;
+  TOKEN = 'Bearer ' + TOKEN;
   console.log(TOKEN);
 }
 
@@ -33,30 +33,30 @@ if (!TOKEN) {
 var USER = config.user;
 var Pass;
 if (!USER) {
-  USER='';
-  Pass='';
+  USER = '';
+  Pass = '';
 } else {
-  var tmp= USER;
+  var tmp = USER;
   var re = /(\w+)\:(\w+)/;
   //var Pass = tmp.replace(re,  '$2, $1 ');
-  var USER= tmp.replace(re,  '$1 ');
-  var Pass = tmp.replace(re,  '$2 ');
+  var USER = tmp.replace(re, '$1 ');
+  var Pass = tmp.replace(re, '$2 ');
 
   if (vm) {
-    console.log(  '\n User and Pass  ' + USER + ' and ' + Pass );
+    console.log('\n User and Pass  ' + USER + ' and ' + Pass);
   }
 }
 
 //SECURE URL CONFIG
 if (PORT === 443) {
-  secure= 'https://';
+  secure = 'https://';
   RUSHENDPOINT = secure + HOST;
 } else {
-  RUSHENDPOINT = secure + HOST+ ':' + PORT;
+  RUSHENDPOINT = secure + HOST + ':' + PORT;
 }
 
 var ENDPOINT = config.externalEndpoint;
-if (!ENDPOINT){
+if (!ENDPOINT) {
   ENDPOINT = 'www.google.es';
 }
 
@@ -67,22 +67,21 @@ var realEP = false;
 var TIMEOUT = 1000;
 var CREATED = 201; // 200 for older versions
 var describeTimeout = 60000;
-var timeout2= 30000;
+var timeout2 = 30000;
 var DELAY = 3000;
 
-function _validScenario(data, i){
+function _validScenario(data, i) {
   'use strict';
 
-  it(data.name, function(done){
+  it(data.name, function(done) {
     var agent = superagent.agent();
-    agent
-        [data.method.toLowerCase()](RUSHENDPOINT )
+    agent[data.method.toLowerCase()](RUSHENDPOINT)
         .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
-        .set('x-relayer-persistence','BODY')
+        .set('x-relayer-persistence', 'BODY')
         .set('Authorization', TOKEN)
         .set(data.headers)
         .send({})
-        .auth(USER,Pass)
+        .auth(USER, Pass)
         .end(function(err, res) {
           if (vm2) {console.log(res);}
           expect(err).to.not.exist;
@@ -92,11 +91,11 @@ function _validScenario(data, i){
           expect(res.body.id).to.exist;
           res.text.should.not.include('exception');
           var transId = res.body.id;
-          setTimeout(function () {
+          setTimeout(function() {
             agent
-                .get(RUSHENDPOINT +'/response/' + res.body['id'])
+                .get(RUSHENDPOINT + '/response/' + res.body['id'])
                 .set('Authorization', TOKEN)
-                .auth(USER,Pass)
+                .auth(USER, Pass)
                 .end(function onResponse2(err2, res2) {
                   if (vm2) {console.log(res2);}
                   if (vm) {console.log(res2.body);}
@@ -104,7 +103,7 @@ function _validScenario(data, i){
                   res2.headers['content-type'].should.eql('application/json; charset=utf-8');
                   res2.text.should.include('id');
                   res2.text.should.include('state');
-                  if (realEP){
+                  if (realEP) {
                     res2.body['state'].should.eql('completed');
                     res2.text.should.not.include('exception');
                   }
@@ -121,16 +120,15 @@ function _validScenario(data, i){
 function _invalidScenario(data, i) {
   'use strict';
 
-  it(data.name, function (done) {
+  it(data.name, function(done) {
     var agent = superagent.agent();
-    agent
-        [data.method.toLowerCase()](RUSHENDPOINT)
+    agent[data.method.toLowerCase()](RUSHENDPOINT)
         .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
-                  .set(data.headers)      .auth(USER,Pass)
-        .end(function (err, res) {
+                  .set(data.headers) .auth(USER, Pass)
+        .end(function(err, res) {
           should.not.exist(err);
           res.should.have.status(400);
-          res.text.should.not.include( 'ok ');
+          res.text.should.not.include('ok ');
           should.exist(res.body['exceptionId']);
 
           if (data.headers['x-relayer-persistence']) {  //checks for invalid persistance
@@ -152,7 +150,7 @@ function _invalidScenario(data, i) {
             }
             if (data.headers['x-relayer-proxy']) {  //checks for invalid proxy
               res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-proxy');
-              console.log( '\n+++++Issue Resolved++++++++\n ');
+              console.log('\n+++++Issue Resolved++++++++\n ');
             }
             if (data.headers['x-relayer-traceid']) {  //checks for invalid traceid
               // It is possible to have a invalid traceid?
@@ -160,7 +158,7 @@ function _invalidScenario(data, i) {
             }
             if (data.headers['x-relayer-encoding']) {  //checks for invalid encoding
               res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-encoding');
-              console.log( '\n+++++Issue Resolved++++++++\n ');
+              console.log('\n+++++Issue Resolved++++++++\n ');
             }
           }
           if (vm) {
@@ -173,7 +171,7 @@ function _invalidScenario(data, i) {
 
 
 
-describe('Scenario: Basic acceptance tests for Rush as a Service ', function () {
+describe('Scenario: Basic acceptance tests for Rush as a Service ', function() {
   'use strict';
 
   if (vm) {
@@ -183,12 +181,12 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
   var ids = [];
 
 
-  describe('/ADD http requests ', function () {
+  describe('/ADD http requests ', function() {
     this.timeout(timeout2);
-    describe('with a valid Endpoint and Headers', function () {
+    describe('with a valid Endpoint and Headers', function() {
       var agent = superagent.agent();
 
-      it('should accept requests using / POST', function (done) {
+      it('should accept requests using / POST', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -204,12 +202,12 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .post(RUSHENDPOINT)
             .set('X-relayer-host', ENDPOINT)
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
       });
 
-      it('should accept requests using / GET', function (done) {
+      it('should accept requests using / GET', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -222,15 +220,15 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
         }
 
         agent
-            .get(RUSHENDPOINT )
+            .get(RUSHENDPOINT)
             .set('X-relayer-host', ENDPOINT)
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
       });
 
-      it('should accept requests using / PUT', function (done) {
+      it('should accept requests using / PUT', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -247,12 +245,12 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .put(RUSHENDPOINT)
             .set('X-relayer-host', ENDPOINT)
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
       });
 
-      it('should accept requests using / OPTIONS', function (done) {
+      it('should accept requests using / OPTIONS', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -268,7 +266,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .options(RUSHENDPOINT)
             .set('X-relayer-host', ENDPOINT)
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
       });
@@ -296,7 +294,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
         }
       });
 */
-      it('should NOT accept requests using / HEAD', function (done) {
+      it('should NOT accept requests using / HEAD', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -312,7 +310,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .head(RUSHENDPOINT)
             .set('X-relayer-host', ENDPOINT)
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .end(onResponse);
       });
 
@@ -320,11 +318,11 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 
   });
 
-  describe('Protocol acceptance', function(){
+  describe('Protocol acceptance', function() {
     this.timeout(timeout2);
     var agent = superagent.agent();
 
-    it('should accept HTTP requests', function (done) {
+    it('should accept HTTP requests', function(done) {
 
       function onResponse(err, res) {
         //console.log(agent);
@@ -340,12 +338,12 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           .set('X-Relayer-Host', 'ENDPOINT')
           .set('X-Relayer-Protocol', 'http')
           .set('Authorization', TOKEN)
-          .auth(USER,Pass)
+          .auth(USER, Pass)
           .send({})
           .end(onResponse);
     });
 
-    it('should accept HTTPS requests', function (done) {
+    it('should accept HTTPS requests', function(done) {
 
       function onResponse(err, res) {
         //console.log(agent);
@@ -361,19 +359,19 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           .set('X-Relayer-Host', 'ENDPOINT')
           .set('X-Relayer-Protocol', 'https')
           .set('Authorization', TOKEN)
-          .auth(USER,Pass)
+          .auth(USER, Pass)
           .send({})
           .end(onResponse);
     });
 
-    it('should NOT accept FTP requests', function (done) {
+    it('should NOT accept FTP requests', function(done) {
 
       function onResponse(err, res) {
         //console.log(agent);
 
         should.not.exist(err);
         res.should.have.status(400);
-        res.text.should.not.include( 'ok ');
+        res.text.should.not.include('ok ');
         should.exist(res.body['exceptionId']);
         res.body['exceptionId'].should.eql('SVC0003');
         res.body['exceptionText'].should.eql('Invalid parameter value: x-relayer-protocol. ' +
@@ -386,19 +384,19 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           .set('X-Relayer-Host', 'ENDPOINT')
           .set('X-Relayer-Protocol', 'ftp')
           .set('Authorization', TOKEN)
-          .auth(USER,Pass)
+          .auth(USER, Pass)
           .send({})
           .end(onResponse);
     });
   });
 
 
-  describe('/Retrieve processed requests', function () {
+  describe('/Retrieve processed requests', function() {
     this.timeout(timeout2);
-    describe('with valid Endpoint and parameters', function () {
+    describe('with valid Endpoint and parameters', function() {
       var agent = superagent.agent();
 
-      it('should return the completed task using / POST', function (done) {
+      it('should return the completed task using / POST', function(done) {
 
         function onResponse(err, res) {
           should.not.exist(err);
@@ -407,17 +405,17 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           res.headers['content-type'].should.eql('application/json; charset=utf-8');
           res.should.have.status(CREATED);
           res.text.should.include('id');
-          if (vm){console.log(res.body['id']);}
+          if (vm) {console.log(res.body['id']);}
           //console.log(res);
-          setTimeout(function () {
+          setTimeout(function() {
             agent
-                .get(RUSHENDPOINT +'/response/' + ids[0])
+                .get(RUSHENDPOINT + '/response/' + ids[0])
                 .set('Authorization', TOKEN)
-                .auth(USER,Pass)
+                .auth(USER, Pass)
                 .end(
                 function onResponse2(err2, res2) {
                   //console.log( '/n/n ',res2)
-                  if (vm){console.log( '***BODY*** ',res2.body);}
+                  if (vm) {console.log('***BODY*** ', res2.body);}
                   res2.should.have.status(200);
                   res2.text.should.include('id');
                   res2.headers['content-type'].should.eql('application/json; charset=utf-8');
@@ -431,12 +429,12 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .set('X-relayer-host', ENDPOINT)
             .set('X-relayer-persistence', 'BODY')
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
       });
 
-      it('should return the completed task using / GET', function (done) {
+      it('should return the completed task using / GET', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -446,16 +444,16 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           res.should.have.status(CREATED);
           res.text.should.include('id');
           //console.log(res.body['id']);
-          setTimeout(function () {
+          setTimeout(function() {
             agent
-                .get(RUSHENDPOINT +'/response/' + ids[0])
+                .get(RUSHENDPOINT + '/response/' + ids[0])
                 .set('Authorization', TOKEN)
-                .auth(USER,Pass)
+                .auth(USER, Pass)
                 .send({})
                 .end(
                 function onResponse2(err2, res2) {
                   //console.log( '***CHECK POINT*** ',res2.body['id'])
-                  if (vm){console.log( '***BODY*** ',res2.body);}
+                  if (vm) {console.log('***BODY*** ', res2.body);}
                   res2.headers['content-type'].should.eql('application/json; charset=utf-8');
                   res2.should.have.status(200);
                   res2.text.should.include('id');
@@ -470,13 +468,13 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .set('X-relayer-host', ENDPOINT)
             .set('X-relayer-persistence', 'BODY')
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
 
       });
 
-      it('should return the completed task using / PUT', function (done) {
+      it('should return the completed task using / PUT', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -486,16 +484,16 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           res.should.have.status(CREATED);
           res.text.should.include('id');
           //console.log(res.body['id']);
-          setTimeout(function () {
+          setTimeout(function() {
             agent
-                .get(RUSHENDPOINT +'/response/' + ids[0])
+                .get(RUSHENDPOINT + '/response/' + ids[0])
                 .set('Authorization', TOKEN)
-                .auth(USER,Pass)
+                .auth(USER, Pass)
                 .send({})
                 .end(
                 function onResponse2(err2, res2) {
                   //console.log( '***CHECK POINT*** ',res2.body['id'])
-                  if (vm){console.log( '***BODY*** ',res2.body);}
+                  if (vm) {console.log('***BODY*** ', res2.body);}
                   res2.headers['content-type'].should.eql('application/json; charset=utf-8');
                   res2.should.have.status(200);
                   res2.text.should.include('id');
@@ -510,13 +508,13 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .set('X-relayer-host', ENDPOINT)
             .set('X-relayer-persistence', 'BODY')
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
 
       });
 
-      it('should return the completed task using / OPTIONS', function (done) {
+      it('should return the completed task using / OPTIONS', function(done) {
 
         function onResponse(err, res) {
           //console.log(agent);
@@ -526,11 +524,11 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
           res.should.have.status(CREATED);
           res.text.should.include('id');
           //console.log(res.body['id']);
-          setTimeout(function () {
+          setTimeout(function() {
             agent
-                .get(RUSHENDPOINT +'/response/' + ids[0])
+                .get(RUSHENDPOINT + '/response/' + ids[0])
                 .set('Authorization', TOKEN)
-                .auth(USER,Pass)
+                .auth(USER, Pass)
                 .send({})
                 .end(
                 function onResponse2(err2, res2) {
@@ -549,7 +547,7 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
             .set('X-relayer-host', ENDPOINT)
             .set('X-relayer-persistence', 'BODY')
             .set('Authorization', TOKEN)
-            .auth(USER,Pass)
+            .auth(USER, Pass)
             .send({})
             .end(onResponse);
 
@@ -562,156 +560,156 @@ describe('Scenario: Basic acceptance tests for Rush as a Service ', function () 
 });
 
 
-describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
+describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function() {
   'use strict';
   this.timeout(describeTimeout);
 
 
-  describe('\nCheck single features: with a valid header policy request using method /GET', function () {
+  describe('\nCheck single features: with a valid header policy request using method /GET', function() {
 
 
 
     var dataSetGET = [
-      {method: 'GET', headers: {}, name :  'Oneway No header: Should accept the request and retrieve the result '},
-      {method: 'GET', headers: { 'x-relayer-persistence ' :  'STATUS '},
-        name :  'Persistance STATUS: Should accept the request and retrieve the stored status '},
-      {method: 'GET', headers: { 'x-relayer-persistence ' :  'HEADER '},
-        name :  'Persistance HEADER: Should accept the request and retrieve stored header '},
-      {method: 'GET', headers: { 'x-relayer-persistence ' :  'BODY '},
-        name :  'Persistance BODY: Should accept the request and retrieve the stored body '},
-      {method: 'GET', headers: { 'x-relayer-httpcallback ' :  'http://noname.com '},
-        name :  'Callback: Should accept the request and retrieve the completed task '},
-      {method: 'GET', headers: { 'x-relayer-httpcallback-error ' :  'http://noname.com '},
-        name :  'Error Callback: Should accept the request and retrieve the completed task '},
-      {method: 'GET', headers: { 'x-relayer-retry ' :  '10, 20, 30 '},
-        name :  'Retry: Should accept the request and retrieve the completed task '},
+      {method: 'GET', headers: {}, name: 'Oneway No header: Should accept the request and retrieve the result '},
+      {method: 'GET', headers: { 'x-relayer-persistence ' : 'STATUS '},
+        name: 'Persistance STATUS: Should accept the request and retrieve the stored status '},
+      {method: 'GET', headers: { 'x-relayer-persistence ' : 'HEADER '},
+        name: 'Persistance HEADER: Should accept the request and retrieve stored header '},
+      {method: 'GET', headers: { 'x-relayer-persistence ' : 'BODY '},
+        name: 'Persistance BODY: Should accept the request and retrieve the stored body '},
+      {method: 'GET', headers: { 'x-relayer-httpcallback ' : 'http://noname.com '},
+        name: 'Callback: Should accept the request and retrieve the completed task '},
+      {method: 'GET', headers: { 'x-relayer-httpcallback-error ' : 'http://noname.com '},
+        name: 'Error Callback: Should accept the request and retrieve the completed task '},
+      {method: 'GET', headers: { 'x-relayer-retry ' : '10, 20, 30 '},
+        name: 'Retry: Should accept the request and retrieve the completed task '},
       {method: 'GET', headers: {'x-relayer-proxy' : 'proxy.com'},
-        name :  'Proxy: Should accept the request and retrieve the completed task '},
+        name: 'Proxy: Should accept the request and retrieve the completed task '},
       {method: 'GET', headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Encoding: Should accept the request and retrieve the completed task '},
+        name: 'Encoding: Should accept the request and retrieve the completed task '},
       {method: 'GET', headers: {'x-relayer-traceid' : 'TEST'},
-        name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
+        name: 'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
     ];
 
-    for(var i=0; i < dataSetGET.length; i++){
+    for (var i = 0; i < dataSetGET.length; i++) {
       _validScenario(dataSetGET[i]);  //Launch every test in data set
     }
   });
 
 
-  describe('\nCheck single features: with a valid header policy request using method /POST', function () {
+  describe('\nCheck single features: with a valid header policy request using method /POST', function() {
     var dataSetPOST = [
-      {method: 'POST', headers: {}, name :  'Oneway No header: Should accept the request and retrieve the result '},
-      {method: 'POST', headers: { 'x-relayer-persistence ' :  'STATUS '},
-        name :  'Persistance STATUS: Should accept the request and retrieve the stored status '},
-      {method: 'POST', headers: { 'x-relayer-persistence ' :  'HEADER '},
-        name :  'Persistance HEADER: Should accept the request and retrieve stored header '},
-      {method: 'POST', headers: { 'x-relayer-persistence ' :  'BODY '},
-        name :  'Persistance BODY: Should accept the request and retrieve the stored body '},
-      {method: 'POST', headers: { 'x-relayer-httpcallback ' :  'http://noname.com '},
-        name :  'Callback: Should accept the request and retrieve the completed task '},
-      {method: 'POST', headers: { 'x-relayer-httpcallback-error ' :  'http://noname.com '},
-        name :  'Error Callback: Should accept the request and retrieve the completed task '},
-      {method: 'POST', headers: { 'x-relayer-retry ' :  '10, 20, 30 '},
-        name :  'Retry: Should accept the request and retrieve the completed task '},
+      {method: 'POST', headers: {}, name: 'Oneway No header: Should accept the request and retrieve the result '},
+      {method: 'POST', headers: { 'x-relayer-persistence ' : 'STATUS '},
+        name: 'Persistance STATUS: Should accept the request and retrieve the stored status '},
+      {method: 'POST', headers: { 'x-relayer-persistence ' : 'HEADER '},
+        name: 'Persistance HEADER: Should accept the request and retrieve stored header '},
+      {method: 'POST', headers: { 'x-relayer-persistence ' : 'BODY '},
+        name: 'Persistance BODY: Should accept the request and retrieve the stored body '},
+      {method: 'POST', headers: { 'x-relayer-httpcallback ' : 'http://noname.com '},
+        name: 'Callback: Should accept the request and retrieve the completed task '},
+      {method: 'POST', headers: { 'x-relayer-httpcallback-error ' : 'http://noname.com '},
+        name: 'Error Callback: Should accept the request and retrieve the completed task '},
+      {method: 'POST', headers: { 'x-relayer-retry ' : '10, 20, 30 '},
+        name: 'Retry: Should accept the request and retrieve the completed task '},
       {method: 'POST', headers: {'x-relayer-proxy' : 'proxy.com'},
-        name :  'Proxy: Should accept the request and retrieve the completed task '},
+        name: 'Proxy: Should accept the request and retrieve the completed task '},
       {method: 'POST', headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Encoding: Should accept the request and retrieve the completed task '},
+        name: 'Encoding: Should accept the request and retrieve the completed task '},
       {method: 'POST', headers: {'x-relayer-traceid' : 'TEST'},
-        name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
+        name: 'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
     ];
 
-    for(var i=0; i < dataSetPOST.length; i++){
+    for (var i = 0; i < dataSetPOST.length; i++) {
       _validScenario(dataSetPOST[i]);  //Launch every test in data set
     }
 
   });
 
-  describe('\nCheck single features: with a valid header policy request using method /PUT', function () {
+  describe('\nCheck single features: with a valid header policy request using method /PUT', function() {
     var dataSetPUT = [
       {method: 'PUT', headers: {},
-        name :  'Oneway No header: Should accept the request and retrieve the result '},
-      {method: 'PUT', headers: { 'x-relayer-persistence ' :  'STATUS '},
-        name :  'Persistance STATUS: Should accept the request and retrieve the stored status '},
-      {method: 'PUT', headers: { 'x-relayer-persistence ' :  'HEADER '},
-        name :  'Persistance HEADER: Should accept the request and retrieve stored header '},
-      {method: 'PUT', headers: { 'x-relayer-persistence ' :  'BODY '},
-        name :  'Persistance BODY: Should accept the request and retrieve the stored body '},
-      {method: 'PUT', headers: { 'x-relayer-httpcallback ' :  'http://noname.com '},
-        name :  'Callback: Should accept the request and retrieve the completed task '},
-      {method: 'PUT', headers: { 'x-relayer-httpcallback-error ' :  'http://noname.com '},
-        name :  'Error Callback: Should accept the request and retrieve the completed task '},
-      {method: 'PUT', headers: { 'x-relayer-retry ' :  '10, 20, 30 '},
-        name :  'Retry: Should accept the request and retrieve the completed task '},
+        name: 'Oneway No header: Should accept the request and retrieve the result '},
+      {method: 'PUT', headers: { 'x-relayer-persistence ' : 'STATUS '},
+        name: 'Persistance STATUS: Should accept the request and retrieve the stored status '},
+      {method: 'PUT', headers: { 'x-relayer-persistence ' : 'HEADER '},
+        name: 'Persistance HEADER: Should accept the request and retrieve stored header '},
+      {method: 'PUT', headers: { 'x-relayer-persistence ' : 'BODY '},
+        name: 'Persistance BODY: Should accept the request and retrieve the stored body '},
+      {method: 'PUT', headers: { 'x-relayer-httpcallback ' : 'http://noname.com '},
+        name: 'Callback: Should accept the request and retrieve the completed task '},
+      {method: 'PUT', headers: { 'x-relayer-httpcallback-error ' : 'http://noname.com '},
+        name: 'Error Callback: Should accept the request and retrieve the completed task '},
+      {method: 'PUT', headers: { 'x-relayer-retry ' : '10, 20, 30 '},
+        name: 'Retry: Should accept the request and retrieve the completed task '},
       {method: 'PUT', headers: {'x-relayer-proxy' : 'proxy.com'},
-        name :  'Proxy: Should accept the request and retrieve the completed task '},
+        name: 'Proxy: Should accept the request and retrieve the completed task '},
       {method: 'PUT', headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Encoding: Should accept the request and retrieve the completed task '},
+        name: 'Encoding: Should accept the request and retrieve the completed task '},
       {method: 'PUT', headers: {'x-relayer-traceid' : 'TEST'},
-        name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
+        name: 'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
     ];
 
 
-    for(var i=0; i < dataSetPUT.length; i++){
+    for (var i = 0; i < dataSetPUT.length; i++) {
       _validScenario(dataSetPUT[i]);  //Launch every test in data set
     }
   });
 
-  describe('\nCheck single features: with a valid header policy request using method /DELETE', function () {
+  describe('\nCheck single features: with a valid header policy request using method /DELETE', function() {
     var dataSetDEL = [
-      {method: 'DEL', headers: {}, name :  'Oneway No header: Should accept the request and retrieve the result '},
-      {method: 'DEL', headers: { 'x-relayer-persistence ' :  'STATUS '},
-        name :  'Persistance STATUS: Should accept the request and retrieve the stored status '},
-      {method: 'DEL', headers: { 'x-relayer-persistence ' :  'HEADER '},
-        name :  'Persistance HEADER: Should accept the request and retrieve stored header '},
-      {method: 'DEL', headers: { 'x-relayer-persistence ' :  'BODY '},
-        name :  'Persistance BODY: Should accept the request and retrieve the stored body '},
-      {method: 'DEL', headers: { 'x-relayer-httpcallback ' :  'http://noname.com '},
-        name :  'Callback: Should accept the request and retrieve the completed task '},
-      {method: 'DEL', headers: { 'x-relayer-httpcallback-error ' :  'http://noname.com '},
-        name :  'Error Callback: Should accept the request and retrieve the completed task '},
-      {method: 'DEL', headers: { 'x-relayer-retry ' :  '10, 20, 30 '},
-        name :  'Retry: Should accept the request and retrieve the completed task '},
+      {method: 'DEL', headers: {}, name: 'Oneway No header: Should accept the request and retrieve the result '},
+      {method: 'DEL', headers: { 'x-relayer-persistence ' : 'STATUS '},
+        name: 'Persistance STATUS: Should accept the request and retrieve the stored status '},
+      {method: 'DEL', headers: { 'x-relayer-persistence ' : 'HEADER '},
+        name: 'Persistance HEADER: Should accept the request and retrieve stored header '},
+      {method: 'DEL', headers: { 'x-relayer-persistence ' : 'BODY '},
+        name: 'Persistance BODY: Should accept the request and retrieve the stored body '},
+      {method: 'DEL', headers: { 'x-relayer-httpcallback ' : 'http://noname.com '},
+        name: 'Callback: Should accept the request and retrieve the completed task '},
+      {method: 'DEL', headers: { 'x-relayer-httpcallback-error ' : 'http://noname.com '},
+        name: 'Error Callback: Should accept the request and retrieve the completed task '},
+      {method: 'DEL', headers: { 'x-relayer-retry ' : '10, 20, 30 '},
+        name: 'Retry: Should accept the request and retrieve the completed task '},
       {method: 'DEL', headers: {'x-relayer-proxy' : 'proxy.com'},
-        name :  'Proxy: Should accept the request and retrieve the completed task '},
+        name: 'Proxy: Should accept the request and retrieve the completed task '},
       {method: 'DEL', headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Encoding: Should accept the request and retrieve the completed task '},
+        name: 'Encoding: Should accept the request and retrieve the completed task '},
       {method: 'DEL', headers: {'x-relayer-traceid' : 'TEST'},
-        name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
+        name: 'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
     ];
 
-    for(var i=0; i < dataSetDEL.length; i++){
+    for (var i = 0; i < dataSetDEL.length; i++) {
       _validScenario(dataSetDEL[i]);  //Launch every test in data set
     }
   });
 
-  describe('\nCheck single features: with a valid header policy request using method /OPTIONS', function () {
+  describe('\nCheck single features: with a valid header policy request using method /OPTIONS', function() {
     var dataSetOPTIONS = [
-      {method: 'OPTIONS', headers: {}, name :  'Oneway No header: Should accept the request and retrieve the result '},
-      {method: 'OPTIONS', headers: { 'x-relayer-persistence ' :  'STATUS '},
-        name :  'Persistance STATUS: Should accept the request and retrieve the stored status '},
-      {method: 'OPTIONS', headers: { 'x-relayer-persistence ' :  'HEADER '},
-        name :  'Persistance HEADER: Should accept the request and retrieve stored header '},
-      {method: 'OPTIONS', headers: { 'x-relayer-persistence ' :  'BODY '},
-        name :  'Persistance BODY: Should accept the request and retrieve the stored body '},
-      {method: 'OPTIONS', headers: { 'x-relayer-httpcallback ' :  'http://noname.com '},
-        name :  'Callback: Should accept the request and retrieve the completed task '},
-      {method: 'OPTIONS', headers: { 'x-relayer-httpcallback-error ' :  'http://noname.com '},
-        name :  'Error Callback: Should accept the request and retrieve the completed task '},
-      {method: 'OPTIONS', headers: { 'x-relayer-retry ' :  '10, 20, 30 '},
-        name :  'Retry: Should accept the request and retrieve the completed task '},
+      {method: 'OPTIONS', headers: {}, name: 'Oneway No header: Should accept the request and retrieve the result '},
+      {method: 'OPTIONS', headers: { 'x-relayer-persistence ' : 'STATUS '},
+        name: 'Persistance STATUS: Should accept the request and retrieve the stored status '},
+      {method: 'OPTIONS', headers: { 'x-relayer-persistence ' : 'HEADER '},
+        name: 'Persistance HEADER: Should accept the request and retrieve stored header '},
+      {method: 'OPTIONS', headers: { 'x-relayer-persistence ' : 'BODY '},
+        name: 'Persistance BODY: Should accept the request and retrieve the stored body '},
+      {method: 'OPTIONS', headers: { 'x-relayer-httpcallback ' : 'http://noname.com '},
+        name: 'Callback: Should accept the request and retrieve the completed task '},
+      {method: 'OPTIONS', headers: { 'x-relayer-httpcallback-error ' : 'http://noname.com '},
+        name: 'Error Callback: Should accept the request and retrieve the completed task '},
+      {method: 'OPTIONS', headers: { 'x-relayer-retry ' : '10, 20, 30 '},
+        name: 'Retry: Should accept the request and retrieve the completed task '},
       {method: 'OPTIONS', headers: {'x-relayer-proxy' : 'proxy.com'},
-        name :  'Proxy: Should accept the request and retrieve the completed task '},
+        name: 'Proxy: Should accept the request and retrieve the completed task '},
       {method: 'OPTIONS', headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Encoding: Should accept the request and retrieve the completed task '},
+        name: 'Encoding: Should accept the request and retrieve the completed task '},
       {method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST'},
-        name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
+        name: 'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
       //{method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST2'},
       //  name :  'TO DO: CHECK why the last test is not validated... '}
     ];
 
-    for(var i=0; i < dataSetOPTIONS.length; i++){
+    for (var i = 0; i < dataSetOPTIONS.length; i++) {
       _validScenario(dataSetOPTIONS[i]);  //Launch every test in data set
     }
   });

@@ -56,8 +56,7 @@ function _validScenario(data) {
 			function connectedCallback() {
 
 				//SET UP the request to the advancedServer
-				var req = agent;
-						[method](RUSHENDPOINT + data.path)
+				var req = agent[method](RUSHENDPOINT + data.path)
 						.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 						.set('x-relayer-persistence', DEFAULT_PERSISTENCE)
 						.set('content-type', 'application/json')
@@ -135,8 +134,7 @@ function _invalidScenario(data) {
 				function connectedCallback() {
 
 					//SET UP the request to the advancedServer
-					var req = agent;
-							[method](RUSHENDPOINT + data.path)
+					var req = agent[method](RUSHENDPOINT + data.path)
 							.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 							.set('x-relayer-persistence', DEFAULT_PERSISTENCE)
 							.set('content-type', 'application/json')
@@ -209,8 +207,7 @@ function _invalidHeadersValue(data) {
     }
 
     //SET UP the request to the advancedServer
-    var req = agent;
-        [method](RUSHENDPOINT + data.path)
+    var req = agent[method](RUSHENDPOINT + data.path)
         .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
         .set('x-relayer-persistence', DEFAULT_PERSISTENCE)
         .set('content-type', 'application/json')

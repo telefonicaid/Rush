@@ -77,8 +77,7 @@ function executeTest(method, content, headers, done) {
 
   var simpleServer = server.serverListener(
     function onConnected() {
-      agent;
-        [mymethod](URL_RUSH)
+      agent[mymethod](URL_RUSH)
         .set('content-type', 'application/json')
         .set(headers)
         .end(function(err, res) {

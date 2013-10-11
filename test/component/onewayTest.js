@@ -99,8 +99,7 @@ describe('Component Test: Task queue', function() {
   function _newScenario(data) {
     return function() {
       it(data.name + ' /' + data.method + ' #CT', function(done) {
-        agent;
-          [data.method.toLowerCase()](URL_RUSH)
+        agent[data.method.toLowerCase()](URL_RUSH)
           .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
           .set(data.headers)
           .end(function(err, res) {

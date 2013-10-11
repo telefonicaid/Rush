@@ -47,8 +47,7 @@ function _validScenario(data) {
 		var simpleServer = server({port: fhPORT, protocol: data.protocol}, {},
 			function() {
 
-				var req = agent;
-						[method](RUSHENDPOINT + data.path)
+				var req = agent[method](RUSHENDPOINT + data.path)
 						.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 						.set('x-relayer-persistence', 'BODY')
 						.set('content-type', 'application/json')

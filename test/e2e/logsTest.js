@@ -97,8 +97,7 @@ function _scenario(data) {
       function() {
 
         data.expected.push(RELAYREQUEST);
-        var req = agent;
-            [method](RUSHENDPOINT + data.path)
+        var req = agent[method](RUSHENDPOINT + data.path)
             .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
             .set('x-relayer-persistence', 'BODY')
             .set('content-type', 'application/json')

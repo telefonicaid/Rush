@@ -65,8 +65,7 @@ function _validScenario(data) {
     var simpleServer = server({port: fhPORT, protocol: data.protocol}, {statusCode: '201'},
         function() {
 
-          var req = agent;
-              [method](RUSHENDPOINT + data.path)
+          var req = agent[method](RUSHENDPOINT + data.path)
             //	.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
               .set('x-relayer-host', 'localhost:8014')  //Hardcoded
               .set('x-relayer-persistence', 'BODY')
@@ -141,8 +140,7 @@ function _invalidScenario(data) {
     var simpleServer = server({port: fhPORT, protocol: data.protocol}, {statusCode: '501'},
         function() {
 
-          var req = agent;
-              [method](RUSHENDPOINT + data.path)
+          var req = agent[method](RUSHENDPOINT + data.path)
             //	.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
               .set('x-relayer-host', 'localhost:8014')  //Hardcoded
               .set('x-relayer-persistence', 'BODY')

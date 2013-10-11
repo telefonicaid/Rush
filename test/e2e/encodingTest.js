@@ -43,8 +43,7 @@ function _invalidScenario(data) {
   it('Case ' + data.name + ' #FEN', function(done) {
 
 		var agent = superagent.agent();
-		agent;
-				[data.method.toLowerCase()](RUSHENDPOINT)
+		agent[data.method.toLowerCase()](RUSHENDPOINT)
 				.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 				.set('x-relayer-persistence', 'BODY')
 				.set(data.headers)

@@ -57,9 +57,8 @@ function _validBody(data) {
 				function connectedCallback() {
 
 					//SET UP the request to the advancedServer
-					var req = agent;
-							[method](RUSHENDPOINT + data.path)
-							.set('x-relayer-host', ENDPOINT)  //Always the same endpoint
+					var req = agent[method](RUSHENDPOINT + data.path)
+						  .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
 							.set('x-relayer-persistence', DEFAULT_PERSISTENCE)
 							.set('content-type', 'application/json')
 							.set(data.headers);
