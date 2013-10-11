@@ -14,12 +14,12 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
   var serversToShutDown = [];
 
-  beforeEach(function (done) {
+  beforeEach(function(done) {
     serversToShutDown = [];
     listener.start(done);
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
 
     //Stop created servers
     for (var i = 0; i < serversToShutDown.length; i++) {
@@ -49,7 +49,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     optionsRelay.headers = {};
     optionsRelay.method = 'POST';
     optionsRelay.headers['content-type'] = 'application/json';
-    optionsRelay.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
+    optionsRelay.headers['X-Relayer-Host'] = config.simpleServerHostname + ':' + config.simpleServerPort;
     optionsRelay.headers['X-relayer-persistence'] = 'BODY';
     optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
@@ -64,7 +64,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
       //First attempt: Get STATUS === QUEUED
       //Consumer has not been started yet
-      utils.makeRequest(optionsRetrieve, null, function (err, data, res) {
+      utils.makeRequest(optionsRetrieve, null, function(err, data, res) {
 
         should.not.exist(err);
         res.statusCode.should.be.equal(200);
@@ -86,7 +86,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
             //Second attempt: Get STATUS === PROCESSING
             //Consumer and server have been started but server hasn't sent the response
-            utils.makeRequest(optionsRetrieve, null, function (err, data, resRetrieve) {
+            utils.makeRequest(optionsRetrieve, null, function(err, data, resRetrieve) {
 
               should.not.exist(err);
               resRetrieve.statusCode.should.be.equal(200);
@@ -151,7 +151,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     optionsRelay.headers = {};
     optionsRelay.method = 'POST';
     optionsRelay.headers['content-type'] = 'application/json';
-    optionsRelay.headers['X-Relayer-Host'] =  'noexiste.com';
+    optionsRelay.headers['X-Relayer-Host'] = 'noexiste.com';
     optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
     //RELAY REQUEST
@@ -164,13 +164,13 @@ describe('Multiple Feature: Processing Status #FOW', function() {
       var optionsRetrieve = { port: PORT, host: HOST, path: '/response/' + id, method: 'GET'};
 
       //404 ERROR because X-Relayer-Persistence was not defined when the relay request was sent
-      utils.makeRequest(optionsRetrieve, null, function (err, data, res) {
+      utils.makeRequest(optionsRetrieve, null, function(err, data, res) {
 
         should.not.exist(err);
         //res.should.have.property('statusCode', 404);
 
         var JSONres = JSON.parse(data);
-        JSONres.should.have.property('exceptionId','SVC1006');
+        JSONres.should.have.property('exceptionId', 'SVC1006');
         JSONres.should.have.property('exceptionText', 'Resource ' + id + ' does not exist');
 
         //Consumer should be started to remove the task from the queue

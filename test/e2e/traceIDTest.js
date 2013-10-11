@@ -26,7 +26,7 @@ function executeTest(method, body, done) {
   options.path = PATH;
   options.headers = {};
   options.headers['content-type'] = 'application/json';
-  options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
+  options.headers['X-Relayer-Host'] = config.simpleServerHostname + ':' + config.simpleServerPort;
   options.headers['X-relayer-persistence'] = 'BODY';
   options.headers[TEST_HEADER_NAME] = TEST_HEADER_VALUE;
   options.headers['X-Relayer-traceid'] = traceID;
@@ -78,13 +78,13 @@ function executeTest(method, body, done) {
 describe('Single Feature: TraceID #FTID', function() {
   'use strict';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
@@ -130,27 +130,27 @@ describe('Single Feature: TraceID #FTID', function() {
     executeTest('PUT', 'TEST BODY 2 |||@#|@~@½@#', done);
   });
 
-  describe('TraceID: Rush should accept requests sending TraceID and recover it when task are retrieved', function () {
+  describe('TraceID: Rush should accept requests sending TraceID and recover it when task are retrieved', function() {
     var dataSet = [
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF-8'}, body: {},
-        name : ' 1 Should accept the request with a real protocol UTF-8 /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'UTF8'}, body: {},
-        name : ' 2 Should accept the request with a real protocol UTF8 /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'utf8'}, body: {},
-        name : ' 3 Should accept the request with a real protocol utf8 /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'QUOTED-PRINTABLE'}, body: {},
-        name : ' 4 Should accept the request with a real protocol QUOTED-PRINTABLE /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'8BIT'}, body: {},
-        name : ' 5 Should accept the request with a real protocol 8BIT /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'7BIT'}, body: {},
-        name : ' 6 Should accept the request with a real protocol 7BIT /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'BINARY'}, body: {},
-        name : ' 7 Should accept the request with a real protocol BINARY /GET #FTID'},
-      {method: 'GET', path: '', headers: {'X-Relayer-Encoding':'x'}, body: {},
-        name : ' 8 Should accept the request using a fake encoding  \'x\' /GET #FTID'}
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': 'UTF-8'}, body: {},
+        name: ' 1 Should accept the request with a real protocol UTF-8 /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': 'UTF8'}, body: {},
+        name: ' 2 Should accept the request with a real protocol UTF8 /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': 'utf8'}, body: {},
+        name: ' 3 Should accept the request with a real protocol utf8 /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': 'QUOTED-PRINTABLE'}, body: {},
+        name: ' 4 Should accept the request with a real protocol QUOTED-PRINTABLE /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': '8BIT'}, body: {},
+        name: ' 5 Should accept the request with a real protocol 8BIT /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': '7BIT'}, body: {},
+        name: ' 6 Should accept the request with a real protocol 7BIT /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': 'BINARY'}, body: {},
+        name: ' 7 Should accept the request with a real protocol BINARY /GET #FTID'},
+      {method: 'GET', path: '', headers: {'X-Relayer-Encoding': 'x'}, body: {},
+        name: ' 8 Should accept the request using a fake encoding  \'x\' /GET #FTID'}
     ];
 
-    for(var i=0; i < dataSet.length; i++){
+    for (var i = 0; i < dataSet.length; i++) {
       //_invalidScenario(dataSet[i]);  //Launch every test in data set
     }
   });

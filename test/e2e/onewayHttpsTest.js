@@ -38,11 +38,11 @@ function executeTest(method, content, done) {
   };
 
   var simpleServer = server.serverListener(
-      function () {
-        utils.makeRequestHttps(options, content, function () {
+      function() {
+        utils.makeRequestHttps(options, content, function() {
         });
       },
-      function (methodUsed, headers, url, body) {
+      function(methodUsed, headers, url, body) {
         methodUsed.should.be.equal(method);
         url.should.be.equal(PATH);
 
@@ -59,22 +59,22 @@ function executeTest(method, content, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Multiple Feature: ONEWAY with HTTPS #FOW', function () {
+describe('Multiple Feature: ONEWAY with HTTPS #FOW', function() {
   'use strict';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
   });
 
-  afterEach(function () {
+  afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
         serversToShutDown[i].close();
@@ -86,41 +86,41 @@ describe('Multiple Feature: ONEWAY with HTTPS #FOW', function () {
     serversToShutDown = [];
   });
 
-  it('Case 1 Should return the same headers and the same method / GET #FOW', function (done) {
+  it('Case 1 Should return the same headers and the same method / GET #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Case 2 Should return the same headers, method and body / POST #FOW', function (done) {
+  it('Case 2 Should return the same headers, method and body / POST #FOW', function(done) {
     var content = 'Hello World';
     executeTest('POST', content, done);
   });
 
-  it('Case 3 Should return the same headers, method and body / PUT #FOW', function (done) {
+  it('Case 3 Should return the same headers, method and body / PUT #FOW', function(done) {
     var content = 'Hello World';
     executeTest('PUT', content, done);
   });
 
-  it('Case 4 Should return the same headers and the same method / DELETE #FOW', function (done) {
+  it('Case 4 Should return the same headers and the same method / DELETE #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 });
 
-describe('Multiple Feature: ONEWAY with HTTPS / Checking limits ', function () {
+describe('Multiple Feature: ONEWAY with HTTPS / Checking limits ', function() {
   'use strict';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
   });
 
-  afterEach(function () {
+  afterEach(function() {
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
         serversToShutDown[i].close();
@@ -144,27 +144,27 @@ describe('Multiple Feature: ONEWAY with HTTPS / Checking limits ', function () {
       '66666666666677777777777777777777777778888888888888888888888888888888889999999999999999999999999999999999999' +
       '99900000000000000000000000000';
 
-  it('Case 1 Should return the response / POST #FOW', function (done) {
+  it('Case 1 Should return the response / POST #FOW', function(done) {
     executeTest('POST', contentLarge, done);
   });
 
-  it('Case 2 Should return the response / PUT #FOW', function (done) {
+  it('Case 2 Should return the response / PUT #FOW', function(done) {
     executeTest('PUT', contentLarge, done);
   });
 
-  it('Case 3 Should return the response / HEAD #FOW', function (done) {
+  it('Case 3 Should return the response / HEAD #FOW', function(done) {
     executeTest('HEAD', undefined, done);
   });
 
-  it('Case 4 Should return the response / TRACE #FOW', function (done) {
+  it('Case 4 Should return the response / TRACE #FOW', function(done) {
     executeTest('TRACE', undefined, done);
   });
 
-  it('Case 5 Should return the response / GET #FOW', function (done) {
+  it('Case 5 Should return the response / GET #FOW', function(done) {
     executeTest('GET', undefined, done);
   });
 
-  it('Case 6 Should return the response / DELETE #FOW', function (done) {
+  it('Case 6 Should return the response / DELETE #FOW', function(done) {
     executeTest('TRACE', undefined, done);
   });
 

@@ -11,7 +11,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var applicationContent = 'application/json',
-    relayerHost =  config.simpleServerHostname + ':' + config.simpleServerPort,
+    relayerHost = config.simpleServerHostname + ':' + config.simpleServerPort,
     personalHeader1name = 'personal-header-1',
     personalHeader1value = 'TEST1',
     personalHeader2name = 'personal-header-2',
@@ -153,13 +153,13 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
@@ -298,7 +298,7 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
 
                 var JSONRes = JSON.parse(data);
 
-                if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed'  &&
+                if (!checked && res.statusCode !== 404 && JSONRes.state === 'completed' &&
                     data.indexOf('callback_err') !== -1) {
 
                   clearInterval(interval);
@@ -377,11 +377,11 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
 
               done();
             });
-          }, 30 );
+          }, 30);
 
         });
 
-      }).listen(portCallBack,  function() {
+      }).listen(portCallBack, function() {
         //Petition method
         options.method = 'POST';
         options.headers['x-relayer-persistence'] = 'BODY';

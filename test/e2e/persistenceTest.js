@@ -24,7 +24,7 @@ function executeTest(method, content, persistence, done) {
   options.headers = {};
   options.method = method;
   options.headers['content-type'] = 'application/json';
-  options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
+  options.headers['X-Relayer-Host'] = config.simpleServerHostname + ':' + config.simpleServerPort;
   options.headers['X-relayer-persistence'] = persistence;
   options.headers[HEADER_NAME] = HEADER_VALUE;
 
@@ -98,13 +98,13 @@ function executeTest(method, content, persistence, done) {
 describe('Single Feature: Persistence #FPE', function() {
   'use strict';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
@@ -123,13 +123,13 @@ describe('Single Feature: Persistence #FPE', function() {
   });
 
 
-  it('Case 1 should return 404 if the persistence doesn\'t exist  #FPE ', function(done){
+  it('Case 1 should return 404 if the persistence doesn\'t exist  #FPE ', function(done) {
     var id = 'not_an_id';
-    utils.makeRequest({host:HOST, port:PORT, path : '/response/' + id}, '', function(err, data, res) {
+    utils.makeRequest({host: HOST, port: PORT, path: '/response/' + id}, '', function(err, data, res) {
       should.not.exist(err);
       res.should.have.property('statusCode', 404);
       var JSONres = JSON.parse(data);
-      JSONres.should.have.property('exceptionId','SVC1006');
+      JSONres.should.have.property('exceptionId', 'SVC1006');
       JSONres.should.have.property('exceptionText', 'Resource not_an_id does not exist');
       done();
     });
@@ -143,11 +143,11 @@ describe('Single Feature: Persistence #FPE', function() {
     executeTest('POST', 'Body Example', 'BODY', done);
   });
 
-  it ('Case 4 should return status and header. should not return body  #FPE ', function(done) {
+  it('Case 4 should return status and header. should not return body  #FPE ', function(done) {
     executeTest('POST', 'Body Example', 'HEADER', done);
   });
 
-  it ('Case 5 should not return body neither heraders #FPE ', function(done) {
+  it('Case 5 should not return body neither heraders #FPE ', function(done) {
     executeTest('POST', 'Body Example', 'STATUS', done);
   });
 

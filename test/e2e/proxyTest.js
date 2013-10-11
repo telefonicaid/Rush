@@ -20,13 +20,13 @@ describe('Single Feature: Proxy Server #FPX', function() {
     myOwnHeader: 'c'
   };
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
@@ -35,7 +35,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
   afterEach(function(done) {
     try {
       proxyServer.close();
-    } catch(e) {  }
+    } catch (e) { }
 
     done();
   });
@@ -45,7 +45,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
     var id;
     var PATH = '/test1/test2/test3?aaa=bbb&ccc=ddd';
 
-    var makeRequest = function () {
+    var makeRequest = function() {
 
       var options = {};
       options.host = HOST;
@@ -71,7 +71,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
       });
     };
 
-    proxyServer = simpleServer.serverListener(makeRequest, function (usedMethod, receivedHeaders,
+    proxyServer = simpleServer.serverListener(makeRequest, function(usedMethod, receivedHeaders,
         usedURL, receivedContent) {
 
       usedMethod.should.be.equal(method);

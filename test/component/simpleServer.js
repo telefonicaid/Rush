@@ -3,8 +3,8 @@ var config = require('./config');
 
 var serverListener = function(connectedCallback, dataCallback) {
 
-  function callbackIfExist(){
-    if(dataCallback && typeof dataCallback === 'function'){
+  function callbackIfExist() {
+    if (dataCallback && typeof dataCallback === 'function') {
       dataCallback.apply({}, arguments);
     }
   }

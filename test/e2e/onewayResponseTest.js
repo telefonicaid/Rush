@@ -15,13 +15,13 @@ describe('Multiple Feature: ONEWAY Response errors #FOW', function() {
 
   var options;
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
