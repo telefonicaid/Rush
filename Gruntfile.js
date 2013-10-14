@@ -1,4 +1,5 @@
 'use strict';
+var shell = require('shelljs');
 
 module.exports = function (grunt) {
 
@@ -62,14 +63,9 @@ module.exports = function (grunt) {
 					'test/component/*Test.js'
 				]
 			}
-
 		},
 
 		exec: {
-			istanbul: {
-				cmd: 'node ./node_modules/.bin/istanbul cover --root lib/ -- grunt test  &&  ' +
-						'node ./node_modules/.bin/istanbul report --root coverage/ cobertura'
-			},
 			doxfoundation: {
 				cmd: 'node ./node_modules/.bin/dox-foundation --source lib --target doc'
 			}
@@ -115,7 +111,15 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('init-dev-env', ['hook:pre-commit']);
 
-	grunt.registerTask('coverage', ['env', 'exec:istanbul']);
+	grunt.registerTask('generate-report',function(){
+    var generateData = './node_modules/.bin/istanbul cover --root lib/ -- grunt test';
+    var generateReport = './node_modules/.bin/istanbul report --root coverage/ cobertura';
+		shell.exec(generateData, {silent : false});
+		shell.exec(generateReport, {silent : false});
+	});
+
+	grunt.registerTask('coverage', ['env', 'generate-report']);
+
 
 	grunt.registerTask('complexity', ['plato']);
 
