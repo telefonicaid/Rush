@@ -39,28 +39,28 @@ var RELAYREQUEST = '| lvl=INFO | op=RELAY REQUEST | msg=Relay Request received |
         '| component=evPersistence | userID=\'.*\' | state=\'error\'',
     JOBENDED = '| lvl=INFO | op=CONSUME | msg=Job Ended | corr=N/A | trans=.* | hostname=.* | component=consumer | ' +
         'userID=\'.*\' |',
-    NOHOST = '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | hostname=.* | ' +
+    NOHOST = '| lvl=WARN | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | hostname=.* | ' +
         'component=listener | userID=\'.*\' | error=[{ type: \'invalid_parameter\',  parameter: \'x-relayer-host\',  ' +
         'userMessage: \'Valid format: host[:port]\' }]',
-    INVALIDPERSISTENCE = '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | hostname=.* ' +
+    INVALIDPERSISTENCE = '| lvl=WARN | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | hostname=.* ' +
         '| component=listener | userID=\'.*\' | error=[{ type: \'invalid_parameter_accepted_values\',  ' +
         'parameter: \'x-relayer-persistence\',  acceptedValues: [ \'BODY\', \'STATUS\', \'HEADER\' ] }]',
-    INVALID_CALLBACK_PROTO = '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* ' +
+    INVALID_CALLBACK_PROTO = '| lvl=WARN | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* ' +
         '| hostname=.* | component=listener | userID=\'.*\' | error=[{ type: \'invalid_parameter\',  ' +
         'parameter: \'x-relayer-httpcallback\',  userMessage: \'Protocol is not defined\' }]',
-    INVALID_CALLBACK_HOST = '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | ' +
+    INVALID_CALLBACK_HOST = '| lvl=WARN | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | ' +
         'hostname=.* | component=listener | userID=\'.*\' | error=[{ type: \'invalid_parameter\',  parameter: ' +
         '\'x-relayer-httpcallback\',  userMessage: \'Hostname expected. Empty host after protocol\' }]',
-    INVALID_RETRY = '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | hostname=.* ' +
+    INVALID_RETRY = '| lvl=WARN | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | hostname=.* ' +
         '| component=listener | userID=\'.*\' | error=[{ type: \'invalid_parameter\',  parameter: ' +
         '\'x-relayer-retry\',  userMessage: \'Invalid retry value: .*\' }]',
-    INVALID_HEADER = '| lvl=WARNING | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | ' +
+    INVALID_HEADER = '| lvl=WARN | op=ASSIGN REQUEST | msg=Request Error | corr=N/A | trans=.* | ' +
         'hostname=.* | component=listener | userID=\'.*\' | error=[{ type: \'invalid_parameter\',  ' +
         'parameter: \'x-relayer-header\',  userMessage: \'Value for header .* is not defined\' }]',
-    JOBERROR = '| lvl=WARNING | op=DO JOB | msg=Request Error | corr=N/A | trans=.* | hostname=.* | ' +
+    JOBERROR = '| lvl=WARN | op=DO JOB | msg=Request Error | corr=N/A | trans=.* | hostname=.* | ' +
         'component=eventWorker | userID=\'.*\' | error={ [Error: getaddrinfo ENOTFOUND]  code: \'ENOTFOUND\',  ' +
         'errno: \'ENOTFOUND\',  syscall: \'getaddrinfo\',  resultOk: false }',
-    CALLBACKERROR = '| lvl=WARNING | op=HTTP CALLBACK | msg=Callback Error | corr=N/A | trans=.* | hostname=.* | ' +
+    CALLBACKERROR = '| lvl=WARN | op=HTTP CALLBACK | msg=Callback Error | corr=N/A | trans=.* | hostname=.* | ' +
         'component=evCallback | userID=\'.*\' | error={ callback_err: \'getaddrinfo ENOTFOUND\' }';
 
 var escape = function(text) {
