@@ -23,8 +23,7 @@ var RUSHENDPOINT = 'http://' + HOST + ':' + PORT;
 var fhHOST = config.simpleServerHostname;
 var fhPORT = config.simpleServerPort;
 
-var listenerLog = 'Rush_listener_' + os.hostname() + '.log';
-var consumerLog = 'Rush_consumer_' + os.hostname() + '.log';
+var log = 'Rush_' + os.hostname() + '.log';
 
 
 var RELAYREQUEST = '| lvl=INFO | op=RELAY REQUEST | msg=Relay Request received | corr=N/A | trans=.* | hostname=.* | ' +
@@ -111,14 +110,15 @@ function _scenario(data){
 
           setTimeout(function() {
 
-            var lLog = fs.readFileSync(listenerLog).toString();
-            var cLog = fs.readFileSync(consumerLog).toString();
+            var logResult = fs.readFileSync(log).toString();
 
             for(var i=0; i < data.expected.length; i++){
               var pattern=new RegExp(escape(data.expected[i]));
-              var contains = pattern.test(lLog);
+              var contains = pattern.test(logResult);
+
               contains.should.be.true;
             }
+
             done();
 
           }, TIMEOUT);
@@ -149,13 +149,11 @@ describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
   });
 
   beforeEach(function (){
-    fdLLog = fs.openSync(listenerLog, 'w');
-    fdCLog = fs.openSync(consumerLog, 'w');
+    fdLLog = fs.openSync(log, 'w+');
   });
 
   afterEach(function() {
     fs.closeSync(fdLLog);
-    fs.closeSync(fdCLog);
 
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
