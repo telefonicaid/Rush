@@ -15,8 +15,7 @@ var vm = false;
 var TIMEOUT = 1000;
 var describeTimeout = 60000;
 var QUEUE = 'wrL:hpri'; //Task
-var intval = 10; // interval time
-
+var intval = 100; // interval time
 
 describe('Multiple Feature: Processing Status #FOW', function() {
   'use strict';
@@ -46,7 +45,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     });
   });
 
-	it('Case 1 Should return the processing state when the task is been processed (QUEUED/PROCESSING/COMPLETED) #FRT ', function(done) {
+	it('Case 1 Should return the retrying state when the task fail the first attemtp (QUEUED/PROCESSING/TRYING) #FRT ', function(done) {
 
 		var optionsRelay = {};
 		var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d',
@@ -60,6 +59,8 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 		optionsRelay.headers['content-type'] = 'application/json';
 		optionsRelay.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
 		optionsRelay.headers['X-relayer-persistence'] = 'BODY';
+		optionsRelay.headers['X-relayer-retry'] = '1';
+
 		optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
 		//RELAY REQUEST
@@ -106,7 +107,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 							if(vm){console.log(data);}
 							JSONRes.should.have.property('id', id);
 
-							res.writeHead(200, headers);
+							res.writeHead(500, headers);
 							res.end(content);
 
 							//Third attempt: Get STATUS === COMPLETED
@@ -119,16 +120,11 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
 									var JSONres = JSON.parse(data);
 									if(vm){console.log(data);}
-									if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
+									if (!checked && res.statusCode !== 404 && JSONres.state === 'retrying') {
 
 										clearInterval(interval);
-
 										JSONRes.should.have.property('id', id);
-										JSONres.should.have.property('body', CONTENT);
-										JSONres.body.should.be.equal(content);
-										JSONres.headers.should.have.property(HEADER_NAME, HEADER_VALUE);
-										JSONres.should.have.property('statusCode', '200');
-
+										JSONres.should.have.property('state', 'retrying')
 										checked = true;
 										done();
 
@@ -163,6 +159,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 		optionsRelay.method = 'POST';
 		optionsRelay.headers['content-type'] = 'application/json';
 		optionsRelay.headers['X-Relayer-Host'] =  'noexiste.com';
+		optionsRelay.headers['X-relayer-retry'] = '1';
 		optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
 		//RELAY REQUEST
