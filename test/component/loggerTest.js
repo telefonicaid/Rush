@@ -7,7 +7,7 @@ var should = require('should');
 var LOGNAME = 'pditclogger.log';
 var WEIRDSTRING = '1234567890__________________________¿?=)(/&%$·"!!"·$%&/()=?Hello World¿?=)(/&%$·"!!"·$%&/()=';
 
-var timeout = 200;
+var timeout = 500;
 var timeoutDescribe = 2000;
 
 //verbose mode
@@ -20,18 +20,16 @@ var vm = false;
 
 var swapLoggerOnce = function(callback){
   var oldLogger = console.log;
+  var received = "";
 
 
   var endOnNoLog = setTimeout(function(){  //Waits until some log is witten. If not, returns. Usefull when no log is written at all.
     console.log = oldLogger;
-    callback(null);
+    callback(received);
   }, timeout);
 
   console.log = function(){
-    var received = Array.prototype.slice.call(arguments);
-    console.log = oldLogger; //returns to the actual logger
-    clearTimeout(endOnNoLog); //prevents setTimeout callback.
-    callback(received[0]);
+    received += Array.prototype.slice.call(arguments)[0];
   }
 
 }
@@ -70,7 +68,7 @@ function _invalidScenario(data){
       var fd = fs.openSync(LOGNAME, 'w+');
       swapLoggerOnce(function(logConsole){
 	      if(vm){console.log(logConsole);}
-        should.not.exist(logConsole); //Waits for a log and expect it to be empty
+        logConsole.should.not.include(data.expected); //Waits for a log and expect it to be empty
         checked++;
         if(checked == 2){
           done();
@@ -80,7 +78,7 @@ function _invalidScenario(data){
 
       setTimeout(function(){
         var read = fs.readFileSync(LOGNAME, 'utf8');
-        read.should.be.equal('');  //Reads the file and expect it to be empty
+        read.should.not.include(data.expected);
         checked++;
         if(checked == 2){
           done();
@@ -209,6 +207,7 @@ describe('Component Test: Logs ', function () {
     var test =
 	    {
 	      log : logger.warn.bind(null, 'Test', {op: 'CONSUME'}),
+        expected : "| lvl=WARN | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
 	      name : "Case 1 Should not log warning with an error log level"
 	    }
     _invalidScenario(test);
@@ -232,6 +231,7 @@ describe('Component Test: Logs ', function () {
     var test =
 	    {
 	      log : logger.info.bind(null, 'Test', {op: 'CONSUME'}),
+        expected : "| lvl=INFO | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
 	      name : "Case 3 Should not log info with a warning log level"
 	    }
     _invalidScenario(test);
@@ -256,6 +256,7 @@ describe('Component Test: Logs ', function () {
     var test =
 	    {
 	      log : logger.debug.bind(null, 'Test', {op: 'CONSUME'}),
+        expected : "| lvl=DEBUG | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
 	      name : "Case 5 Should not log debug with an info log level"
 	    }
     _invalidScenario(test);
@@ -279,6 +280,7 @@ describe('Component Test: Logs ', function () {
 	  var test =
 	  {
 		  log : logger.debug.bind(null, 'Test', {op: 'CONSUME'}),
+      expected : "| lvl=DEBUG | op=test1 | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
 		  name : "Case 7 Should not log with a no defined log level"
 	  }
 	  _invalidScenario(test);
@@ -336,6 +338,7 @@ describe('Component Test: Logs ', function () {
 	  var test =
 	  {
 		  log : logger.debug.bind(null, 'Test', {op: 'CONSUME'}),
+      expected : "| lvl=DEBUG | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
 		  name : "Case 11 Should not log debug with an empty log level"
 	  }
 	  _invalidScenario(test);
@@ -358,6 +361,7 @@ describe('Component Test: Logs ', function () {
 	  var test =
 	  {
 		  log : logger.debug.bind(null, 'Test', {op: 'CONSUME'}),
+      expected : "| lvl=DEBUG | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
 		  name : "Case 13 Should not log with an Invalid log level"
 	  }
 	  _invalidScenario(test);
@@ -380,6 +384,7 @@ describe('Component Test: Logs ', function () {
     var test =
       {
         log : logger.warn.bind(null, WEIRDSTRING, {op: '', correlator : '', transid : '', component : ''}),
+        expected : "| lvl=WARN | op=N/A | msg=" + WEIRDSTRING +" | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=N/A",
         name : "Case 15 Should not log warning with an error log level and extrange characters in msg"
       }
     _invalidScenario(test);
@@ -403,6 +408,7 @@ describe('Component Test: Logs ', function () {
     var test =
       {
         log : logger.info.bind(null, '', {op: WEIRDSTRING, correlator : '', transid : '', component : ''}),
+        expected : "| lvl=INFO | op=" + WEIRDSTRING + " | msg=N/A | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=N/A",
         name : "Case 17 Should not log info with a warning log level and extrange characters in op"
       }
     _invalidScenario(test);
@@ -427,6 +433,7 @@ describe('Component Test: Logs ', function () {
     var test =
       {
         log : logger.debug.bind(null, WEIRDSTRING, {op: WEIRDSTRING, correlator : WEIRDSTRING, transid : WEIRDSTRING, component : WEIRDSTRING}),
+        expected : "| lvl=DEBUG | op="+ WEIRDSTRING + " | msg="+ WEIRDSTRING + " | corr="+ WEIRDSTRING + " | trans="+ WEIRDSTRING + " | hostname=" + os.hostname() + " | component=" + WEIRDSTRING,
         name : "Case 19 Should not log debug with an info log level and extrange characters in all fields"
       }
     _invalidScenario(test);
