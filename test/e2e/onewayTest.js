@@ -55,13 +55,13 @@ function executeTest(method, content, done) {
 describe('Single Feature: Oneway with HTTP #FOW', function() {
   'use strict';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });

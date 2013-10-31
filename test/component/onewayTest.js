@@ -42,16 +42,16 @@ var ALL_HEADERS = [
   'x-relayer-encoding'
 ];
 
-describe('Component Test: Task queue', function () {
+describe('Component Test: Task queue', function() {
   'use strict';
 
   this.timeout(describeTimeout);
 
-  before(function (done) {
+  before(function(done) {
     listener.start(done);
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(done);
   });
 
@@ -63,44 +63,43 @@ describe('Component Test: Task queue', function () {
   var dataSet = [
       {method: 'GET',
         headers: {},
-        name : 'Case 1 Task should contain OneWay policy #FOW' },
+        name: 'Case 1 Task should contain OneWay policy #FOW' },
       {method: 'GET',
         headers: {'x-relayer-persistence' : 'STATUS'},
-        name : 'Case 2 Task should contain STATUS persistence #FPT'},
+        name: 'Case 2 Task should contain STATUS persistence #FPT'},
       {method: 'GET',
         headers: {'x-relayer-persistence' : 'HEADER'},
-        name :  'Case 3 Task should contain HEADER persistence  #FPT'},
+        name: 'Case 3 Task should contain HEADER persistence  #FPT'},
       {method: 'GET',
         headers: {'x-relayer-persistence' : 'BODY'},
-        name : 'Case 4 Task should contain BODY persistence #FPT'},
+        name: 'Case 4 Task should contain BODY persistence #FPT'},
       {method: 'POST',
         headers: {'x-relayer-httpcallback' : 'http://noname.com'},
-        name :  'Case 5 Task should contain x-relayer-httpcallback atribute #FCB'},
+        name: 'Case 5 Task should contain x-relayer-httpcallback atribute #FCB'},
       {method: 'POST',
         headers: {'x-relayer-httpcallback' : 'http://noname.com', 'x-relayer-httpcallback-error' : 'http://noname.com'},
-        name : 'Case 6 Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error  #FCB'},
+        name: 'Case 6 Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error  #FCB'},
       {method: 'POST',
         headers: {'x-relayer-retry' : '10, 20, 30'},
-        name :  'Case 7 Task should have property x-relayer-retry  #FRT'},
+        name: 'Case 7 Task should have property x-relayer-retry  #FRT'},
       {method: 'PUT',
         headers: {},
-        name :  'Case 8 Task should be stored #FOW'},
+        name: 'Case 8 Task should be stored #FOW'},
       {method: 'PUT',
         headers: {'x-relayer-topic' : 'TEST'},
-        name :  'Case 9 Task should have property x-relayer-topic  #FTID'},
+        name: 'Case 9 Task should have property x-relayer-topic  #FTID'},
       {method: 'PUT',
         headers: {'x-relayer-proxy' : 'proxy.com'},
-        name : 'Case 10 Task should have property x-relayer-proxy  #FPX'},
+        name: 'Case 10 Task should have property x-relayer-proxy  #FPX'},
       {method: 'PUT',
         headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Case 11 Task should have property x-relayer-encoding  #FEN'}
+        name: 'Case 11 Task should have property x-relayer-encoding  #FEN'}
     ];
 
-  function _newScenario(data){
-    return function(){
-      it(data.name + ' /' + data.method + ' #CT', function(done){
-        agent
-          [data.method.toLowerCase()](URL_RUSH)
+  function _newScenario(data) {
+    return function() {
+      it(data.name + ' /' + data.method + ' #CT', function(done) {
+        agent[data.method.toLowerCase()](URL_RUSH)
           .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
           .set(data.headers)
           .end(function(err, res) {
@@ -110,7 +109,7 @@ describe('Component Test: Task queue', function () {
             expect(res.body.id).to.exist;
 
             var transId = res.body.id;
-            rc.lpop(QUEUE, function(err, res){
+            rc.lpop(QUEUE, function(err, res) {
               expect(err).to.not.exist;
 
               var task = JSON.parse(res);
@@ -121,7 +120,7 @@ describe('Component Test: Task queue', function () {
               expect(task.headers).to.have.property('x-relayer-host');
               expect(task.headers['x-relayer-host']).to.equal(ENDPOINT);
 
-              for(var header in data.headers){    //every header in the request must be inside the current task
+              for (var header in data.headers) {    //every header in the request must be inside the current task
                 var head = header.toLowerCase();
                 expect(task.headers).to.have.property(head);
                 expect(task.headers[head]).to.equal(data.headers[head]);
@@ -130,7 +129,7 @@ describe('Component Test: Task queue', function () {
               //headers that aren't in the request
               var shouldNotExist = _.difference(ALL_HEADERS, Object.keys(data.headers));
               //there should not be headers in the task that are not in the request
-              for(var i=0; i < shouldNotExist.length; i++){
+              for (var i = 0; i < shouldNotExist.length; i++) {
                 expect(task.headers).to.not.have.property(shouldNotExist[i]);
               }
               done();
@@ -140,7 +139,7 @@ describe('Component Test: Task queue', function () {
     };
   }
 
-  for(var i=0; i < dataSet.length; i++){
+  for (var i = 0; i < dataSet.length; i++) {
     _newScenario(dataSet[i])();  //Launch every test in data set
   }
 });

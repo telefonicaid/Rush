@@ -16,7 +16,7 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 
   var CONTENT = 'Retry Test',
       APPLICATION_CONTENT = 'application/json',
-      RELAYER_HOST =  config.simpleServerHostname + ':' + config.simpleServerPort,
+      RELAYER_HOST = config.simpleServerHostname + ':' + config.simpleServerPort,
       PERSONAL_HEADER_1_NAME = 'personal-header-1',
       PERSONAL_HEADER_1_VALUE = 'TEST1',
       PERSONAL_HEADER_2_NAME = 'personal-header-2',
@@ -83,13 +83,13 @@ function runTest(retryTimes, petitionCorrect, serverTimes, done) {
 describe('Single Feature: Retry #FRT', function() {
   'use strict';
 
-  before(function (done) {
+  before(function(done) {
     listener.start(function() {
       consumer.start(done);
     });
   });
 
-  after(function (done) {
+  after(function(done) {
     listener.stop(function() {
       consumer.stop(done);
     });
