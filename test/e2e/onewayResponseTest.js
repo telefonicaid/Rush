@@ -234,14 +234,14 @@ describe('Multiple Feature: ONEWAY Response errors #FOW', function() {
   it('Case 16 invalid retry parameter should throw error  #FOW', function(done) {
     var id;
     options.headers['X-Relayer-Host'] = 'notAServer:8014';
-    options.headers['X-Relayer-Retry'] = '5-7,4,8';
+    options.headers['X-Relayer-Retry'] = '5,4,8';
 
     utils.makeRequest(options, 'body request', function(err, res) {
       should.not.exist(err);
       var jsonRes = JSON.parse(res);
       jsonRes.should.have.property('exceptionId', 'SVC0002');
       jsonRes.should.have.property('exceptionText', 'Invalid parameter value: x-relayer-retry');
-      jsonRes.should.have.property('userMessage', 'Invalid retry value: 5-7,4,8');
+      jsonRes.should.have.property('userMessage', 'Invalid retry value: 5,4,8');
 
       done();
     });
