@@ -12,7 +12,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var serversToShutDown = [];
-var timeout = 18000;
+var timeout = 60000;
 var describeTimeout= timeout*10;
 
 //verbose mode

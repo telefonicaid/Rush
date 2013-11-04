@@ -10,6 +10,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var serversToShutDown = [];
+var describeTimeout = 60000;
 
 function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   'use strict';
@@ -168,7 +169,7 @@ describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
 
   it('Case 1 The last retry will work #FRT', function(done) {
 
-    this.timeout(15000);
+    this.timeout(describeTimeout);
 
     var retryTimes = 3,
         petitionCorrect = retryTimes + 1,
@@ -179,7 +180,7 @@ describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
 
   it('Case 2 The second retry will work #FRT', function(done) {
 
-    this.timeout(15000);
+    this.timeout(describeTimeout);
 
     var retryTimes = 3,
         petitionCorrect = retryTimes,
@@ -190,7 +191,7 @@ describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
 
   it('Case 3 None retry will work #FRT', function(done) {
 
-    this.timeout(15000);
+    this.timeout(describeTimeout);
 
     var retryTimes = 3,
         petitionCorrect = retryTimes + 2,
