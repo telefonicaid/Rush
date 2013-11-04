@@ -2,6 +2,8 @@ var http = require('http');
 var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
+var redis = require('redis');
+var configTest = require('../../lib/configTest.js');
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -12,14 +14,14 @@ var PORT = config.rushServer.port;
 // Verbose MODE
 var vm = false;
 // Time to wait to check the status of the task
-var TIMEOUT = 1000;
-var describeTimeout = 60000;
+var describeTimeout = 80000;
 var QUEUE = 'wrL:hpri'; //Task
-var intval = 10; // interval time
-
+var intval = 200; // interval time
 
 describe('Multiple Feature: Processing Status #FOW', function() {
   'use strict';
+
+  this.timeout(describeTimeout);
 
   var serversToShutDown = [];
 
@@ -46,7 +48,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     });
   });
 
-	it('Case 1 Should return the processing state when the task is been processed (QUEUED/PROCESSING/COMPLETED) #FRT ', function(done) {
+	it('Case 1 Should return the retrying state when the task fail the first attemtp (QUEUED/PROCESSING/TRYING) #FRT ', function(done) {
 
 		var optionsRelay = {};
 		var HEADER_NAME = 'test-header', HEADER_VALUE = 'test header 1', PATH = '/testa/testb/testc?a=b&c=d',
@@ -60,6 +62,8 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 		optionsRelay.headers['content-type'] = 'application/json';
 		optionsRelay.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
 		optionsRelay.headers['X-relayer-persistence'] = 'BODY';
+		optionsRelay.headers['X-relayer-retry'] = '3';
+
 		optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
 		//RELAY REQUEST
@@ -71,6 +75,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
 			var optionsRetrieve = { port: PORT, host: HOST, path: '/response/' + id, method: 'GET'};
 
+			var checked = false;
 			//First attempt: Get STATUS === QUEUED
 			//Consumer has not been started yet
 			utils.makeRequest(optionsRetrieve, null, function (err, data, res) {
@@ -92,8 +97,9 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 						content += chunk;
 					});
 
-					req.on('end', function() {
+					var interval;
 
+					req.on('end', function() {
 						//Second attempt: Get STATUS === PROCESSING
 						//Consumer and server have been started but server hasn't sent the response
 						utils.makeRequest(optionsRetrieve, null, function (err, data, resRetrieve) {
@@ -106,35 +112,28 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 							if(vm){console.log(data);}
 							JSONRes.should.have.property('id', id);
 
-							res.writeHead(200, headers);
+							res.writeHead(500, headers);
 							res.end(content);
 
 							//Third attempt: Get STATUS === COMPLETED
 							//Consumer and server have been started and server has sent the response.
 							//Interval is needed because redis can take time to store the new state.
-							var checked;
-							var interval = setInterval(function() {
 
-								function checkResponse(err, data, res) {
+						  function checkResponse(err, data, res) {
 
 									var JSONres = JSON.parse(data);
 									if(vm){console.log(data);}
-									if (!checked && res.statusCode !== 404 && JSONres.state === 'completed') {
+									if (!checked && res.statusCode !== 404 && JSONres.state === 'retrying') {
+										checked = true;
 
 										clearInterval(interval);
-
 										JSONRes.should.have.property('id', id);
-										JSONres.should.have.property('body', CONTENT);
-										JSONres.body.should.be.equal(content);
-										JSONres.headers.should.have.property(HEADER_NAME, HEADER_VALUE);
-										JSONres.should.have.property('statusCode', '200');
-
-										checked = true;
+										JSONres.should.have.property('state', 'retrying')
 										done();
-
-									}
 								}
+							}
 
+							interval = setInterval(function() {
 								utils.makeRequest(optionsRetrieve, '', checkResponse);
 							}, intval);
 
@@ -163,6 +162,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 		optionsRelay.method = 'POST';
 		optionsRelay.headers['content-type'] = 'application/json';
 		optionsRelay.headers['X-Relayer-Host'] =  'noexiste.com';
+		optionsRelay.headers['X-relayer-retry'] = '1';
 		optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
 		//RELAY REQUEST

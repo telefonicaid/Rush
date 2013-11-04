@@ -25,9 +25,8 @@
     "type": "git",
     "url": "https://mrutid@github.com/mrutid/Rush.git"
   },
-
   "dependencies": {
-    "underscore" : "1.5.1",
+    "underscore": "1.5.1",
     "express": "3.2.4",
     "redis": "0.8.4",
     "node-uuid": "1.4.0",
@@ -53,9 +52,9 @@
     "grunt-cli": "0.1.8",
     "request": "2.21.0",
     "should": "1.2.0",
-    "superagent": "0.14.9"
-
-
+    "superagent": "0.14.9",
+    "grunt-mocha-cov": "0.0.7",
+    "shelljs": "0.2.6"
   },
   "license": "AGPL",
   "engine": {

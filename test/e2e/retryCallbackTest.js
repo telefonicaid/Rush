@@ -10,6 +10,7 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
 var serversToShutDown = [];
+var describeTimeout = 60000;
 
 function runTest(retryTimes, petitionCorrect, serverTimes, done) {
   'use strict';
@@ -168,30 +169,34 @@ describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
 
   it('Case 1 The last retry will work #FRT', function(done) {
 
-    var retryTimes = '1,25,100',
-        petitionCorrect = retryTimes.split(',').length + 1,
-        serverTimes = retryTimes.split(',').length + 1,
-        petitionsReceived = 0;
+    this.timeout(describeTimeout);
+
+    var retryTimes = 3,
+        petitionCorrect = retryTimes + 1,
+        serverTimes = retryTimes + 1;       //Three retries + the initial request
 
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
   it('Case 2 The second retry will work #FRT', function(done) {
 
-    var retryTimes = '1,25,100',
-        petitionCorrect = retryTimes.split(',').length,
-        serverTimes = retryTimes.split(',').length,
-        petitionsReceived = 0;
+    this.timeout(describeTimeout);
+
+    var retryTimes = 3,
+        petitionCorrect = retryTimes,
+        serverTimes = retryTimes;           //Two retries + the initial request
 
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });
 
   it('Case 3 None retry will work #FRT', function(done) {
 
-    var retryTimes = '1,25,100',
-        petitionCorrect = retryTimes.split(',').length + 2,
-        serverTimes = retryTimes.split(',').length + 1,
-        petitionsReceived = 0;
+    this.timeout(describeTimeout);
+
+    var retryTimes = 3,
+        petitionCorrect = retryTimes + 2,
+        serverTimes = retryTimes + 1;       //Three retries + the initial request
+                                            //Server won't be called again even if the last retry fails
 
     runTest(retryTimes, petitionCorrect, serverTimes, done);
   });

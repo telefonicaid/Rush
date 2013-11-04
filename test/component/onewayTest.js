@@ -80,7 +80,7 @@ describe('Component Test: Task queue', function () {
         headers: {'x-relayer-httpcallback' : 'http://noname.com', 'x-relayer-httpcallback-error' : 'http://noname.com'},
         name : 'Case 6 Task should contain x-relayer-httpcallback and x-relayer-httpcallback-error  #FCB'},
       {method: 'POST',
-        headers: {'x-relayer-retry' : '10, 20, 30'},
+        headers: {'x-relayer-retry' : '3'},
         name :  'Case 7 Task should have property x-relayer-retry  #FRT'},
       {method: 'PUT',
         headers: {},
