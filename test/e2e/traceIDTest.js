@@ -3,6 +3,7 @@ var should = require('should');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
+var redis = require('redis');
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -69,7 +70,7 @@ function executeTest(method, body, done) {
             }
           }
           utils.makeRequest(options, '', checkResponse);
-        }, 10);
+        }, 100);
       }
   );
   serversToShutDown.push(simpleServer);
@@ -99,6 +100,12 @@ describe('Single Feature: TraceID #FTID', function() {
       }
     }
     serversToShutDown = [];
+  });
+
+  beforeEach(function(done){
+    var rc = redis.createClient(6379, 'localhost');
+    rc.select(1);
+    rc.flushall(done);
   });
 
 
