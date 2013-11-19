@@ -1,0 +1,11 @@
+.idea
+*.log
+node_modules
+coverage
+report
+*.crt
+*.csr
+*.key
+*.key.org
+*.rdb
+test/acceptance/config.js
