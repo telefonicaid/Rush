@@ -37,7 +37,7 @@ module.exports = function (grunt) {
 		},
 
 		'mocha-hack': {
-      test : {
+            test : {
 				options: {
 					ui: 'bdd',
 					reporter: 'spec',
@@ -62,7 +62,19 @@ module.exports = function (grunt) {
 					'test/component/*Check.js',
 					'test/component/*Test.js'
 				]
-			}
+			},
+            xunit : {
+                options: {
+                    ui: 'bdd',
+                    reporter: 'xunit-file',
+                    ignoreLeaks: true
+                },
+                src: [
+                    'mocha-globals.js',
+                    'test/e2e/*Test.js',
+                    'test/component/*Test.js'
+                ]
+            }
 		},
 
 		exec: {
@@ -104,6 +116,8 @@ module.exports = function (grunt) {
   grunt.loadTasks('tools/tasks');
 
 	grunt.registerTask('test', ['env', 'mocha-hack:test']);
+
+        grunt.registerTask('xunit', ['env', 'mocha-hack:xunit']);
 
 	grunt.registerTask('check', ['env', 'mocha-hack:check']);
 
