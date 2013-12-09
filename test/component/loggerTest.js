@@ -12,6 +12,7 @@ var timeoutDescribe = 2000;
 
 //verbose mode
 var vm = false;
+process.setMaxListeners(0); //avoid MaxListeners warning
 
 /*
 * TODO
