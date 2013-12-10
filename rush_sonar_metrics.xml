@@ -53,7 +53,7 @@
             otherwise its TechDebt will be added twice
     -->
     <jiraProjects>
-        <jiraProject key="TDAFRUSH" component="Rush"/>
+        <jiraProject key="TDAFRUSH" />
     </jiraProjects>
 
     <!--
