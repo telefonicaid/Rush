@@ -4,6 +4,8 @@ var expect = chai.expect;
 var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -150,6 +152,7 @@ describe('Single Feature: Retry #FRT', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function() {
@@ -161,6 +164,10 @@ describe('Single Feature: Retry #FRT', function() {
       }
     }
      serversToShutDown = [];
+  });
+
+  beforeEach(function(){
+    dbUtils.cleanDb();
   });
 
 

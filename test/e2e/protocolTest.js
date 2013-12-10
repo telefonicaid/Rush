@@ -6,6 +6,8 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -53,7 +55,7 @@ function _validScenario(data){
 						.set('x-relayer-persistence','BODY')
 						.set('content-type','application/json')
 						.set(data.headers);
-        
+
         if(data.method === 'POST' || data.method === 'PUT'){
           req = req.send(data.body);
         }
@@ -110,6 +112,7 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
 		listener.stop(function() {
 			consumer.stop(done);
 		});
+    dbUtils.exit();
 	});
 
 	afterEach(function() {
@@ -120,6 +123,10 @@ describe('Single Feature: Protocol '  + '#FPT', function() {
 		}
 		serversToShutDown = [];
 	});
+
+  beforeEach(function(){
+    dbUtils.cleanDb();
+  });
 
 
 	describe('Retrieve request with a valid header policy request using HTTPS ', function () {

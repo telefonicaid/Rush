@@ -7,6 +7,8 @@ var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
 //var server = require('./simpleServer.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -201,6 +203,7 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function() {
@@ -212,7 +215,9 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
     serversToShutDown = [];
   });
 
-
+  beforeEach(function(){
+    dbUtils.cleanDb();
+  });
 
 
   describe('Retrieve request with a valid header policy request using HTTPS ', function () {

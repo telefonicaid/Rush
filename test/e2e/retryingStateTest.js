@@ -4,6 +4,8 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 var redis = require('redis');
 var configTest = require('../../lib/configTest.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -27,6 +29,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
   beforeEach(function (done) {
     serversToShutDown = [];
+    dbUtils.cleanDb();
     listener.start(done);
   });
 
@@ -46,6 +49,10 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+  });
+
+  after(function(){
+  	dbUtils.exit();
   });
 
 	it('Case 1 Should return the retrying state when the task fail the first attemtp (QUEUED/PROCESSING/TRYING) #FRT ', function(done) {

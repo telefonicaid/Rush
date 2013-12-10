@@ -6,6 +6,7 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -252,6 +253,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 		listener.stop(function() {
 			consumer.stop(done);
 		});
+    dbUtils.exit();
 	});
 
 	afterEach(function() {
@@ -262,6 +264,10 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 		}
 		serversToShutDown = [];
 	});
+
+  beforeEach(function(done){
+    dbUtils.cleanDb(done);
+  });
 
 
 	describe('Retrieve request with a valid header policy request using HTTPS #FEH', function () {
@@ -296,7 +302,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
         encodeURIComponent('Accept-Language:')
       ].join(', ')
     };
-		
+
 		var dataSetHTTPS = [
 			{protocol : 'HTTPS', method: 'GET', path: '/', headers: extraHeaders1, body: {},
         name : '1 Should accept the request using ', responseHeaders: responseHeaders1},
@@ -338,7 +344,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
         encodeURIComponent('Accept-Language:es-ES,es;q=0.8')
       ].join(', ')
     };
-		
+
 		var dataSetHTTP = [
       {protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
         name : '1 Should accept the request using ', responseHeaders: responseHeaders},

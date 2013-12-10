@@ -2,6 +2,8 @@ var http = require('http');
 var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -23,7 +25,12 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
   var serversToShutDown = [];
 
+  after(function(){
+  	dbUtils.exit();
+  });
+
   beforeEach(function (done) {
+    dbUtils.cleanDb();
     serversToShutDown = [];
     listener.start(done);
   });

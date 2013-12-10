@@ -36,7 +36,7 @@ module.exports = function (grunt) {
 			}
 		},
 
-		'mocha-hack': {
+		'mocha-proc': {
             test : {
 				options: {
 					ui: 'bdd',
@@ -108,20 +108,20 @@ module.exports = function (grunt) {
 	// These plugins provide necessary tasks.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-mocha-hack');
+  grunt.loadNpmTasks('grunt-mocha-proc');
 	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks('grunt-plato');
   grunt.loadNpmTasks('grunt-env');
 
   grunt.loadTasks('tools/tasks');
 
-	grunt.registerTask('test', ['env', 'mocha-hack:test']);
+	grunt.registerTask('test', ['env', 'mocha-proc:test']);
 
-        grunt.registerTask('xunit', ['env', 'mocha-hack:xunit']);
+        grunt.registerTask('xunit', ['env', 'mocha-proc:xunit']);
 
-	grunt.registerTask('check', ['env', 'mocha-hack:check']);
+	grunt.registerTask('check', ['env', 'mocha-proc:check']);
 
-	grunt.registerTask('testAll', ['env', 'mocha-hack:check']);
+	grunt.registerTask('testAll', ['env', 'mocha-proc:check']);
 
 	grunt.registerTask('init-dev-env', ['hook:pre-commit']);
 

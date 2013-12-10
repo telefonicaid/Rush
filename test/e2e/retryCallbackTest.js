@@ -2,6 +2,8 @@ var http = require('http');
 var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');
@@ -153,6 +155,7 @@ describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function() {
@@ -165,6 +168,10 @@ describe('Multiple Feature: Retry and Callback #FRT #FCB', function() {
     }
 
     serversToShutDown = [];
+  });
+
+  beforeEach(function(){
+    dbUtils.cleanDb();
   });
 
   it('Case 1 The last retry will work #FRT', function(done) {

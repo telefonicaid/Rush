@@ -6,6 +6,8 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var fs = require('fs');
 var os = require('os');
@@ -146,13 +148,16 @@ describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
-  beforeEach(function (){
+  beforeEach(function (done){
     fdLLog = fs.openSync(log, 'w+');
+    dbUtils.cleanDb(done);
   });
 
   afterEach(function() {
+    dbUtils.cleanDb();
     fs.closeSync(fdLLog);
 
     for (var i = 0; i < serversToShutDown.length; i++) {

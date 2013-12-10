@@ -6,6 +6,7 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
 
 var consumer = require('../../lib/consumer.js');
 var listener = require('../../lib/listener.js');

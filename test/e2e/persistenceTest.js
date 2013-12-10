@@ -3,6 +3,8 @@ var should = require('should');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var serversToShutDown = [];
 
@@ -108,6 +110,7 @@ describe('Single Feature: Persistence #FPE', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function() {
@@ -120,6 +123,10 @@ describe('Single Feature: Persistence #FPE', function() {
     }
 
     serversToShutDown = [];
+  });
+
+  beforeEach(function(done){
+    dbUtils.cleanDb(done);
   });
 
 
