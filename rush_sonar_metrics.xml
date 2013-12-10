@@ -16,34 +16,13 @@
         Sum is the summatory of the given metric of all the components 
     -->
     <metrics>
-        <suspect_lcom4_density value="x">
-            <rationale>Not yet automated</rationale> <!-- Average only when available -->
-        </suspect_lcom4_density>
-        <duplicated_lines_density value="x"> <!-- Average -->
-            <rationale>Not yet automated</rationale>
-        </duplicated_lines_density>
-        <ncloc value="x"> <!-- SUM  -->
-            <rationale>Not yet automated</rationale>
-        </ncloc>
-        <coverage value="x"> <!-- Average -->
-            <rationale>Not yet automated</rationale>
-        </coverage>
-        <techDebtStoryPoints must="0" should="0" niceToHave="0"> <!-- SUM -->
-            <rationale>Technical Debt not yet in Jira</rationale>
-        </techDebtStoryPoints>
-        <techDebtManMonths must="0" should="0" niceToHave="0"> <!-- SUM -->
-            <rationale>Technical Debt not yet in Jira</rationale>
-        </techDebtManMonths>
-        <scm_adoption value="x">
-            <rationale>Defined to be manual</rationale>
-        </scm_adoption>
-        <coding_style_guidelines_adoption value="x"> <!-- Average -->
+        <coding_style_guidelines_adoption value="100"> <!-- Average -->
             <rationale>Not yet automated</rationale>
         </coding_style_guidelines_adoption>
-        <tech_plan_adoption value="x">
+        <tech_plan_adoption value="full">
             <rationale>Defined to be manual</rationale>
         </tech_plan_adoption>
-        <process_dev_maturity value="x">
+        <process_dev_maturity value="consolidated">
             <rationale>Definition does not work for us</rationale>
         </process_dev_maturity>
     </metrics>        
