@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    name and release of the product as specified in
+    https://pdihub.hi.inet/DEV/tdigital-metrics/blob/develop/metrics-docs/src/site/markdown/pdi-infomanagement.md
+    release-notes-urlbase: URL where release notes are published
+-->
+<product name="rush" release="1.0" release-notes-urlbase="https://raw.github.com/telefonicaid/Rush/master/README.md">
+    <!-- Use generalComment for general issues or comments -->
+    <generalComment>Some comment</generalComment>
+
+    <!-- @DEPRECATED
+        Metrics results defined by DLM while integration with sonar, jira & pdihub is not developed 
+        Once integration is done, we use it to overload calculated metrics (with rationale)
+        When an average is calculated it is done using ncloc and weight of all of its componets, i.e.
+            Average(x) = SUM[1:N] (x_n * ncloc_n * weight_n) / (SUM[1:N](ncloc_n * weight_n))
+        Sum is the summatory of the given metric of all the components 
+    -->
+    <metrics>
+        <coding_style_guidelines_adoption value="100"> <!-- Average -->
+            <rationale>Not yet automated</rationale>
+        </coding_style_guidelines_adoption>
+        <tech_plan_adoption value="full">
+            <rationale>Defined to be manual</rationale>
+        </tech_plan_adoption>
+        <process_dev_maturity value="consolidated">
+            <rationale>Definition does not work for us</rationale>
+        </process_dev_maturity>
+    </metrics>        
+
+    <!-- This is a list of the SCMs used in this product, usually a list of organizations in pdihub -->
+    <scms>
+        <scm type="git" urlbase="https://github.com/telefonicaid/Rush" />
+    </scms>
+
+    <!-- This is a list of the CI machines used in this product, usually a list of jenkins URLs -->
+    <ci-servers>
+        <ci type="jenkins" urlbase="http://ci-tdafrush-01.hi.inet/jenkins/"/>
+    </ci-servers>
+
+    <!--
+        Team info; used to calculate technical debt in man months, as defined in:
+        https://colabora.tid.es/kbportal/PLCwiki/Guidelines/Common/Software%20Metrics/Technical%20Debt.aspx
+        techDebtEstimationMethod: man-month or Story Points
+    -->
+    <team velocity="30" devs="3" members="5" techDebtEstimationMethod="man-month"/>
+        
+    <!--
+        We use it to calculate TechDebt
+        We can define jira project at:
+            Product Level: We use the same jira overall product
+            Componente Level: Each component has its own jira project.
+            ATTENTION: Do not specify a Jira Project more than once (for example, at product level and component level),
+            otherwise its TechDebt will be added twice
+    -->
+    <jiraProjects>
+        <jiraProject key="TDAFRUSH" />
+    </jiraProjects>
+
+    <!--
+        We can define usefull information about the project documentation. It can be technical, management or whatever documentation
+    -->
+    <documentation>
+        <doc category="wiki">https://github.com/telefonicaid/Rush/wiki</doc>
+    </documentation>
+    
+    <components>
+        <!-- 
+            Name: Name of the component
+            Type (according to Technology Plan): Mobile, Desktop, Web, Server Side, Core
+            Language: Java, Python, JavaScript, C#, Objective-C, C++
+            scan: yes (metrics are calculated) or no (apply when third parties, or common components); default value is yes
+            outsorced: When yes, metrics are not calculated; default value is no
+            Weight [0..1]: The weight of this component to the overall product. 
+             - 0 means that this component doesn't contribute to the product metric
+             - Default value is 1
+        -->
+        <component name="rush" type="Server Side" language="node.js" scan="yes" outsorced="no">
+            <sonar urlbase="http://ci-tdafrush-01.hi.inet/sonar/" key="com.tdigital.rush" />
+        </component>
+    </components>
+</product>
