@@ -7,8 +7,8 @@ var configTest = require('../../lib/configTest.js');
 var dbUtils = require('../dbUtils.js');
 
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -27,10 +27,8 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 
   var serversToShutDown = [];
 
-  beforeEach(function (done) {
-    serversToShutDown = [];
-    dbUtils.cleanDb();
-    listener.start(done);
+  before(function(done){
+  	listener.start(done);
   });
 
   afterEach(function (done) {
@@ -45,14 +43,13 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     }
 
     serversToShutDown = [];
+    dbUtils.exit();
+    done();
 
-    listener.stop(function() {
-      consumer.stop(done);
-    });
   });
 
-  after(function(){
-  	dbUtils.exit();
+  after(function(done){
+  	listener.stop(done);
   });
 
 	it('Case 1 Should return the retrying state when the task fail the first attemtp (QUEUED/PROCESSING/TRYING) #FRT ', function(done) {
@@ -136,7 +133,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 										clearInterval(interval);
 										JSONRes.should.have.property('id', id);
 										JSONres.should.have.property('state', 'retrying')
-										done();
+										consumer.stop(done);
 								}
 							}
 

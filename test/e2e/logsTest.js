@@ -13,8 +13,8 @@ var fs = require('fs');
 var os = require('os');
 var util = require('util');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;
@@ -157,7 +157,6 @@ describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
   });
 
   afterEach(function() {
-    dbUtils.cleanDb();
     fs.closeSync(fdLLog);
 
     for (var i = 0; i < serversToShutDown.length; i++) {

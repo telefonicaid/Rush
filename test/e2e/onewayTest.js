@@ -7,8 +7,8 @@ var dbUtils = require('../dbUtils.js');
 
 
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;

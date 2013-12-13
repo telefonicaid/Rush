@@ -8,8 +8,8 @@ var async = require('async');
 var server = require('./advancedServer.js');
 var dbUtils = require('../dbUtils.js');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 // Verbose MODE
 var vm = false;

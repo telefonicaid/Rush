@@ -12,8 +12,8 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
 
-var listener = require('../../lib/listener.js');
-var consumer = require('../../lib/consumer.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
@@ -122,7 +122,7 @@ describe('Component Test: Task queue', function () {
 
   beforeEach(function(done){
     setTimeout(done, 5000);
-  })
+  });
 
   var dataSet = [
     {name : "Scenario 1: Should move the transaction between buckets with 1 tansaction", numTrans : 1},

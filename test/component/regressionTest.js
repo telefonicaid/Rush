@@ -9,8 +9,8 @@ var config = require('./config.js');
 var redis = require('redis');
 
 var expect = chai.expect;
-var listener = require('../../lib/listener.js');
-var consumer = require('../../lib/consumer.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;

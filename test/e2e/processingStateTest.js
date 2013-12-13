@@ -5,8 +5,8 @@ var utils = require('./utils.js');
 var dbUtils = require('../dbUtils.js');
 
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -17,22 +17,18 @@ var vm = false;
 var TIMEOUT = 1000;
 var describeTimeout = 60000;
 var QUEUE = 'wrL:hpri'; //Task
-var intval = 10; // interval time
+var intval = 100; // interval time
 
 
 describe('Multiple Feature: Processing Status #FOW', function() {
   'use strict';
 
+  this.timeout(6000);
+
   var serversToShutDown = [];
 
-  after(function(){
-  	dbUtils.exit();
-  });
-
-  beforeEach(function (done) {
-    dbUtils.cleanDb();
-    serversToShutDown = [];
-    listener.start(done);
+  before(function(done){
+  	listener.start(done);
   });
 
   afterEach(function (done) {
@@ -47,10 +43,13 @@ describe('Multiple Feature: Processing Status #FOW', function() {
     }
 
     serversToShutDown = [];
+    dbUtils.exit();
+    done();
 
-    listener.stop(function() {
-      consumer.stop(done);
-    });
+  });
+
+  after(function(done){
+  	listener.stop(done);
   });
 
 	it('Case 1 Should return the processing state when the task is been processed (QUEUED/PROCESSING/COMPLETED) #FRT ', function(done) {
@@ -137,7 +136,7 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 										JSONres.should.have.property('statusCode', '200');
 
 										checked = true;
-										done();
+										consumer.stop(done);
 
 									}
 								}
@@ -173,28 +172,29 @@ describe('Multiple Feature: Processing Status #FOW', function() {
 		optionsRelay.headers[HEADER_NAME] = HEADER_VALUE;
 
 		//RELAY REQUEST
-		utils.makeRequest(optionsRelay, CONTENT, function(err, res) {
+		consumer.start(function(){
+			utils.makeRequest(optionsRelay, CONTENT, function(err, res) {
 
-			//GET ID
-			should.not.exist(err);
-			var id = JSON.parse(res).id;
-
-			var optionsRetrieve = { port: PORT, host: HOST, path: '/response/' + id, method: 'GET'};
-
-			//404 ERROR because X-Relayer-Persistence was not defined when the relay request was sent
-			utils.makeRequest(optionsRetrieve, null, function (err, data, res) {
-
+				//GET ID
 				should.not.exist(err);
-				//res.should.have.property('statusCode', 404);
+				var id = JSON.parse(res).id;
 
-				var JSONres = JSON.parse(data);
-				if(vm){console.log(data);}
-				JSONres.should.have.property('exceptionId','SVC1006');
-				JSONres.should.have.property('exceptionText', 'Resource ' + id + ' does not exist');
+				var optionsRetrieve = { port: PORT, host: HOST, path: '/response/' + id, method: 'GET'};
 
-				//Consumer should be started to remove the task from the queue
-				done();
+				//404 ERROR because X-Relayer-Persistence was not defined when the relay request was sent
+				utils.makeRequest(optionsRetrieve, null, function (err, data, res) {
 
+					should.not.exist(err);
+					//res.should.have.property('statusCode', 404);
+
+					var JSONres = JSON.parse(data);
+					if(vm){console.log(data);}
+					JSONres.should.have.property('exceptionId','SVC1006');
+					JSONres.should.have.property('exceptionText', 'Resource ' + id + ' does not exist');
+
+					//Consumer should be started to remove the task from the queue
+					consumer.stop(done);
+				});
 			});
 		});
 	});

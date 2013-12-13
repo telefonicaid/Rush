@@ -13,8 +13,8 @@ var server = require('./simpleServer.js');
 
 var dbUtils = require('../dbUtils.js');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = require('../consumerLauncher.js');
+var listener = require('../listenerLauncher.js');
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;

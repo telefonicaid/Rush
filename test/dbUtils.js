@@ -4,9 +4,9 @@ rc.select(1);
 
 exports.cleanDb = function(done){
 
-  rc.flushall(function(err, res){
-    if (done) done();
-  });
+  rc.flushall();
+  if (done) done();
+
 }
 
 exports.exit = function(){
