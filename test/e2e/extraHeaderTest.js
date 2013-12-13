@@ -409,7 +409,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 			{protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
 				name : '3 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders},
-			{protocol : 'http', method: 'DELETE', path: '/', headers:extraHeaders, body: {},
+			{protocol : 'http', method: 'GET', path: '/', headers:extraHeaders, body: {},
 				name : '4 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'GET', path: '/', headers: extraHeaders2, body: {},
@@ -421,7 +421,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 			{protocol : 'https', method: 'PUT', path: '/', headers: extraHeaders2, body: {},
 				name : '7 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders},
-			{protocol : 'https', method: 'DELETE', path: '/', headers:extraHeaders2, body: {},
+			{protocol : 'https', method: 'GET', path: '/', headers:extraHeaders2, body: {},
 				name : '8 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders}
 		];

@@ -81,7 +81,7 @@ function _validScenario(data, i){
         .set('x-relayer-persistence','BODY')
         .set('Authorization', TOKEN)
         .set(data.headers)
-        .send({})
+        //.send({})
         .auth(USER,Pass)
         .end(function(err, res) {
           if (vm2) {console.log(res);}
