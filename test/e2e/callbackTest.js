@@ -187,7 +187,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Callback has to be called even ' +
       'if the Host is incorrect', function() {
-    it.skip('Case 1 Should receive a callback with an error #FCB', function(done) {
+    it('Case 1 Should receive a callback with an error #FCB', function(done) {
 
       var portCallBack = config.callBackPort,
           serverCallback,

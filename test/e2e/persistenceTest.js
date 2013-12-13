@@ -158,7 +158,7 @@ describe('Single Feature: Persistence #FPE', function() {
     executeTest('POST', 'Body Example', 'STATUS', done);
   });
 
-  it.skip('Case 6 should return error headers (ENOTFOUND) OR (EADDRINFO)  #FPE ', function(done) {
+  it('Case 6 should return error headers (ENOTFOUND) OR (EADDRINFO)  #FPE ', function(done) {
     var id, options = {};
     options.host = HOST;
     options.port = PORT;
