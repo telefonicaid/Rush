@@ -77,11 +77,11 @@ function _validScenario(data, i){
     var agent = superagent.agent();
     agent
         [data.method.toLowerCase()](RUSHENDPOINT )
-        .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
+		    .set(data.headers)
+		    .set('x-relayer-host', ENDPOINT)  //Always the same endpoint
         .set('x-relayer-persistence','BODY')
         .set('Authorization', TOKEN)
-        .set(data.headers)
-        .send({})
+        //.send({})
         .auth(USER,Pass)
         .end(function(err, res) {
           if (vm2) {console.log(res);}
@@ -109,6 +109,7 @@ function _validScenario(data, i){
                     res2.text.should.not.include('exception');
                   }
                   if (data.headers['x-relayer-traceid']) {
+	                  if (vm2) {console.log(res2.body['traceID']);}
                     res2.body['traceID'].should.eql('TEST');
                   }
                   done();
@@ -703,10 +704,11 @@ describe('ACCEPTANCE TESTS: EXTERNAL VALID SCENARIOS [AWS]', function () {
         name :  'Retry: Should accept the request and retrieve the completed task '},
       {method: 'OPTIONS', headers: {'x-relayer-proxy' : 'proxy.com'},
         name :  'Proxy: Should accept the request and retrieve the completed task '},
+	    {method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST'},
+		    name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '},
       {method: 'OPTIONS', headers: {'x-relayer-encoding' : 'base64'},
-        name :  'Encoding: Should accept the request and retrieve the completed task '},
-      {method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST'},
-        name :  'TRACEID: Should accept the request and retrieve the traceid and the completed task '}
+        name :  'Encoding: Should accept the request and retrieve the completed task '}
+
       //{method: 'OPTIONS', headers: {'x-relayer-traceid' : 'TEST2'},
       //  name :  'TO DO: CHECK why the last test is not validated... '}
     ];

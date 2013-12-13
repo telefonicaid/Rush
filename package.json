@@ -34,7 +34,8 @@
     "mongodb": "1.3.11",
     "hooker": "0.2.3",
     "stack-parser": "0.0.1",
-    "performanceFramework": "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master"
+    "performanceFramework": "https://github.com/PDI-DGS-Protolab/performanceFramework/tarball/master",
+	  "node-next-agent": "https://pdihub.hi.inet/javier/node-next-agent/tarball/develop"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.5.3",
