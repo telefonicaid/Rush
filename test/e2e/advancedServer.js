@@ -60,6 +60,7 @@ var serverListener = function(portProtocol, responseParameters, connectedCallbac
   srv.listen(portProtocol.port, connectedCallback);
 
   srv.on('error', function(err) {
+    console.log("ERROR");
     if(dataCallback){
       dataCallback(null);
     }

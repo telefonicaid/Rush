@@ -1,7 +1,7 @@
 var http = require('http');
 var config = require('./config');
 
-var serverListener = function(connectedCallback, dataCallback) {
+var serverListener = function(connectedCallback, dataCallback, port) {
   'use strict';
 
   var srv = http.createServer(function(req, res) {
@@ -28,7 +28,7 @@ var serverListener = function(connectedCallback, dataCallback) {
     //srv.on('close', function () {
     //    console.log('Server closed...');
     //});
-  }).listen(config.simpleServerPort, connectedCallback);
+  }).listen(port || config.simpleServerPort, connectedCallback);
 
   return srv;
 

@@ -6,13 +6,16 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
+
 
 var fs = require('fs');
 var os = require('os');
 var util = require('util');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;
@@ -146,10 +149,12 @@ describe('Multiple Feature: LOGs Checks '  + '#LOGS', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
-  beforeEach(function (){
+  beforeEach(function (done){
     fdLLog = fs.openSync(log, 'w+');
+    dbUtils.cleanDb(done);
   });
 
   afterEach(function() {

@@ -12,6 +12,7 @@ var timeoutDescribe = 2000;
 
 //verbose mode
 var vm = false;
+process.setMaxListeners(0); //avoid MaxListeners warning
 
 /*
 * TODO
@@ -67,7 +68,6 @@ function _invalidScenario(data){
 
       var fd = fs.openSync(LOGNAME, 'w+');
       swapLoggerOnce(function(logConsole){
-	      if(vm){console.log(logConsole);}
         logConsole.should.not.include(data.expected); //Waits for a log and expect it to be empty
         checked++;
         if(checked == 2){
@@ -75,7 +75,7 @@ function _invalidScenario(data){
         }
       });
       fs.closeSync(fd);
-
+      data.log();
       setTimeout(function(){
         var read = fs.readFileSync(LOGNAME, 'utf8');
         read.should.not.include(data.expected);
@@ -96,7 +96,7 @@ describe('Component Test: Logs ', function () {
 
     var config = {
 
-      loglevel : 'debug',
+      enableForceLog : true,
 
       Console: {
         level : 'debug',
@@ -339,9 +339,9 @@ describe('Component Test: Logs ', function () {
 	  {
 		  log : logger.debug.bind(null, 'Test', {op: 'CONSUME'}),
       expected : "| lvl=DEBUG | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
-		  name : "Case 11 Should not log debug with an empty log level"
+		  name : "Case 11 Should log debug with an empty log level"
 	  }
-	  _invalidScenario(test);
+	  _validScenario(test);
 	  test =
 	  {
 		  log : logger.debug.bind(null, 'Test', {op: 'CONSUME', force : true}),
@@ -478,6 +478,78 @@ describe('Component Test: Logs ', function () {
       }
     _validScenario(test);
 
+  });
+
+describe('Set enableForceLog to false', function(){
+
+    var log = require('../../lib/logger/logger');
+
+    var config = {
+      enableForceLog : false,
+      Console: {level : 'error'},
+      File: {level : 'error'}
+    }
+    log.setConfig(config);
+    var logger = log.newLogger();
+    logger.prefix = path.basename(module.filename, '.js');
+    var test =
+      {
+        log : logger.warn.bind(null, 'Test', {op: 'CONSUME', force : true}),
+        expected : "| lvl=WARN | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
+        name : "Case 1 Should not log warning with an error log level even if force is set to true (enableForceLog false)"
+      }
+    _invalidScenario(test);
+
+    var config =
+    {
+      enableForceLog : false,
+      Console: {level : 'warning'},
+      File: {level : 'warning'}
+    }
+    log.setConfig(config);
+    var logger = log.newLogger();
+    logger.prefix = path.basename(module.filename, '.js');
+    var test =
+      {
+        log : logger.info.bind(null, 'Test', {op: 'CONSUME', force : true}),
+        expected : "| lvl=INFO | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
+        name : "Case 2 Should not log info with a warning log level even if force is set to true (enableForceLog false)"
+      }
+    _invalidScenario(test);
+
+    var config =
+      {
+        enableForceLog : false,
+        Console: {level : 'info'},
+        File: {level : 'info'}
+      }
+    log.setConfig(config);
+    var logger = log.newLogger();
+    logger.prefix = path.basename(module.filename, '.js');
+    var test =
+      {
+        log : logger.debug.bind(null, 'Test', {op: 'CONSUME', force : true}),
+        expected : "| lvl=DEBUG | op=CONSUME | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
+        name : "Case 3 Should not log debug with an info log level even if force is set to true (enableForceLog false)"
+      }
+    _invalidScenario(test);
+
+    var config =
+    {
+      enableForceLog : false,
+      Console: {level : 'test'},
+      File: {level : 'test'}
+    }
+    log.setConfig(config);
+    var logger = log.newLogger();
+    logger.prefix = path.basename(module.filename, '.js');
+    var test =
+    {
+      log : logger.debug.bind(null, 'Test', {op: 'test1', force : true}),
+      expected : "| lvl=DEBUG | op=test1 | msg=Test | corr=N/A | trans=N/A | hostname=" + os.hostname() + " | component=loggerTest",
+      name : "Case 4 Should not log with a non defined log level even if force is set to true (enableForceLog false)"
+    }
+    _invalidScenario(test);
   });
 
 });

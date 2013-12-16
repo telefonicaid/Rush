@@ -6,9 +6,11 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;
@@ -36,7 +38,7 @@ var serversToShutDown = [];
 
 function _validScenario(data){
   'use strict';
-	it.skip('Case ' + data.name +  ' #FHA', function(done){
+	it('Case ' + data.name +  ' #FHA', function(done){
 		var agent = superagent.agent();
 		var id;
     if (vm) {
@@ -48,7 +50,7 @@ function _validScenario(data){
 
 function _invalidScenario(data){
   'use strict';
-	it.skip('Case ' + data.name +  ' #FHA', function(done){
+	it('Case ' + data.name +  ' #FHA', function(done){
 		var agent = superagent.agent();
 		var id;
     if (vm) {

@@ -6,9 +6,11 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 // Verbose MODE
 var vm = false;
@@ -252,6 +254,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 		listener.stop(function() {
 			consumer.stop(done);
 		});
+    dbUtils.exit();
 	});
 
 	afterEach(function() {
@@ -262,6 +265,10 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 		}
 		serversToShutDown = [];
 	});
+
+  beforeEach(function(done){
+    dbUtils.cleanDb(done);
+  });
 
 
 	describe('Retrieve request with a valid header policy request using HTTPS #FEH', function () {
@@ -296,7 +303,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
         encodeURIComponent('Accept-Language:')
       ].join(', ')
     };
-		
+
 		var dataSetHTTPS = [
 			{protocol : 'HTTPS', method: 'GET', path: '/', headers: extraHeaders1, body: {},
         name : '1 Should accept the request using ', responseHeaders: responseHeaders1},
@@ -338,7 +345,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
         encodeURIComponent('Accept-Language:es-ES,es;q=0.8')
       ].join(', ')
     };
-		
+
 		var dataSetHTTP = [
       {protocol : 'http', method: 'GET', path: '/', headers: extraHeaders, body: {},
         name : '1 Should accept the request using ', responseHeaders: responseHeaders},
@@ -403,7 +410,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 			{protocol : 'http', method: 'PUT', path: '/', headers: extraHeaders, body: {},
 				name : '3 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders},
-			{protocol : 'http', method: 'DELETE', path: '/', headers:extraHeaders, body: {},
+			{protocol : 'http', method: 'GET', path: '/', headers:extraHeaders, body: {},
 				name : '4 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders},
 			{protocol : 'https', method: 'GET', path: '/', headers: extraHeaders2, body: {},
@@ -415,7 +422,7 @@ describe('Single Feature: Extra header '  + '#FEH', function() {
 			{protocol : 'https', method: 'PUT', path: '/', headers: extraHeaders2, body: {},
 				name : '7 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders},
-			{protocol : 'https', method: 'DELETE', path: '/', headers:extraHeaders2, body: {},
+			{protocol : 'https', method: 'GET', path: '/', headers:extraHeaders2, body: {},
 				name : '8 Should sent the extra header without filter it as a valid extra header ',
         responseHeaders: responseHeaders}
 		];

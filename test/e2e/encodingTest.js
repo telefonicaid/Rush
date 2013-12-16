@@ -11,8 +11,11 @@ var _ = require('underscore');
 var async = require('async');
 var server = require('./simpleServer.js');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
+
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;
@@ -81,7 +84,7 @@ function _invalidScenario(data){
 
 describe('Single Feature: Encoding #FEN', function() {
   'use strict';
-	 this.timeout(describeTimeout);
+	this.timeout(describeTimeout);
 
 	var serversToShutDown = [];
   var simpleserver, petitionID;
@@ -97,7 +100,12 @@ describe('Single Feature: Encoding #FEN', function() {
 		listener.stop(function() {
 			consumer.stop(done);
 		});
+    dbUtils.exit();
 	});
+
+  beforeEach(function(){
+    dbUtils.cleanDb();
+  });
 
 	afterEach(function() {
 		for (var i = 0; i < serversToShutDown.length; i++) {

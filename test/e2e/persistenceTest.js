@@ -3,11 +3,14 @@ var should = require('should');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
+
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var serversToShutDown = [];
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -108,6 +111,7 @@ describe('Single Feature: Persistence #FPE', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function() {
@@ -120,6 +124,10 @@ describe('Single Feature: Persistence #FPE', function() {
     }
 
     serversToShutDown = [];
+  });
+
+  beforeEach(function(done){
+    dbUtils.cleanDb(done);
   });
 
 
