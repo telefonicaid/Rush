@@ -26,7 +26,3 @@ process.on('message', function(message){
       });
   }
 });
-
-process.on('exit', function(){
-  console.log("CERRADO");
-})
