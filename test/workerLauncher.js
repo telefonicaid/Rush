@@ -1,21 +1,32 @@
+var globals = require('./launcherGlobals').globals;
 var workerObject;
 
 process.on('message', function(message){
+
   switch(message){
-    case 'consumer' :
+
+    case globals.CONSUMER :
       workerObject = require('../lib/consumer.js');
       break;
-    case 'listener' :
+
+    case globals.LISTENER :
       workerObject = require('../lib/listener.js');
       break;
-    case 'start' :
-      workerObject.start(function(){
-        process.send('STARTOK');
+
+    case globals.START :
+      workerObject.start(function(err){
+        if (!err)
+          process.send(globals.START_OK);
       });
       break;
-    case 'stop' :
+
+    case globals.STOP :
       workerObject.stop(function(){
-        process.send('STOPOK');
+        process.send(globals.STOP_OK);
       });
   }
 });
+
+process.on('exit', function(){
+  console.log("CERRADO");
+})

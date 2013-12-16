@@ -6,14 +6,15 @@ var redis = require('redis');
 var _ = require('underscore');
 var server = require('./simpleServer.js');
 var agent = require('superagent');
+var processLauncher = require('../processLauncher');
 
 var expect = chai.expect;
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-var consumer = require('../consumerLauncher.js');
-var listener = require('../listenerLauncher.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var serversToShutDown = [];
 

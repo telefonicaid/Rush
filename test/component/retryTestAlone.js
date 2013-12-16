@@ -5,6 +5,7 @@ var superagent = require('superagent');
 var config = require('./config.js');
 var configBase = require('../../lib/configTest.js');
 var async = require('async');
+var processLauncher = require('../processLauncher');
 
 var expect = chai.expect;
 
@@ -12,8 +13,8 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
 
-var consumer = require('../consumerLauncher.js');
-var listener = require('../listenerLauncher.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;

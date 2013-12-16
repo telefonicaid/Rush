@@ -6,9 +6,10 @@ var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 var fs = require('fs');
 var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../consumerLauncher.js');
-var listener = require('../listenerLauncher.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var HOST = config.rushServerHttps.hostname;
 var PORT = config.rushServerHttps.port;

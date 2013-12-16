@@ -8,10 +8,10 @@ var async = require('async');
 var server = require('./advancedServer.js');
 //var server = require('./simpleServer.js');
 var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-
-var consumer = require('../consumerLauncher.js');
-var listener = require('../listenerLauncher.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;

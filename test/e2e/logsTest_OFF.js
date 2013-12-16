@@ -12,9 +12,10 @@ var dbUtils = require('../dbUtils.js');
 var fs = require('fs');
 var os = require('os');
 var util = require('util');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../consumerLauncher.js');
-var listener = require('../listenerLauncher.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 //RUSH ENDPOINT
 var HOST = config.rushServer.hostname;

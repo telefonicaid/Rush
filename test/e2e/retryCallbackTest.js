@@ -3,10 +3,10 @@ var should = require('should');
 var config = require('./config.js');
 var utils = require('./utils.js');
 var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-
-var consumer = require('../consumerLauncher.js');
-var listener = require('../listenerLauncher.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
