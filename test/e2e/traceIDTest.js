@@ -4,12 +4,16 @@ var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
 var redis = require('redis');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
+
+var SIMPLESERVERPORT = 4002;
 
 var serversToShutDown = [];
 
@@ -27,7 +31,7 @@ function executeTest(method, body, done) {
   options.path = PATH;
   options.headers = {};
   options.headers['content-type'] = 'application/json';
-  options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + config.simpleServerPort;
+  options.headers['X-Relayer-Host'] =  config.simpleServerHostname + ':' + SIMPLESERVERPORT;
   options.headers['X-relayer-persistence'] = 'BODY';
   options.headers[TEST_HEADER_NAME] = TEST_HEADER_VALUE;
   options.headers['X-Relayer-traceid'] = traceID;
@@ -42,7 +46,6 @@ function executeTest(method, body, done) {
       },
 
       function(methodReceived, headersReceived, url, bodyReceived) {
-
         methodReceived.should.be.equal(method);
         url.should.be.equal(PATH);
         headersReceived.should.have.property(TEST_HEADER_NAME, TEST_HEADER_VALUE);
@@ -70,8 +73,8 @@ function executeTest(method, body, done) {
             }
           }
           utils.makeRequest(options, '', checkResponse);
-        }, 100);
-      }
+        }, 200);
+      }, SIMPLESERVERPORT
   );
   serversToShutDown.push(simpleServer);
 }
@@ -89,6 +92,7 @@ describe('Single Feature: TraceID #FTID', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function() {
@@ -102,10 +106,8 @@ describe('Single Feature: TraceID #FTID', function() {
     serversToShutDown = [];
   });
 
-  beforeEach(function(done){
-    var rc = redis.createClient(6379, 'localhost');
-    rc.select(1);
-    rc.flushall(done);
+  beforeEach(function(){
+    dbUtils.cleanDb();
   });
 
 

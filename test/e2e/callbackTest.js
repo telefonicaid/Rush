@@ -3,9 +3,11 @@ var should = require('should');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -118,6 +120,12 @@ describe('Single Feature: Callback #FCB', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
+  });
+
+  beforeEach(function(done){
+    this.timeout(10000);
+    dbUtils.cleanDb(done);
   });
 
   afterEach(function() {
@@ -133,7 +141,6 @@ describe('Single Feature: Callback #FCB', function() {
   });
 
   describe('Using method / POST', function() {
-
     it('Case 1 Should receive a callback on a correct ' +
         'POST petition #FCB', function(done) {
       makeRequest('POST', content, done);
@@ -181,7 +188,7 @@ describe('Single Feature: Callback #FCB', function() {
 
   describe('Callback has to be called even ' +
       'if the Host is incorrect', function() {
-    it.skip('Case 1 Should receive a callback with an error #FCB', function(done) {
+    it('Case 1 Should receive a callback with an error #FCB', function(done) {
 
       var portCallBack = config.callBackPort,
           serverCallback,

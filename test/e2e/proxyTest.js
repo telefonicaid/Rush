@@ -3,9 +3,11 @@ var should = require('should');
 var config = require('./config.js');
 var simpleServer = require('./simpleServer.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -30,6 +32,7 @@ describe('Single Feature: Proxy Server #FPX', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
   afterEach(function(done) {
@@ -38,6 +41,10 @@ describe('Single Feature: Proxy Server #FPX', function() {
     } catch(e) {  }
 
     done();
+  });
+
+  beforeEach(function(){
+    dbUtils.cleanDb();
   });
 
   function makeTest(relayerHost, method, headers, content, done) {

@@ -3,9 +3,11 @@ var should = require('should');
 var config = require('./config.js');
 var server = require('./simpleServer.js');
 var utils = require('./utils.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
@@ -163,14 +165,16 @@ describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
   });
 
-  beforeEach(function() {
+  beforeEach(function(done) {
     //Set initial headers
     options.headers = {};
     options.headers['content-type'] = applicationContent;
     options.headers[personalHeader1name] = personalHeader1value;
     options.headers[personalHeader2name] = personalHeader2value;
+    dbUtils.cleanDb(done);
   });
 
   afterEach(function() {

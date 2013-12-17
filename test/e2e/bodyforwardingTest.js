@@ -6,9 +6,11 @@ var expect = chai.expect;
 var _ = require('underscore');
 var async = require('async');
 var server = require('./advancedServer.js');
+var dbUtils = require('../dbUtils.js');
+var processLauncher = require('../processLauncher');
 
-var consumer = require('../../lib/consumer.js');
-var listener = require('../../lib/listener.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 // Verbose MODE
 var vm = false;
@@ -134,6 +136,7 @@ describe('Multiple Feature: Body '  + '#FEH', function() {
 		listener.stop(function() {
 			consumer.stop(done);
 		});
+		dbUtils.exit();
 	});
 
 	afterEach(function() {
@@ -144,6 +147,10 @@ describe('Multiple Feature: Body '  + '#FEH', function() {
 		}
 		serversToShutDown = [];
 	});
+
+	beforeEach(function(done){
+    dbUtils.cleanDb(done);
+  });
 
 	describe('Body sent to Rush should remain the same as the received in the final endpoint #FOW', function () {
 

@@ -5,6 +5,7 @@ var superagent = require('superagent');
 var config = require('./config.js');
 var configBase = require('../../lib/configTest.js');
 var async = require('async');
+var processLauncher = require('../processLauncher');
 
 var expect = chai.expect;
 
@@ -12,8 +13,8 @@ var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 var URL_RUSH = 'http://' + HOST + ':' + PORT;
 
-var listener = require('../../lib/listener.js');
-var consumer = require('../../lib/consumer.js');
+var consumer = new processLauncher.consumerLauncher();
+var listener = new processLauncher.listenerLauncher();
 
 var REDIS_HOST = config.redisServer.host;
 var REDIS_PORT = config.redisServer.port;
@@ -122,7 +123,7 @@ describe('Component Test: Task queue', function () {
 
   beforeEach(function(done){
     setTimeout(done, 5000);
-  })
+  });
 
   var dataSet = [
     {name : "Scenario 1: Should move the transaction between buckets with 1 tansaction", numTrans : 1},
