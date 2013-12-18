@@ -40,7 +40,7 @@ function prepareServerAndSendPetition(type, content, httpCallBack, callback) {
 
         //Petition method
         options.method = type;
-        options.path = PATH,
+        options.path = PATH;
         options.headers['x-relayer-host'] = RELAYER_HOST;
         options.headers['x-relayer-httpcallback'] = httpCallBack;
 
@@ -89,6 +89,12 @@ function makeRequest(type, content, done) {
 
     req.on('end',
         function() {
+
+          //Check headers
+          req.headers.should.have.property('content-type', applicationContent);
+          req.headers.should.have.property('content-length', Buffer.byteLength(response).toString());
+
+          //Check content
           var parsedJSON = JSON.parse(response);
           parsedJSON.should.have.property('body', content);
           parsedJSON.should.have.property('statusCode', 200);
@@ -101,7 +107,7 @@ function makeRequest(type, content, done) {
         });
 
   }).listen(portCallBack, prepareServerAndSendPetition.bind({},
-      type, content, 'http://localhost:' + portCallBack));
+          type, content, 'http://localhost:' + portCallBack));
 
   serversToShutDown.push(serverCallback);
 }
@@ -120,12 +126,6 @@ describe('Single Feature: Callback #FCB', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
-    dbUtils.exit();
-  });
-
-  beforeEach(function(done){
-    this.timeout(10000);
-    dbUtils.cleanDb(done);
   });
 
   afterEach(function() {
@@ -207,6 +207,10 @@ describe('Single Feature: Callback #FCB', function() {
 
         req.on('end',
             function() {
+
+              //Check headers
+              req.headers.should.have.property('content-type', applicationContent);
+              req.headers.should.have.property('content-length', Buffer.byteLength(response).toString());
 
               var parsedJSON = JSON.parse(response);
               should.not.exist(parsedJSON.result);

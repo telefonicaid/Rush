@@ -38,6 +38,12 @@ function executeTest(method, content, done) {
       },
       function(methodUsed, headers, url, body) {
 
+        //Check content-length
+        if (method !== 'GET' && method !== 'DELETE') {
+          var contentLength = content ? Buffer.byteLength(content).toString() : '0';
+          headers.should.have.property('content-length', contentLength);
+        }
+
         methodUsed.should.equal(method);
         url.should.be.equal(PATH);
         headers.should.have.property(HEADER_TEST_NAME, HEADER_TEST_VALUE);
