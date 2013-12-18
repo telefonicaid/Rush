@@ -126,6 +126,12 @@ describe('Single Feature: Callback #FCB', function() {
     listener.stop(function() {
       consumer.stop(done);
     });
+    dbUtils.exit();
+  });
+
+  beforeEach(function(done){
+    this.timeout(10000);
+    dbUtils.cleanDb(done);
   });
 
   afterEach(function() {
