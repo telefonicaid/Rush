@@ -17,6 +17,7 @@ var listener = new processLauncher.listenerLauncher();
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 var RUSHENDPOINT = 'http://' + HOST + ':' + PORT;
+var googleEpS = 'www.google.es:443'
 
 //Final host endpoint
 var fhHOST = config.simpleServerHostname;
@@ -48,6 +49,8 @@ var certB64 = 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDS1RDQ0FaSUNDUUQ1TUV2Q
     'UxMEhKc21UcUI4anVxaWk5MVBRRkRFWnRjOWp2VHRMVVNzDQpqR3Zyd0hTQlNiR2ZTNnRNdjJQdHNnRzg4ZW9zRFRLbzBkM2padkFEVVlVZ2Qy' +
     'T0FaaWY0YkJLdjFMOGtVVE9NDQpYN1FxUFFCZmUyZG84WEdOQ3V6RlpGa2RseFd1VW9OV3pjbXkwaEU9DQotLS0tLUVORCBDRVJUSUZJQ0FURS' +
     '0tLS0t';
+
+var googleCert = '';
 
 function _validScenario(data){
   'use strict';
@@ -188,6 +191,48 @@ function _invalidScenario(data){
   });
 }
 
+function _certScenario(data){
+		'use strict';
+
+		it(data.name, function(done){
+			var agent = superagent.agent();
+			agent
+					[data.method.toLowerCase()](RUSHENDPOINT )
+					.set('x-relayer-host', googleEpS)  //google  HTTPS
+					.set('x-relayer-persistence','BODY')
+					.set(data.headers)
+				  .end(function(err, res) {
+						if (vm) {console.log(res);}
+						expect(err).to.not.exist;
+						expect(res.statusCode).to.equal(CREATED); //Status code 200
+						if (vm) {console.log(res.body.id);}
+						expect(res.body).to.exist;
+						expect(res.body.id).to.exist;
+						res.text.should.not.include('exception');
+						var transId = res.body.id;
+						setTimeout(function () {
+							agent
+									.get(RUSHENDPOINT +'/response/' + res.body['id'])
+									.end(function onResponse2(err2, res2) {
+										if (vm) {console.log(res2);}
+										if (vm) {console.log(res2.body);}
+										expect(res2.statusCode).to.equal(200);
+										res2.headers['content-type'].should.eql('application/json; charset=utf-8');
+										res2.text.should.include('id');
+										res2.text.should.include('state');
+										res2.body['state'].should.eql('completed');
+										res2.text.should.not.include('exception');
+
+										if (data.headers['x-relayer-traceid']) {
+											res2.body['traceID'].should.eql('TEST');
+										}
+										done();
+									});
+						}, TIMEOUT);
+					});
+		});
+	}
+
 
 describe('Feature: Target Certificate '  + '#FTC', function() {
   'use strict';
@@ -273,6 +318,61 @@ describe('Feature: Target Certificate '  + '#FTC', function() {
         _invalidScenario(dataSetInvalid[i]);  //Launch every test in data set
       }
     }
+
+	  var dataSetCerts = [     //only allowed GET HEAD @ google
+		  {protocol : 'https', method: 'GET', path: '/',
+			  headers: {'X-Relayer-Protocol':'https'}, body: {},
+			  name : '1 Should accept the request using a official Certificate of the HTTPS endpoint without CasDir set /GET'}
+		/*  ,{protocol : 'https', method: 'POST', path: '/',  #NOT ALLOWED ON GOOGLE
+			  headers: {'X-Relayer-Protocol':'https'}, body: {},
+			  name : '2 Should accept the request using a official Certificate of the HTTPS without CasDir set /POST'}
+	  */
+	  ];
+
+	  if(/v0\.10.*/.test(process.version)){
+		  for(i=0; i < dataSetCerts.length; i++){
+			  _certScenario(dataSetCerts[i]);  //Launch every test in data set
+		  }
+	  }
+
+	  it('should accept requests using HTTPS official certs / GET', function (done) {
+		  var agent = superagent.agent();
+
+		  function onResponse(err, res) {
+			  should.not.exist(err);
+			  res.headers['content-type'].should.eql('application/json; charset=utf-8');
+			  res.should.have.status(CREATED);
+			  res.text.should.include('id');
+			  if (vm) {console.log(res.body);}
+			  return done();
+		  }
+
+		  agent
+				  .get(RUSHENDPOINT )
+				  .set('X-relayer-host', 'www.google.com:443')
+				  .send({})
+				  .end(onResponse);
+	  });
+
+	  it('should accept requests using HTTPS official certs / POST', function (done) {
+		  var agent = superagent.agent();
+
+		  function onResponse(err, res) {
+			  should.not.exist(err);
+			  res.headers['content-type'].should.eql('application/json; charset=utf-8');
+			  res.should.have.status(CREATED);
+			  res.text.should.include('id');
+			  if (vm) {console.log(res.body);}
+			  return done();
+		  }
+
+		  agent
+				  .post(RUSHENDPOINT )
+				  .set('X-relayer-host', 'www.google.com:443')
+				  .send({})
+				  .end(onResponse);
+	  });
+
 
 
   });
