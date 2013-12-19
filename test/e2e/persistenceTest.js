@@ -12,8 +12,11 @@ var listener = new processLauncher.listenerLauncher();
 var serversToShutDown = [];
 
 
+
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
+var timeout=100;
+var describetimeout=6000;
 
 function executeTest(method, content, persistence, done) {
   'use strict';
@@ -91,7 +94,7 @@ function executeTest(method, content, persistence, done) {
 
           utils.makeRequest(options, '', checkResponse);
 
-        }, 10);
+        }, timeout);
       }
   );
 
@@ -99,6 +102,7 @@ function executeTest(method, content, persistence, done) {
 }
 
 describe('Single Feature: Persistence #FPE', function() {
+	this.timeout(describetimeout);
   'use strict';
 
   before(function (done) {

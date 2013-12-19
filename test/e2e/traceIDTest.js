@@ -80,6 +80,7 @@ function executeTest(method, body, done) {
 }
 
 describe('Single Feature: TraceID #FTID', function() {
+	this.timeout(6000);
   'use strict';
 
   before(function (done) {
