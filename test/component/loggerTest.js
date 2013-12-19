@@ -88,7 +88,7 @@ function _invalidScenario(data){
 
 }
 
-describe('Component Test: Logs ', function () {
+describe.skip('Component Test: Logs ', function () {
 	this.timeout(timeoutDescribe);
   describe('Valid log Scenarios with different log level', function () {
 
