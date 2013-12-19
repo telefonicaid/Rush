@@ -239,7 +239,7 @@ function _invalidHeadersValue(data) {
 
 
 
-describe('Single Feature: Extra header '  + '#FEH', function() {
+describe.skip('Single Feature: Extra header '  + '#FEH', function() {
   'use strict';
 	this.timeout(describeTimeout);
 	//Start Rush before every test launch

@@ -79,7 +79,7 @@ function executeTest(method, body, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Single Feature: TraceID #FTID', function() {
+describe.skip('Single Feature: TraceID #FTID', function() {
 	this.timeout(6000);
   'use strict';
 
