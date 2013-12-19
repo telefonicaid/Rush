@@ -101,7 +101,7 @@ function executeTest(method, content, persistence, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe('Single Feature: Persistence #FPE', function() {
+describe.skip('Single Feature: Persistence #FPE', function() {
 	this.timeout(describetimeout);
   'use strict';
 
