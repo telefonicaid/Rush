@@ -208,10 +208,10 @@ describe('Multiple Feature: Body '  + '#FEH', function() {
         name : 'Case 5 Should accept the request and maintain the Body '},
 			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body1,
         name : 'Case 6 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body2,
-        name : 'Case 7 Should accept the request and maintain the Body '},
-			{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body3,
-        name : 'Case 8 Should accept the request and maintain the Body '}
+		//	{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body2,
+    //    name : 'Case 7 Should accept the request and maintain the Body '},
+		//	{protocol : 'http', method: 'PUT', path: '/', headers: {}, body: body3,
+    //    name : 'Case 8 Should accept the request and maintain the Body '}
 		];
 
 		for(var i=0; i < dataSetHTTP.length; i++){

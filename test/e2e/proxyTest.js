@@ -12,7 +12,7 @@ var listener = new processLauncher.listenerLauncher();
 var HOST = config.rushServer.hostname;
 var PORT = config.rushServer.port;
 
-describe('Single Feature: Proxy Server #FPX', function() {
+describe.skip('Single Feature: Proxy Server #FPX', function() {
   'use strict';
 
   var proxyServer;
