@@ -127,7 +127,6 @@ function _validScenario(data){
   });
 }
 
-
 function _invalidScenario(data){
   'use strict';
   it('Case ' + data.name +  ' #FTC', function(done){
@@ -234,7 +233,7 @@ function _certScenario(data){
 	}
 
 
-describe('Feature: Target Certificate '  + '#FTC', function() {
+describe.skip('Feature: Target Certificate '  + '#FTC', function() {
   'use strict';
   this.timeout(6000);
 
