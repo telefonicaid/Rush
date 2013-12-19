@@ -151,7 +151,7 @@ function makeRequest(type, persistence, content, done) {
   serversToShutDown.push(callbackServer);
 }
 
-describe('Multiple Features: Persistence Callback #FPT #FCB', function() {
+describe.skip('Multiple Features: Persistence Callback #FPT #FCB', function() {
   'use strict';
   var content = 'Persistence&HTTPCallBack Test';
 
