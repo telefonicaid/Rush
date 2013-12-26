@@ -68,7 +68,7 @@ function executeTest(method, content, done) {
   serversToShutDown.push(simpleServer);
 }
 
-describe.skip('Multiple Feature: ONEWAY with HTTPS #FOW', function () {
+describe('Multiple Feature: ONEWAY with HTTPS #FOW', function () {
   'use strict';
 
   before(function (done) {
