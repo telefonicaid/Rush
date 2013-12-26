@@ -145,7 +145,7 @@ function executeTest(method, content, headers, done) {
   }
 }
 
-describe('Component Test: Persistence ', function() {
+describe.skip('Component Test: Persistence ', function() {
   'use strict';
   this.timeout(describeTimeout);
 
