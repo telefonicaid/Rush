@@ -42,7 +42,7 @@
         https://colabora.tid.es/kbportal/PLCwiki/Guidelines/Common/Software%20Metrics/Technical%20Debt.aspx
         techDebtEstimationMethod: man-month or Story Points
     -->
-    <team velocity="30" devs="3" members="5" techDebtEstimationMethod="man-month"/>
+    <team velocity="30" devs="3" members="4" techDebtEstimationMethod="man-month"/>
         
     <!--
         We use it to calculate TechDebt
