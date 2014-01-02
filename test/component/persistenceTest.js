@@ -92,6 +92,8 @@ function executeTest(method, content, headers, done) {
     }
   );
 
+  serversToShutDown.push(simpleServer);
+
   var responses = {};
 
   subscriber.on('message', function newMessage(channel, message){
@@ -101,9 +103,6 @@ function executeTest(method, content, headers, done) {
   setTimeout(function(){
     testResponses(responses);
   }, TIMEOUT);
-
-
-
 
   function testResponses (responses){
     expect(responses).to.have.property('STATE:processing');
@@ -139,13 +138,12 @@ function executeTest(method, content, headers, done) {
       expect(responses).to.not.have.property('STATE:completed');
       expect(responses).to.have.property('STATE:persistence_state');
     }
-    serversToShutDown.push(simpleServer);
     subscriber.unsubscribe('message');
     done();
   }
 }
 
-describe.skip('Component Test: Persistence ', function() {
+describe('Component Test: Persistence ', function() {
   'use strict';
   this.timeout(describeTimeout);
 
@@ -162,6 +160,7 @@ describe.skip('Component Test: Persistence ', function() {
   });
 
   afterEach(function() {
+    console.log("CERRAR++++++++++++++++++++++++++++++++++");
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
         serversToShutDown[i].close();
