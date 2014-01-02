@@ -20,9 +20,6 @@ var serverListener = function(connectedCallback, dataCallback, port) {
       res.end(content);
 
       dataCallback(method, headers, url, content);
-
-      //req.destroy();
-      srv.close();
     });
 
     //srv.on('close', function () {

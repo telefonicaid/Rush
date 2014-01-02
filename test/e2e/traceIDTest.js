@@ -101,7 +101,6 @@ describe('Single Feature: TraceID #FTID', function() {
       try {
         serversToShutDown[i].close();
       } catch (e) {
-
       }
     }
     serversToShutDown = [];
