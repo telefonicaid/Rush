@@ -7,6 +7,7 @@ var _ = require('underscore');
 var server = require('./simpleServer.js');
 var agent = require('superagent');
 var processLauncher = require('../processLauncher');
+var dbUtils = require('../dbUtils.js');
 
 var expect = chai.expect;
 
@@ -33,13 +34,13 @@ var TIMEOUT = 3000;
 var describeTimeout = 60000;
 
 var ALL_HEADERS = [
-  'x-relayer-persistence',
-  'x-relayer-httpcallback',
-  'x-relayer-httpcallback-error',
-  'x-relayer-retry',
-  'x-relayer-topic',
-  'x-relayer-proxy',
-  'x-relayer-encoding'
+'x-relayer-persistence',
+'x-relayer-httpcallback',
+'x-relayer-httpcallback-error',
+'x-relayer-retry',
+'x-relayer-topic',
+'x-relayer-proxy',
+'x-relayer-encoding'
 ];
 
 function keysToLowerCase(obj){
@@ -59,10 +60,10 @@ function executeTest(method, content, headers, done) {
 
   var mymethod;
   switch(method){
-  case 'DELETE':
+    case 'DELETE':
     mymethod = 'del';
     break;
-  default:
+    default:
     mymethod = method.toLowerCase();
   }
 
@@ -75,30 +76,28 @@ function executeTest(method, content, headers, done) {
   var id;
 
   headers = keysToLowerCase(headers);
+  var responses = {};
 
   var simpleServer = server.serverListener(
     function onConnected() {
+      subscriber.on('message', function newMessage(channel, message){
+        responses[channel] = JSON.parse(message);
+      });
       agent
-        [mymethod](URL_RUSH)
-        .set('content-type', 'application/json')
-        .set(headers)
-        .end(function(err, res) {
-          expect(err).to.not.exist;
+      [mymethod](URL_RUSH)
+      .set('content-type', 'application/json')
+      .set(headers)
+      .end(function(err, res) {
+        expect(err).to.not.exist;
           expect(res.statusCode).to.equal(201); //Status code 201
           expect(res.body).to.exist;
           expect(res.body.id).to.exist;
           id = res.body.id;
         });
     }
-  );
+    );
 
   serversToShutDown.push(simpleServer);
-
-  var responses = {};
-
-  subscriber.on('message', function newMessage(channel, message){
-    responses[channel] = JSON.parse(message);
-  });
 
   setTimeout(function(){
     testResponses(responses);
@@ -160,13 +159,16 @@ describe('Component Test: Persistence ', function() {
   });
 
   afterEach(function() {
-    console.log("CERRAR++++++++++++++++++++++++++++++++++");
     for (var i = 0; i < serversToShutDown.length; i++) {
       try {
         serversToShutDown[i].close();
       } catch (e) {}
     }
     serversToShutDown = [];
+  });
+
+  beforeEach(function(done){
+    dbUtils.cleanDb(done);
   });
 
 
